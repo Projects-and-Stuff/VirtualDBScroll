@@ -23,7 +23,7 @@ along with this package. If not, see <http://www.gnu.org/licenses/>.
 interface
 
 uses
-  Classes, SysUtils, Controls, StdCtrls;
+  Classes, SysUtils, Controls, StdCtrls, IDEIntf, PropEdits, typinfo;
 
 type
 
@@ -65,9 +65,30 @@ type
     property WantTabs;
   end;
 
+  TEmbeddedMemoPropertyEditor = class(TEnumPropertyEditor)
+    public
+      procedure GetValues(Proc: TGetStrProc); override;
+    end;
+
 implementation
 
 
+
+{ TEmbeddedMemoPropertyEditor }
+
+procedure TEmbeddedMemoPropertyEditor.GetValues(Proc: TGetStrProc);
+type
+  TRestricted = 1..3;
+  TRestrictedNames = array[TRestricted] of shortstring;
+const
+  RestrictedStyleNames: TRestrictedNames =
+                          ('ssNone', 'ssHorizontal', 'ssAutoHorizontal');
+var
+  i: TRestricted;
+begin
+  for i := Low(TRestricted) to High(TRestricted) do
+    Proc(RestrictedStyleNames[i]);
+end;
 
 { TEmbeddedMemo }
 
@@ -97,6 +118,9 @@ begin
   WordWrap := False;
   ReadOnly := True;
 end;
+
+initialization
+  RegisterPropertyEditor(TypeInfo(TScrollStyle), TEmbeddedMemo, 'ScrollBars', TEmbeddedMemoPropertyEditor);
 
 end.
 
