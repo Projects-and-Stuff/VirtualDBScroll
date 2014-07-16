@@ -33,7 +33,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this package. If not, see &lt;http://www.gnu.org/licenses/>."/>
     <Version Minor="1"/>
-    <Files Count="2">
+    <Files Count="3">
       <Item1>
         <Filename Value="virtualdbscrollmemo.pas"/>
         <HasRegisterProc Value="True"/>
@@ -43,15 +43,22 @@ along with this package. If not, see &lt;http://www.gnu.org/licenses/>."/>
         <Filename Value="embeddedmemo.pas"/>
         <UnitName Value="EmbeddedMemo"/>
       </Item2>
+      <Item3>
+        <Filename Value="embeddedscrollbar.pas"/>
+        <UnitName Value="EmbeddedScrollBar"/>
+      </Item3>
     </Files>
     <Type Value="RunAndDesignTime"/>
-    <RequiredPkgs Count="2">
+    <RequiredPkgs Count="3">
       <Item1>
-        <PackageName Value="LCL"/>
+        <PackageName Value="IDEIntf"/>
       </Item1>
       <Item2>
-        <PackageName Value="FCL"/>
+        <PackageName Value="LCL"/>
       </Item2>
+      <Item3>
+        <PackageName Value="FCL"/>
+      </Item3>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>

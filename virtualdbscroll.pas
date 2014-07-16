@@ -7,7 +7,7 @@ unit VirtualDBScroll;
 interface
 
 uses
-  VirtualDBScrollMemo, EmbeddedMemo, LazarusPackageIntf;
+  VirtualDBScrollMemo, EmbeddedMemo, EmbeddedScrollBar, LazarusPackageIntf;
 
 implementation
 

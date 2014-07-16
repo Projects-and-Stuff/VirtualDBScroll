@@ -23,7 +23,7 @@ along with this package. If not, see <http://www.gnu.org/licenses/>.
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls, EmbeddedMemo, db;
+  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls, EmbeddedMemo, EmbeddedScrollBar, db;
 
 type
 
@@ -34,7 +34,7 @@ type
   private
     { Private declarations }
     FEmbeddedMemo : TEmbeddedMemo;
-    FEmbeddedScrollBar : TScrollBar;
+    FEmbeddedScrollBar : TEmbeddedScrollBar;
     FRecordChunkSize : Integer;
     FDataSet : TDataSet;
 
@@ -48,7 +48,7 @@ type
   published
     { Published declarations }
     property EmbeddedMemo : TEmbeddedMemo read FEmbeddedMemo;
-    property EmbeddedScrollBar : TScrollBar read FEmbeddedScrollBar;
+    property EmbeddedScrollBar : TEmbeddedScrollBar read FEmbeddedScrollBar;
 
     property RecordChunkSize : Integer read GetChunkSize write SetChunkSize default 50; // Used to set the number of records per chunk. Allowable range is 1 to 500
     property DataSet : TDataSet read FDataSet write FDataSet;
@@ -133,7 +133,7 @@ begin
   FEmbeddedMemo.Lines.Clear;
 
 
-  FEmbeddedScrollBar := TScrollBar.Create(Self); // Add the embedded memo
+  FEmbeddedScrollBar := TEmbeddedScrollBar.Create(Self); // Add the embedded memo
   FEmbeddedScrollBar.Parent := self;         // Show the memo in the panel
   FEmbeddedScrollBar.SetSubComponent(true);  // Tell the IDE to store the modified properties
   FEmbeddedScrollBar.Width := 15;
