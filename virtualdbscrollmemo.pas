@@ -23,11 +23,13 @@ along with this package. If not, see <http://www.gnu.org/licenses/>.
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls, EmbeddedMemo, EmbeddedScrollBar, db;
+  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls, EmbeddedMemo, EmbeddedScrollBar, db, DBGrids;
 
 type
 
 
+
+  { TVirtualDBScrollMemo }
 
   TVirtualDBScrollMemo = class(TCustomPanel)
 
@@ -36,22 +38,29 @@ type
     FEmbeddedMemo : TEmbeddedMemo;
     FEmbeddedScrollBar : TEmbeddedScrollBar;
     FRecordChunkSize : Integer;
-    FDataSet : TDataSet;
+    FDataLink : TComponentDataLink;
 
     function GetChunkSize: Integer;
+    function GetDataSource: TDataSource;
     procedure SetChunkSize(const Value: Integer);
+    procedure SetDataSource(AValue: TDataSource);
+
+    function GetRecordCount: Integer;
   protected
     { Protected declarations }
+    procedure onDataSetChanged(ADataSet : TDataSet);
   public
     { Public declarations }
     constructor Create(AOwner : TComponent); override;
+    destructor Destroy; override;
   published
     { Published declarations }
     property EmbeddedMemo : TEmbeddedMemo read FEmbeddedMemo;
     property EmbeddedScrollBar : TEmbeddedScrollBar read FEmbeddedScrollBar;
 
     property RecordChunkSize : Integer read GetChunkSize write SetChunkSize default 50; // Used to set the number of records per chunk. Allowable range is 1 to 500
-    property DataSet : TDataSet read FDataSet write FDataSet;
+    property DataLink : TComponentDataLink read FDataLink write FDataLink;
+    property DataSource : TDataSource read GetDataSource write SetDataSource;
 
     property Align;
     property Anchors;
@@ -95,6 +104,11 @@ begin
   Result := FRecordChunkSize;
 end;
 
+function TVirtualDBScrollMemo.GetDataSource: TDataSource;
+begin
+  result := FDataLink.DataSource;
+end;
+
 procedure TVirtualDBScrollMemo.SetChunkSize(const Value: Integer);
 begin
   if Value < 1 then
@@ -109,6 +123,21 @@ begin
   begin
     FRecordChunkSize := Value;
   end;
+end;
+
+procedure TVirtualDBScrollMemo.SetDataSource(AValue: TDataSource);
+begin
+  FDataLink.DataSource := AValue;
+end;
+
+function TVirtualDBScrollMemo.GetRecordCount: Integer;
+begin
+  result := FDataLink.DataSet.RecordCount;
+end;
+
+procedure TVirtualDBScrollMemo.onDataSetChanged(ADataSet : TDataSet);
+begin
+  // Do stuff when the dataset has changed
 end;
 
 
@@ -147,10 +176,29 @@ begin
   FEmbeddedMemo.ControlStyle := FEmbeddedMemo.ControlStyle - [csNoDesignSelectable];
   FEmbeddedScrollBar.ControlStyle := FEmbeddedScrollBar.ControlStyle - [csNoDesignSelectable];
 
+  // Initially set the chunk size to 50
   FRecordChunkSize := 50;
 
 
+  // Initialize the Dataset
+  FDataLink := TComponentDataLink.Create;
+  FDataLink.OnDataSetChanged := @onDataSetChanged; // Make sure we handle the DataSetChanged event
 
+
+
+
+
+
+
+
+end;
+
+destructor TVirtualDBScrollMemo.Destroy;
+begin
+  FDataLink.Free;
+  FDataLink := nil;
+
+  inherited Destroy;
 end;
 
 initialization
