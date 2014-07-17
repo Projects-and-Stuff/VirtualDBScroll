@@ -46,9 +46,23 @@ type
     procedure SetDataSource(AValue: TDataSource);
 
     function GetRecordCount: Integer;
+
+
+    procedure OnRecordChanged(Field : TField);
+    procedure OnDataSetChanged(ADataSet : TDataSet);
+    procedure OnDataSetOpen(ADataSet : TDataSet);
+    procedure OnDataSetClose(ADataSet : TDataSet);
+    procedure OnNewDataSet(ADataSet : TDataSet);
+    procedure OnInvalidDataset(ADataSet : TDataSet);
+    procedure OnInvalidDataSource(ADataSet : TDataSet);
+    procedure OnDataSetScrolled(ADataSet : TDataSet; Distance : Integer);
+    procedure OnLayoutChanged(ADataSet : TDataSet);
+    procedure OnEditingChanged(ADataSet : TDataSet);
+    procedure OnUpdateData(ADataSet : TDataSet);
+
   protected
     { Protected declarations }
-    procedure onDataSetChanged(ADataSet : TDataSet);
+
   public
     { Public declarations }
     constructor Create(AOwner : TComponent); override;
@@ -135,9 +149,60 @@ begin
   result := FDataLink.DataSet.RecordCount;
 end;
 
-procedure TVirtualDBScrollMemo.onDataSetChanged(ADataSet : TDataSet);
+procedure TVirtualDBScrollMemo.OnRecordChanged(Field: TField);
 begin
-  // Do stuff when the dataset has changed
+
+end;
+
+procedure TVirtualDBScrollMemo.OnDataSetChanged(ADataSet: TDataSet);
+begin
+
+end;
+
+procedure TVirtualDBScrollMemo.OnDataSetOpen(ADataSet: TDataSet);
+begin
+
+end;
+
+procedure TVirtualDBScrollMemo.OnDataSetClose(ADataSet: TDataSet);
+begin
+
+end;
+
+procedure TVirtualDBScrollMemo.OnNewDataSet(ADataSet: TDataSet);
+begin
+
+end;
+
+procedure TVirtualDBScrollMemo.OnInvalidDataset(ADataSet: TDataSet);
+begin
+
+end;
+
+procedure TVirtualDBScrollMemo.OnInvalidDataSource(ADataSet: TDataSet);
+begin
+
+end;
+
+procedure TVirtualDBScrollMemo.OnDataSetScrolled(ADataSet: TDataSet;
+  Distance: Integer);
+begin
+
+end;
+
+procedure TVirtualDBScrollMemo.OnLayoutChanged(ADataSet: TDataSet);
+begin
+
+end;
+
+procedure TVirtualDBScrollMemo.OnEditingChanged(ADataSet: TDataSet);
+begin
+
+end;
+
+procedure TVirtualDBScrollMemo.OnUpdateData(ADataSet: TDataSet);
+begin
+
 end;
 
 
@@ -182,8 +247,18 @@ begin
 
   // Initialize the Dataset
   FDataLink := TComponentDataLink.Create;
-  FDataLink.OnDataSetChanged := @onDataSetChanged; // Make sure we handle the DataSetChanged event
-
+  FDataLink.OnRecordChanged := @OnRecordChanged;
+  FDataLink.OnDatasetChanged := @OnDataSetChanged;
+  FDataLink.OnDataSetOpen := @OnDataSetOpen;
+  FDataLink.OnDataSetClose := @OnDataSetClose;
+  FDataLink.OnNewDataSet := @OnNewDataSet;
+  FDataLink.OnInvalidDataSet := @OnInvalidDataset;
+  FDataLink.OnInvalidDataSource := @OnInvalidDataSource;
+  FDataLink.OnDataSetScrolled := @OnDataSetScrolled;
+  FDataLink.OnLayoutChanged := @OnLayoutChanged;
+  FDataLink.OnEditingChanged := @OnEditingChanged;
+  FDataLink.OnUpdateData := @OnUpdateData;
+  FDataLink.VisualControl := True;
 
 
 
