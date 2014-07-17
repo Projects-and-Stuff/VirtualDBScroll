@@ -252,41 +252,30 @@ begin
     SetInitialBounds(0, 0, CX, CY);
   end;
 
+  Height := 50;
   Caption := '';
 
-  // Add the Embedded Components
+  // Initialize the Embedded Memo
   FEMemo := TEmbeddedMemo.Create(Self); // Add the embedded memo
   FEMemo.Parent := self;         // Show the memo in the panel
   FEMemo.SetSubComponent(true);  // Tell the IDE to store the modified properties
-  FEMemo.Name := 'EmbeddedMemo';
-  FEMemo.ScrollBars := ssHorizontal; //[ssNone, ssHorizontal, ssAutoHorizontal];
-  FEMemo.Lines.Clear;
+  FEMemo.Name := 'EMemo';
+  FEMemo.ControlStyle := FEMemo.ControlStyle - [csNoDesignSelectable]; // Make sure it can not be selected/deleted within the IDE
+  FEMemo.Lines.Clear; // Should I allow the user to set some default text?
   FEMemo.OnKeyPress := @EMemoOnKeyPress;
 
-
+  // Initialize the Embedded ScrollBar
   FEScrollBar := TEmbeddedScrollBar.Create(Self); // Add the embedded memo
   FEScrollBar.Parent := self;         // Show the memo in the panel
   FEScrollBar.SetSubComponent(true);  // Tell the IDE to store the modified properties
+  FEScrollBar.Name := 'EScrollBar';
+  FEScrollBar.ControlStyle := FEScrollBar.ControlStyle - [csNoDesignSelectable]; // Make sure it can not be selected/deleted within the IDE
   FEScrollBar.Width := 15;
   FEScrollBar.Align := alRight;
-  FEScrollBar.Name := 'EmbeddedScrollBar';
   FEScrollBar.Kind := sbVertical;
   FEScrollBar.OnChange := @EScrollBarOnChange;
   FEScrollBar.OnScroll := @EScrollBarOnScroll;
   FEScrollBar.OnKeyPress := @EScrollBarOnKeyPress;
-
-
-
-  // Make sure the embedded components can not be selected/deleted within the IDE
-  FEMemo.ControlStyle := FEMemo.ControlStyle - [csNoDesignSelectable];
-  FEScrollBar.ControlStyle := FEScrollBar.ControlStyle - [csNoDesignSelectable];
-
-  // Initially set the chunk size to 50
-  FRecordChunkSize := 50;
-
-  // Inititally allow 1000 positions on EmbeddedScrollBar per record in the dataset (but this may need to be adjusted when we check the RecordCount)
-  FLineResolution := 1000;
-
 
   // Initialize the Dataset
   FDataLink := TComponentDataLink.Create;
@@ -304,6 +293,13 @@ begin
   FDataLink.VisualControl := True;
 
 
+  // Initially set the chunk size to 50
+  FRecordChunkSize := 50;
+
+  // Inititally allow 1000 positions on EmbeddedScrollBar per record in the dataset (but this may need to be adjusted when we check the RecordCount)
+  FLineResolution := 1000;
+
+
 
 
 
@@ -314,6 +310,12 @@ destructor TVirtualDBScrollMemo.Destroy;
 begin
   FDataLink.Free;
   FDataLink := nil;
+
+  FEMemo.Free;
+  FEMemo := nil;
+
+  FEScrollBar.Free;
+  FEScrollBar := nil;
 
   inherited Destroy;
 end;
