@@ -27,7 +27,7 @@ uses
 
 type
 
-  { TEmbeddedMemo }
+  { TEmbeddedScrollBar }
 
   TEmbeddedScrollBar = class (TCustomScrollBar)
   private
@@ -40,7 +40,7 @@ type
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
 
-    property Kind;
+    //property Kind;
     property LargeChange;
     property Max;
     property Min;
@@ -48,12 +48,15 @@ type
     property Position;
     property SmallChange;
 
+
+
   published
     property Cursor;
     property Hint;
     property Name;
     property ShowHint;
     property Width;
+    property Visible;
 
   end;
 
@@ -68,6 +71,9 @@ begin
   inherited Create(AOwner);
 
   // Permanently set the values for these private properties
+
+
+
 
 end;
 
