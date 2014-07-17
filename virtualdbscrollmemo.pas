@@ -35,10 +35,17 @@ type
 
   private
     { Private declarations }
-    FEmbeddedMemo : TEmbeddedMemo;
-    FEmbeddedScrollBar : TEmbeddedScrollBar;
-    FRecordChunkSize : Integer;
+    FEMemo : TEmbeddedMemo;
+    FEScrollBar : TEmbeddedScrollBar;
     FDataLink : TComponentDataLink;
+
+    FRecordCount : Integer;                       // Total number of records in the DataSet
+    FRecordChunkSize : Integer;                   // The maximum number of records per record chunk
+    FRecordChunkCount : Integer;                  // Number of record chunks in the DataSet
+    FRecordChunkLineCounts : Array of Integer;    // Keeps track of the number of lines displayed per chunk
+    FCurrentRecordChunk : Integer;                // Tracks which chunk is currently at the center of display
+    FLineResolution : Integer;                    // The number of lines positions on the scrollbar allocated to each record
+    FVisibleLines : Integer;                      // How many lines are visible in EmbeddedMemo
 
     function GetChunkSize: Integer;
     function GetDataSource: TDataSource;
@@ -48,17 +55,25 @@ type
     function GetRecordCount: Integer;
 
 
-    procedure OnRecordChanged(Field : TField);
-    procedure OnDataSetChanged(ADataSet : TDataSet);
-    procedure OnDataSetOpen(ADataSet : TDataSet);
-    procedure OnDataSetClose(ADataSet : TDataSet);
-    procedure OnNewDataSet(ADataSet : TDataSet);
-    procedure OnInvalidDataset(ADataSet : TDataSet);
-    procedure OnInvalidDataSource(ADataSet : TDataSet);
-    procedure OnDataSetScrolled(ADataSet : TDataSet; Distance : Integer);
-    procedure OnLayoutChanged(ADataSet : TDataSet);
-    procedure OnEditingChanged(ADataSet : TDataSet);
-    procedure OnUpdateData(ADataSet : TDataSet);
+
+    // Event Handlers
+    procedure DataLinkOnRecordChanged(Field : TField);
+    procedure DataLinkOnDataSetChanged(ADataSet : TDataSet);
+    procedure DataLinkOnDataSetOpen(ADataSet : TDataSet);
+    procedure DataLinkOnDataSetClose(ADataSet : TDataSet);
+    procedure DataLinkOnNewDataSet(ADataSet : TDataSet);
+    procedure DataLinkOnInvalidDataset(ADataSet : TDataSet);
+    procedure DataLinkOnInvalidDataSource(ADataSet : TDataSet);
+    procedure DataLinkOnDataSetScrolled(ADataSet : TDataSet; Distance : Integer);
+    procedure DataLinkOnLayoutChanged(ADataSet : TDataSet);
+    procedure DataLinkOnEditingChanged(ADataSet : TDataSet);
+    procedure DataLinkOnUpdateData(ADataSet : TDataSet);
+    procedure EMemoOnKeyPress(Sender: TObject; var Key: char);
+    procedure EScrollBarOnChange(Sender: TObject);
+    procedure EScrollBarOnKeyPress(Sender: TObject; var Key: char);
+    procedure EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode;
+      var ScrollPos: Integer);
+
 
   protected
     { Protected declarations }
@@ -69,8 +84,8 @@ type
     destructor Destroy; override;
   published
     { Published declarations }
-    property EmbeddedMemo : TEmbeddedMemo read FEmbeddedMemo;
-    property EmbeddedScrollBar : TEmbeddedScrollBar read FEmbeddedScrollBar;
+    property EMemo : TEmbeddedMemo read FEMemo;
+    property EScrollBar : TEmbeddedScrollBar read FEScrollBar;
 
     property RecordChunkSize : Integer read GetChunkSize write SetChunkSize default 50; // Used to set the number of records per chunk. Allowable range is 1 to 500
     property DataLink : TComponentDataLink read FDataLink write FDataLink;
@@ -84,7 +99,7 @@ type
     property BevelWidth;
     property BorderStyle;
     property BorderWidth;
-    property Color; // Do I need this?
+    property Color;
     property Enabled;
     property Height;
     property Left;
@@ -100,8 +115,6 @@ type
 
   end;
 
-
-
 procedure Register;
 
 
@@ -109,8 +122,7 @@ implementation
 
 procedure Register;
 begin
-  RegisterComponents('Additional',[TVirtualDBScrollMemo]);
-
+  RegisterComponents('Additional', [TVirtualDBScrollMemo]);
 end;
 
 function TVirtualDBScrollMemo.GetChunkSize: Integer;
@@ -147,64 +159,88 @@ end;
 function TVirtualDBScrollMemo.GetRecordCount: Integer;
 begin
   result := FDataLink.DataSet.RecordCount;
+
+
+  // TODO: We need to verify that the RecordCount is less than 2,147,483
+  // If it's between 2,147,483 and 4,294,966 we can reduce FLineResolution to 500 (vice 1000)
+  // If it's between 4,294,966 and 8,589,932 we can reduce FLineResolution to 250
 end;
 
-procedure TVirtualDBScrollMemo.OnRecordChanged(Field: TField);
+procedure TVirtualDBScrollMemo.DataLinkOnRecordChanged(Field: TField);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.OnDataSetChanged(ADataSet: TDataSet);
+procedure TVirtualDBScrollMemo.DataLinkOnDataSetChanged(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.OnDataSetOpen(ADataSet: TDataSet);
+procedure TVirtualDBScrollMemo.DataLinkOnDataSetOpen(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.OnDataSetClose(ADataSet: TDataSet);
+procedure TVirtualDBScrollMemo.DataLinkOnDataSetClose(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.OnNewDataSet(ADataSet: TDataSet);
+procedure TVirtualDBScrollMemo.DataLinkOnNewDataSet(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.OnInvalidDataset(ADataSet: TDataSet);
+procedure TVirtualDBScrollMemo.DataLinkOnInvalidDataset(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.OnInvalidDataSource(ADataSet: TDataSet);
+procedure TVirtualDBScrollMemo.DataLinkOnInvalidDataSource(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.OnDataSetScrolled(ADataSet: TDataSet;
+procedure TVirtualDBScrollMemo.DataLinkOnDataSetScrolled(ADataSet: TDataSet;
   Distance: Integer);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.OnLayoutChanged(ADataSet: TDataSet);
+procedure TVirtualDBScrollMemo.DataLinkOnLayoutChanged(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.OnEditingChanged(ADataSet: TDataSet);
+procedure TVirtualDBScrollMemo.DataLinkOnEditingChanged(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.OnUpdateData(ADataSet: TDataSet);
+procedure TVirtualDBScrollMemo.DataLinkOnUpdateData(ADataSet: TDataSet);
 begin
 
 end;
 
+procedure TVirtualDBScrollMemo.EMemoOnKeyPress(Sender: TObject; var Key: char);
+begin
+
+end;
+
+procedure TVirtualDBScrollMemo.EScrollBarOnChange(Sender: TObject);
+begin
+
+end;
+
+procedure TVirtualDBScrollMemo.EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode; var ScrollPos: Integer);
+begin
+
+end;
+
+procedure TVirtualDBScrollMemo.EScrollBarOnKeyPress(Sender: TObject; var Key: char);
+begin
+
+end;
 
 constructor TVirtualDBScrollMemo.Create(AOwner: TComponent);
 begin
@@ -219,47 +255,53 @@ begin
   Caption := '';
 
   // Add the Embedded Components
-  FEmbeddedMemo := TEmbeddedMemo.Create(Self); // Add the embedded memo
-  FEmbeddedMemo.Parent := self;         // Show the memo in the panel
-  FEmbeddedMemo.SetSubComponent(true);  // Tell the IDE to store the modified properties
-  FEmbeddedMemo.Name := 'EmbeddedMemo';
-  FEmbeddedMemo.ScrollBars := ssHorizontal; //[ssNone, ssHorizontal, ssAutoHorizontal];
-  FEmbeddedMemo.Lines.Clear;
+  FEMemo := TEmbeddedMemo.Create(Self); // Add the embedded memo
+  FEMemo.Parent := self;         // Show the memo in the panel
+  FEMemo.SetSubComponent(true);  // Tell the IDE to store the modified properties
+  FEMemo.Name := 'EmbeddedMemo';
+  FEMemo.ScrollBars := ssHorizontal; //[ssNone, ssHorizontal, ssAutoHorizontal];
+  FEMemo.Lines.Clear;
+  FEMemo.OnKeyPress := @EMemoOnKeyPress;
 
 
-  FEmbeddedScrollBar := TEmbeddedScrollBar.Create(Self); // Add the embedded memo
-  FEmbeddedScrollBar.Parent := self;         // Show the memo in the panel
-  FEmbeddedScrollBar.SetSubComponent(true);  // Tell the IDE to store the modified properties
-  FEmbeddedScrollBar.Width := 15;
-  FEmbeddedScrollBar.Align := alRight;
-  FEmbeddedScrollBar.Name := 'EmbeddedScrollBar';
-  FEmbeddedScrollBar.Kind := sbVertical;
+  FEScrollBar := TEmbeddedScrollBar.Create(Self); // Add the embedded memo
+  FEScrollBar.Parent := self;         // Show the memo in the panel
+  FEScrollBar.SetSubComponent(true);  // Tell the IDE to store the modified properties
+  FEScrollBar.Width := 15;
+  FEScrollBar.Align := alRight;
+  FEScrollBar.Name := 'EmbeddedScrollBar';
+  FEScrollBar.Kind := sbVertical;
+  FEScrollBar.OnChange := @EScrollBarOnChange;
+  FEScrollBar.OnScroll := @EScrollBarOnScroll;
+  FEScrollBar.OnKeyPress := @EScrollBarOnKeyPress;
 
 
 
   // Make sure the embedded components can not be selected/deleted within the IDE
-  FEmbeddedMemo.ControlStyle := FEmbeddedMemo.ControlStyle - [csNoDesignSelectable];
-  FEmbeddedScrollBar.ControlStyle := FEmbeddedScrollBar.ControlStyle - [csNoDesignSelectable];
+  FEMemo.ControlStyle := FEMemo.ControlStyle - [csNoDesignSelectable];
+  FEScrollBar.ControlStyle := FEScrollBar.ControlStyle - [csNoDesignSelectable];
 
   // Initially set the chunk size to 50
   FRecordChunkSize := 50;
 
+  // Inititally allow 1000 positions on EmbeddedScrollBar per record in the dataset (but this may need to be adjusted when we check the RecordCount)
+  FLineResolution := 1000;
+
 
   // Initialize the Dataset
   FDataLink := TComponentDataLink.Create;
-  FDataLink.OnRecordChanged := @OnRecordChanged;
-  FDataLink.OnDatasetChanged := @OnDataSetChanged;
-  FDataLink.OnDataSetOpen := @OnDataSetOpen;
-  FDataLink.OnDataSetClose := @OnDataSetClose;
-  FDataLink.OnNewDataSet := @OnNewDataSet;
-  FDataLink.OnInvalidDataSet := @OnInvalidDataset;
-  FDataLink.OnInvalidDataSource := @OnInvalidDataSource;
-  FDataLink.OnDataSetScrolled := @OnDataSetScrolled;
-  FDataLink.OnLayoutChanged := @OnLayoutChanged;
-  FDataLink.OnEditingChanged := @OnEditingChanged;
-  FDataLink.OnUpdateData := @OnUpdateData;
+  FDataLink.OnRecordChanged := @DataLinkOnRecordChanged;
+  FDataLink.OnDatasetChanged := @DataLinkOnDataSetChanged;
+  FDataLink.OnDataSetOpen := @DataLinkOnDataSetOpen;
+  FDataLink.OnDataSetClose := @DataLinkOnDataSetClose;
+  FDataLink.OnNewDataSet := @DataLinkOnNewDataSet;
+  FDataLink.OnInvalidDataSet := @DataLinkOnInvalidDataset;
+  FDataLink.OnInvalidDataSource := @DataLinkOnInvalidDataSource;
+  FDataLink.OnDataSetScrolled := @DataLinkOnDataSetScrolled;
+  FDataLink.OnLayoutChanged := @DataLinkOnLayoutChanged;
+  FDataLink.OnEditingChanged := @DataLinkOnEditingChanged;
+  FDataLink.OnUpdateData := @DataLinkOnUpdateData;
   FDataLink.VisualControl := True;
-
 
 
 
