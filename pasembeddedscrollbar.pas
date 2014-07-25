@@ -1,7 +1,7 @@
-unit EmbeddedScrollBar;
+unit PASEmbeddedScrollBar;
 
 {
-VirtualDBScroll Package
+PASVirtualDBScroll Package
 Copyright 2014 Jack D Linke
 
 This package is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ type
 
   { TEmbeddedScrollBar }
 
-  TEmbeddedScrollBar = class (TCustomScrollBar)
+  TPASEmbeddedScrollBar = class (TCustomScrollBar)
   private
     { Private declarations }
 
@@ -66,7 +66,7 @@ implementation
 { TEmbeddedScrollBar }
 
 
-constructor TEmbeddedScrollBar.Create(AOwner: TComponent);
+constructor TPASEmbeddedScrollBar.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
 
@@ -78,9 +78,9 @@ begin
 end;
 
 initialization
-  RegisterPropertyEditor(TypeInfo(TControlBorderSpacingDefault), TEmbeddedScrollBar, 'Top', THiddenPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TControlBorderSpacing), TEmbeddedScrollBar, 'FTop', THiddenPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TControlBorderSpacing), TEmbeddedScrollBar, 'Left', THiddenPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TControlBorderSpacingDefault), TPASEmbeddedScrollBar, 'Top', THiddenPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TControlBorderSpacing), TPASEmbeddedScrollBar, 'FTop', THiddenPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TControlBorderSpacing), TPASEmbeddedScrollBar, 'Left', THiddenPropertyEditor);
 
 
 end.

@@ -1,0 +1,47 @@
+object formPASFormatEditor: TformPASFormatEditor
+  Left = 393
+  Height = 240
+  Top = 441
+  Width = 320
+  BorderStyle = bsSizeToolWin
+  Caption = 'formPASFormatEditor'
+  ClientHeight = 240
+  ClientWidth = 320
+  LCLVersion = '1.2.2.0'
+  object memoFormat: TMemo
+    Left = 16
+    Height = 152
+    Top = 32
+    Width = 288
+    ScrollBars = ssAutoBoth
+    TabOrder = 0
+    WantTabs = True
+    WordWrap = False
+  end
+  object Label1: TLabel
+    Left = 16
+    Height = 15
+    Top = 16
+    Width = 41
+    Caption = 'Format:'
+    ParentColor = False
+  end
+  object btnOK: TButton
+    Left = 16
+    Height = 25
+    Top = 200
+    Width = 75
+    Caption = 'OK'
+    ModalResult = 1
+    TabOrder = 1
+  end
+  object btnCancel: TButton
+    Left = 229
+    Height = 25
+    Top = 200
+    Width = 75
+    Caption = 'Cancel'
+    ModalResult = 2
+    TabOrder = 2
+  end
+end

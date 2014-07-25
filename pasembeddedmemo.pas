@@ -1,4 +1,4 @@
-unit EmbeddedMemo;
+unit PASEmbeddedMemo;
 
 {
 VirtualDBScroll Package
@@ -29,7 +29,7 @@ type
 
   { TEmbeddedMemo }
 
-  TEmbeddedMemo = class (TCustomMemo)
+  TPASEmbeddedMemo = class (TCustomMemo)
   private
     { Private declarations }
     function GetScrollBars: TScrollStyle;
@@ -65,7 +65,7 @@ type
     property WantTabs;
   end;
 
-  TEmbeddedMemoPropertyEditor = class(TEnumPropertyEditor)
+  TPASEmbeddedMemoPropertyEditor = class(TEnumPropertyEditor)
     public
       procedure GetValues(Proc: TGetStrProc); override;
     end;
@@ -74,9 +74,9 @@ implementation
 
 
 
-{ TEmbeddedMemoPropertyEditor }
+{ TPASEmbeddedMemoPropertyEditor }
 
-procedure TEmbeddedMemoPropertyEditor.GetValues(Proc: TGetStrProc);
+procedure TPASEmbeddedMemoPropertyEditor.GetValues(Proc: TGetStrProc);
 type
   TRestricted = 1..3;
   TRestrictedNames = array[TRestricted] of shortstring;
@@ -92,12 +92,12 @@ end;
 
 { TEmbeddedMemo }
 
-function TEmbeddedMemo.GetScrollBars: TScrollStyle;
+function TPASEmbeddedMemo.GetScrollBars: TScrollStyle;
 begin
   Result := inherited ScrollBars;
 end;
 
-procedure TEmbeddedMemo.SetScrollBars(const Value: TScrollStyle);
+procedure TPASEmbeddedMemo.SetScrollBars(const Value: TScrollStyle);
 begin
   if Value in [ssNone, ssAutoHorizontal] then
   begin
@@ -109,7 +109,7 @@ begin
   end;
 end;
 
-constructor TEmbeddedMemo.Create(AOwner: TComponent);
+constructor TPASEmbeddedMemo.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
 
@@ -120,7 +120,7 @@ begin
 end;
 
 initialization
-  RegisterPropertyEditor(TypeInfo(TScrollStyle), TEmbeddedMemo, 'ScrollBars', TEmbeddedMemoPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TScrollStyle), TPASEmbeddedMemo, 'ScrollBars', TPASEmbeddedMemoPropertyEditor);
 
 end.
 

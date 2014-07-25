@@ -2,7 +2,7 @@
 <CONFIG>
   <Package Version="4">
     <PathDelim Value="\"/>
-    <Name Value="VirtualDBScroll"/>
+    <Name Value="PASVirtualDBScroll"/>
     <Author Value="Jack Linke"/>
     <CompilerOptions>
       <Version Value="11"/>
@@ -17,7 +17,7 @@
         <CompilerPath Value="$(CompPath)"/>
       </Other>
     </CompilerOptions>
-    <License Value="VirtualDBScroll Package
+    <License Value="PASVirtualDBScroll Package
 Copyright 2014 Jack D Linke
 
 This package is free software: you can redistribute it and/or modify
@@ -33,20 +33,28 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this package. If not, see &lt;http://www.gnu.org/licenses/>."/>
     <Version Minor="1"/>
-    <Files Count="3">
+    <Files Count="5">
       <Item1>
-        <Filename Value="virtualdbscrollmemo.pas"/>
+        <Filename Value="pasvirtualdbscrollmemo.pas"/>
         <HasRegisterProc Value="True"/>
-        <UnitName Value="VirtualDBScrollMemo"/>
+        <UnitName Value="PASVirtualDBScrollMemo"/>
       </Item1>
       <Item2>
-        <Filename Value="embeddedmemo.pas"/>
-        <UnitName Value="EmbeddedMemo"/>
+        <Filename Value="pasembeddedmemo.pas"/>
+        <UnitName Value="PASEmbeddedMemo"/>
       </Item2>
       <Item3>
-        <Filename Value="embeddedscrollbar.pas"/>
-        <UnitName Value="EmbeddedScrollBar"/>
+        <Filename Value="pasembeddedscrollbar.pas"/>
+        <UnitName Value="PASEmbeddedScrollBar"/>
       </Item3>
+      <Item4>
+        <Filename Value="pasformateditor.pas"/>
+        <UnitName Value="pasformateditor"/>
+      </Item4>
+      <Item5>
+        <Filename Value="pasformateditor.pas"/>
+        <UnitName Value="pasformateditor"/>
+      </Item5>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="3">

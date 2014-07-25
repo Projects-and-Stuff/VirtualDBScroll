@@ -1,7 +1,7 @@
-unit VirtualDBScrollMemo;
+unit PASVirtualDBScrollMemo;
 
 {
-VirtualDBScroll Package
+PASVirtualDBScroll Package
 Copyright 2014 Jack D Linke
 
 This package is free software: you can redistribute it and/or modify
@@ -23,20 +23,20 @@ along with this package. If not, see <http://www.gnu.org/licenses/>.
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls, EmbeddedMemo, EmbeddedScrollBar, db, DBGrids;
+  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  ExtCtrls, PASEmbeddedMemo, PASEmbeddedScrollBar, db, DBGrids, PropEdits,
+  PASFormatEditor;
 
 type
 
+  { TPASVirtualDBScrollMemo }
 
-
-  { TVirtualDBScrollMemo }
-
-  TVirtualDBScrollMemo = class(TCustomPanel)
+  TPASVirtualDBScrollMemo = class(TCustomPanel)
 
   private
     { Private declarations }
-    FEMemo : TEmbeddedMemo;
-    FEScrollBar : TEmbeddedScrollBar;
+    FMemo : TPASEmbeddedMemo;
+    FScrollBar : TPASEmbeddedScrollBar;
     FDataLink : TComponentDataLink;
 
     FRecordCount : Integer;                       // Total number of records in the DataSet
@@ -47,13 +47,16 @@ type
     FLineResolution : Integer;                    // The number of lines positions on the scrollbar allocated to each record
     FVisibleLines : Integer;                      // How many lines are visible in EmbeddedMemo
 
+    FFormat : String;                             // The format for displaying content
+    function GetFormat : String;
+    procedure SetFormat(Value : String);
+
     function GetChunkSize: Integer;
     function GetDataSource: TDataSource;
     procedure SetChunkSize(const Value: Integer);
-    procedure SetDataSource(AValue: TDataSource);
+    procedure SetDataSource(Value: TDataSource);
 
     function GetRecordCount: Integer;
-
 
 
     // Event Handlers
@@ -73,23 +76,22 @@ type
     procedure EScrollBarOnKeyPress(Sender: TObject; var Key: char);
     procedure EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode;
       var ScrollPos: Integer);
-
-
   protected
     { Protected declarations }
-
   public
     { Public declarations }
     constructor Create(AOwner : TComponent); override;
     destructor Destroy; override;
   published
     { Published declarations }
-    property EMemo : TEmbeddedMemo read FEMemo;
-    property EScrollBar : TEmbeddedScrollBar read FEScrollBar;
+    property EMemo : TPASEmbeddedMemo read FMemo;
+    property EScrollBar : TPASEmbeddedScrollBar read FScrollBar;
 
     property RecordChunkSize : Integer read GetChunkSize write SetChunkSize default 50; // Used to set the number of records per chunk. Allowable range is 1 to 500
     property DataLink : TComponentDataLink read FDataLink write FDataLink;
     property DataSource : TDataSource read GetDataSource write SetDataSource;
+
+    property Format : String read GetFormat write SetFormat;
 
     property Align;
     property Anchors;
@@ -112,7 +114,6 @@ type
     property Visible;
     property Width;
 
-
   end;
 
 procedure Register;
@@ -122,20 +123,32 @@ implementation
 
 procedure Register;
 begin
-  RegisterComponents('Additional', [TVirtualDBScrollMemo]);
+  RegisterComponents('Additional', [TPASVirtualDBScrollMemo]);
+
+  RegisterPropertyEditor(TypeInfo(String), TPASVirtualDBScrollMemo, 'Format', TPASFormatEditor);
 end;
 
-function TVirtualDBScrollMemo.GetChunkSize: Integer;
+function TPASVirtualDBScrollMemo.GetFormat: String;
+begin
+  Result := FFormat;
+end;
+
+procedure TPASVirtualDBScrollMemo.SetFormat(Value: String);
+begin
+  FFormat := Value;
+end;
+
+function TPASVirtualDBScrollMemo.GetChunkSize: Integer;
 begin
   Result := FRecordChunkSize;
 end;
 
-function TVirtualDBScrollMemo.GetDataSource: TDataSource;
+function TPASVirtualDBScrollMemo.GetDataSource: TDataSource;
 begin
   result := FDataLink.DataSource;
 end;
 
-procedure TVirtualDBScrollMemo.SetChunkSize(const Value: Integer);
+procedure TPASVirtualDBScrollMemo.SetChunkSize(const Value: Integer);
 begin
   if Value < 1 then
   begin
@@ -151,98 +164,99 @@ begin
   end;
 end;
 
-procedure TVirtualDBScrollMemo.SetDataSource(AValue: TDataSource);
+procedure TPASVirtualDBScrollMemo.SetDataSource(Value: TDataSource);
 begin
-  FDataLink.DataSource := AValue;
+  FDataLink.DataSource := Value;
 end;
 
-function TVirtualDBScrollMemo.GetRecordCount: Integer;
+function TPASVirtualDBScrollMemo.GetRecordCount: Integer;
 begin
   result := FDataLink.DataSet.RecordCount;
 
-
-  // TODO: We need to verify that the RecordCount is less than 2,147,483
-  // If it's between 2,147,483 and 4,294,966 we can reduce FLineResolution to 500 (vice 1000)
-  // If it's between 4,294,966 and 8,589,932 we can reduce FLineResolution to 250
+  // If RecordCount is between 0 and 268,435 FLineResolution = 4000
+  // If RecordCount is between 268,436 and 536,870 FLineResolution = 2000
+  // If RecordCount is between 1,073,742 and 2,147,483 FLineResolution = 1000
+  // If RecordCount is between 2,147,484 and 4,294,966 we can reduce FLineResolution to 500
+  // If RecordCount is between 4,294,967 and 8,589,932 we can reduce FLineResolution to 250
 end;
 
-procedure TVirtualDBScrollMemo.DataLinkOnRecordChanged(Field: TField);
+procedure TPASVirtualDBScrollMemo.DataLinkOnRecordChanged(Field: TField);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.DataLinkOnDataSetChanged(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollMemo.DataLinkOnDataSetChanged(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.DataLinkOnDataSetOpen(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollMemo.DataLinkOnDataSetOpen(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.DataLinkOnDataSetClose(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollMemo.DataLinkOnDataSetClose(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.DataLinkOnNewDataSet(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollMemo.DataLinkOnNewDataSet(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.DataLinkOnInvalidDataset(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollMemo.DataLinkOnInvalidDataset(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.DataLinkOnInvalidDataSource(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollMemo.DataLinkOnInvalidDataSource(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.DataLinkOnDataSetScrolled(ADataSet: TDataSet;
+procedure TPASVirtualDBScrollMemo.DataLinkOnDataSetScrolled(ADataSet: TDataSet;
   Distance: Integer);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.DataLinkOnLayoutChanged(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollMemo.DataLinkOnLayoutChanged(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.DataLinkOnEditingChanged(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollMemo.DataLinkOnEditingChanged(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.DataLinkOnUpdateData(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollMemo.DataLinkOnUpdateData(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.EMemoOnKeyPress(Sender: TObject; var Key: char);
+procedure TPASVirtualDBScrollMemo.EMemoOnKeyPress(Sender: TObject; var Key: char);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.EScrollBarOnChange(Sender: TObject);
+procedure TPASVirtualDBScrollMemo.EScrollBarOnChange(Sender: TObject);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode; var ScrollPos: Integer);
+procedure TPASVirtualDBScrollMemo.EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode; var ScrollPos: Integer);
 begin
 
 end;
 
-procedure TVirtualDBScrollMemo.EScrollBarOnKeyPress(Sender: TObject; var Key: char);
+procedure TPASVirtualDBScrollMemo.EScrollBarOnKeyPress(Sender: TObject; var Key: char);
 begin
 
 end;
 
-constructor TVirtualDBScrollMemo.Create(AOwner: TComponent);
+constructor TPASVirtualDBScrollMemo.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
 
@@ -256,26 +270,26 @@ begin
   Caption := '';
 
   // Initialize the Embedded Memo
-  FEMemo := TEmbeddedMemo.Create(Self); // Add the embedded memo
-  FEMemo.Parent := self;         // Show the memo in the panel
-  FEMemo.SetSubComponent(true);  // Tell the IDE to store the modified properties
-  FEMemo.Name := 'EMemo';
-  FEMemo.ControlStyle := FEMemo.ControlStyle - [csNoDesignSelectable]; // Make sure it can not be selected/deleted within the IDE
-  FEMemo.Lines.Clear; // Should I allow the user to set some default text?
-  FEMemo.OnKeyPress := @EMemoOnKeyPress;
+  FMemo := TPASEmbeddedMemo.Create(Self); // Add the embedded memo
+  FMemo.Parent := self;         // Show the memo in the panel
+  FMemo.SetSubComponent(true);  // Tell the IDE to store the modified properties
+  FMemo.Name := 'EMemo';
+  FMemo.ControlStyle := FMemo.ControlStyle - [csNoDesignSelectable]; // Make sure it can not be selected/deleted within the IDE
+  FMemo.Lines.Clear; // Should I allow the user to set some default text?
+  FMemo.OnKeyPress := @EMemoOnKeyPress;
 
   // Initialize the Embedded ScrollBar
-  FEScrollBar := TEmbeddedScrollBar.Create(Self); // Add the embedded memo
-  FEScrollBar.Parent := self;         // Show the memo in the panel
-  FEScrollBar.SetSubComponent(true);  // Tell the IDE to store the modified properties
-  FEScrollBar.Name := 'EScrollBar';
-  FEScrollBar.ControlStyle := FEScrollBar.ControlStyle - [csNoDesignSelectable]; // Make sure it can not be selected/deleted within the IDE
-  FEScrollBar.Width := 15;
-  FEScrollBar.Align := alRight;
-  FEScrollBar.Kind := sbVertical;
-  FEScrollBar.OnChange := @EScrollBarOnChange;
-  FEScrollBar.OnScroll := @EScrollBarOnScroll;
-  FEScrollBar.OnKeyPress := @EScrollBarOnKeyPress;
+  FScrollBar := TPASEmbeddedScrollBar.Create(Self); // Add the embedded memo
+  FScrollBar.Parent := self;         // Show the memo in the panel
+  FScrollBar.SetSubComponent(true);  // Tell the IDE to store the modified properties
+  FScrollBar.Name := 'EScrollBar';
+  FScrollBar.ControlStyle := FScrollBar.ControlStyle - [csNoDesignSelectable]; // Make sure it can not be selected/deleted within the IDE
+  FScrollBar.Width := 15;
+  FScrollBar.Align := alRight;
+  FScrollBar.Kind := sbVertical;
+  FScrollBar.OnChange := @EScrollBarOnChange;
+  FScrollBar.OnScroll := @EScrollBarOnScroll;
+  FScrollBar.OnKeyPress := @EScrollBarOnKeyPress;
 
   // Initialize the Dataset
   FDataLink := TComponentDataLink.Create;
@@ -299,28 +313,29 @@ begin
   // Inititally allow 1000 positions on EmbeddedScrollBar per record in the dataset (but this may need to be adjusted when we check the RecordCount)
   FLineResolution := 1000;
 
-
+  // Set Format property default value (blank)
+  FFormat := '';
 
 
 
 
 end;
 
-destructor TVirtualDBScrollMemo.Destroy;
+destructor TPASVirtualDBScrollMemo.Destroy;
 begin
   FDataLink.Free;
   FDataLink := nil;
 
-  FEMemo.Free;
-  FEMemo := nil;
+  FMemo.Free;
+  FMemo := nil;
 
-  FEScrollBar.Free;
-  FEScrollBar := nil;
+  FScrollBar.Free;
+  FScrollBar := nil;
 
   inherited Destroy;
 end;
 
 initialization
-  {$I TVirtualDBScrollMemo.lrs}
+  {$I TPASVirtualDBScrollMemo.lrs}
 
 end.
