@@ -48,6 +48,9 @@ type
     FVisibleLines : Integer;                      // How many lines are visible in EmbeddedMemo
 
     FFormat : String;                             // The format for displaying content
+
+    FError : String;                              //
+
     function GetFormat : String;
     procedure SetFormat(Value : String);
 
@@ -56,7 +59,7 @@ type
     procedure SetChunkSize(const Value: Integer);
     procedure SetDataSource(Value: TDataSource);
 
-    function GetRecordCount: Integer;
+    function GetRecordCount: Integer; // Also sets FLineResolution
 
 
     // Event Handlers
@@ -90,6 +93,7 @@ type
     property RecordChunkSize : Integer read GetChunkSize write SetChunkSize default 50; // Used to set the number of records per chunk. Allowable range is 1 to 500
     property DataLink : TComponentDataLink read FDataLink write FDataLink;
     property DataSource : TDataSource read GetDataSource write SetDataSource;
+    property LineResolution : Integer read FLineResolution;
 
     property Format : String read GetFormat write SetFormat;
 
@@ -171,13 +175,47 @@ end;
 
 function TPASVirtualDBScrollMemo.GetRecordCount: Integer;
 begin
-  result := FDataLink.DataSet.RecordCount;
+  // Need to move to the last record in the dataset in order to get an accurate count
+  FDataLink.DataSet.Last;
 
-  // If RecordCount is between 0 and 268,435 FLineResolution = 4000
-  // If RecordCount is between 268,436 and 536,870 FLineResolution = 2000
+
+  if FDataLink.DataSet.RecordCount < 1 then
+  begin
+
+  end
+  else if (FDataLink.DataSet.RecordCount > 0) and (FDataLink.DataSet.RecordCount < 268436) then
+  begin
+    FLineResolution := 8000;
+  end
+  else if (FDataLink.DataSet.RecordCount > 268435) and (FDataLink.DataSet.RecordCount < 536871) then
+  begin
+    FLineResolution := 4000;
+  end
+  else if (FDataLink.DataSet.RecordCount > 536870) and (FDataLink.DataSet.RecordCount < 1073742) then
+  begin
+    FLineResolution := 2000;
+  end
+  else if (FDataLink.DataSet.RecordCount > 1073741) and (FDataLink.DataSet.RecordCount < 2147484) then
+  begin
+    FLineResolution := 1000;
+  end
+  else if (FDataLink.DataSet.RecordCount > 2147483) and (FDataLink.DataSet.RecordCount < 4294967) then
+  begin
+    FLineResolution := 500;
+  end
+  else if (FDataLink.DataSet.RecordCount > 4294966) and (FDataLink.DataSet.RecordCount < 8589933) then
+  begin
+    FLineResolution := 250;
+  end;
+
+  // If RecordCount is between 0 and 268,435 FLineResolution = 8000
+  // If RecordCount is between 268,436 and 536,870 FLineResolution = 4000
+  // If RecordCount is between 536,871 and 1,073,741 FLineResolution = 2000
   // If RecordCount is between 1,073,742 and 2,147,483 FLineResolution = 1000
   // If RecordCount is between 2,147,484 and 4,294,966 we can reduce FLineResolution to 500
   // If RecordCount is between 4,294,967 and 8,589,932 we can reduce FLineResolution to 250
+
+  result := FDataLink.DataSet.RecordCount;
 end;
 
 procedure TPASVirtualDBScrollMemo.DataLinkOnRecordChanged(Field: TField);
