@@ -37,6 +37,7 @@ implementation
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
+
   SQLite3Connection1.Close;
   SQLite3Connection1.DatabaseName := './DB_5000.db3';
   SQLite3Connection1.Open;

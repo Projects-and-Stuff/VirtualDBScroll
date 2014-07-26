@@ -22,7 +22,7 @@ object Form1: TForm1
     EScrollBar.Top = 1
     EScrollBar.Width = 17
     DataSource = DataSource1
-    Format = 'Testing This Out'#13#10'This'#9'Is'#9'A'#9'Test'#13#10#13#10#13#10'New String'#13#10#13#10#13#10'Line 1'#13#10'Line 2'#13#10'Line 3'#13#10'Line 4'#13#10'Line 5'#13#10#13#10#13#10#13#10#13#10#9#9#9#9#9'Testing'#13#10#13#10#13#10#13#10#13#10#13#10#13#10#13#10#13#10#13#10'XXXX'
+    Format = '---------------------------------------------------------------------------'#13#10'id: [id]'#9#9'Name: [Name]'#13#10'---------------------------------------------------------------------------'#13#10'Entry:'#13#10'[Entry]'
     TabOrder = 0
     UseDockManager = True
   end

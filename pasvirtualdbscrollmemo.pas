@@ -59,7 +59,7 @@ type
     procedure SetChunkSize(const Value: Integer);
     procedure SetDataSource(Value: TDataSource);
 
-    function GetRecordCount: Integer; // Also sets FLineResolution
+    procedure GetRecordCount; // Also sets FLineResolution
 
 
     // Event Handlers
@@ -174,56 +174,54 @@ begin
   FDataLink.DataSource := Value;
 end;
 
-function TPASVirtualDBScrollMemo.GetRecordCount: Integer;
+procedure TPASVirtualDBScrollMemo.GetRecordCount;
 begin
   // Need to move to the last record in the dataset in order to get an accurate count
-  //FDataLink.DataSet.Last;
   DataLink.DataSet.Last;
-  //FDataLink.DataSource.DataSet.Last;
+  FRecordCount := DataLink.DataSet.RecordCount;
 
-  if FDataLink.DataSet.RecordCount < 1 then
+  {
+  Based on the number of records in the DataSet, we set the resolution
+  per record. If there are less than 134,218 records, for instance, we
+  allot up to 16,000 positions on the scrollbar per record. In this case,
+  as long as there are less than 16,000 lines in the record, we can scroll
+  smoothly through every line. This should only be a problem when there
+  are millions of records which are very long (several hundred lines).
+  }
+  if RecordCount < 1 then
   begin
-
+    FLineResolution := 0;
   end
-  else if (FDataLink.DataSet.RecordCount > 0) and (FDataLink.DataSet.RecordCount < 134218) then
+  else if (RecordCount > 0) and (RecordCount < 134218) then
   begin
     FLineResolution := 16000;
   end
-  else if (FDataLink.DataSet.RecordCount > 134217) and (FDataLink.DataSet.RecordCount < 268436) then
+  else if (RecordCount > 134217) and (RecordCount < 268436) then
   begin
     FLineResolution := 8000;
   end
-  else if (FDataLink.DataSet.RecordCount > 268435) and (FDataLink.DataSet.RecordCount < 536871) then
+  else if (RecordCount > 268435) and (RecordCount < 536871) then
   begin
     FLineResolution := 4000;
   end
-  else if (FDataLink.DataSet.RecordCount > 536870) and (FDataLink.DataSet.RecordCount < 1073742) then
+  else if (RecordCount > 536870) and (RecordCount < 1073742) then
   begin
     FLineResolution := 2000;
   end
-  else if (FDataLink.DataSet.RecordCount > 1073741) and (FDataLink.DataSet.RecordCount < 2147484) then
+  else if (RecordCount > 1073741) and (RecordCount < 2147484) then
   begin
     FLineResolution := 1000;
   end
-  else if (FDataLink.DataSet.RecordCount > 2147483) and (FDataLink.DataSet.RecordCount < 4294967) then
+  else if (RecordCount > 2147483) and (RecordCount < 4294967) then
   begin
     FLineResolution := 500;
   end
-  else if (FDataLink.DataSet.RecordCount > 4294966) and (FDataLink.DataSet.RecordCount < 8589933) then
+  else if (RecordCount > 4294966) and (RecordCount < 8589933) then
   begin
     FLineResolution := 250;
   end;
-  // If RecordCount is between 0 and 134,217 FLineResolution = 16000
-  // If RecordCount is between 134,218 and 268,435 FLineResolution = 8000
-  // If RecordCount is between 268,436 and 536,870 FLineResolution = 4000
-  // If RecordCount is between 536,871 and 1,073,741 FLineResolution = 2000
-  // If RecordCount is between 1,073,742 and 2,147,483 FLineResolution = 1000
-  // If RecordCount is between 2,147,484 and 4,294,966 we can reduce FLineResolution to 500
-  // If RecordCount is between 4,294,967 and 8,589,932 we can reduce FLineResolution to 250
 
-  //result := FDataLink.DataSet.RecordCount;
-  result := DataLink.DataSet.RecordCount;
-  //result := FDataLink.DataSource.DataSet.RecordCount;
+  EScrollBar.Max := RecordCount * LineResolution;
 end;
 
 procedure TPASVirtualDBScrollMemo.DataLinkOnRecordChanged(Field: TField);
@@ -243,7 +241,7 @@ begin
   // Every time this fires we need to get the record count and perform our calculations
   // ShowMessage('OnDataSetOpen');
   GetRecordCount;
-  ShowMessage(IntToStr(FRecordCount));
+  //ShowMessage(IntToStr(FRecordCount));
 end;
 
 procedure TPASVirtualDBScrollMemo.DataLinkOnDataSetClose(ADataSet: TDataSet);
@@ -362,13 +360,9 @@ begin
   // Initially set the chunk size to 50
   FRecordChunkSize := 50;
 
-  // Inititally allow 1000 positions on EmbeddedScrollBar per record in the dataset (but this may need to be adjusted when we check the RecordCount)
-  // This is set when the DataSet changes and FRecordCount is determined
-  //FLineResolution := 1000;
 
   // Set Format property default value (blank)
   FFormat := '';
-
 
 
 

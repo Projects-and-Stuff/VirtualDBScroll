@@ -49,7 +49,6 @@ begin
   // If not, set ModalResult := mrNone;
 
 
-
 end;
 
 { TPASFormatEditor }
@@ -68,7 +67,7 @@ begin
 
       // Place form at mouse position
       Left := Mouse.CursorPos.x;
-      Top := Mouse.CursorPos.y;
+      Top := Mouse.CursorPos.y - (Height div 2);
 
       // Set memo text to current property value
       memoFormat.Text := GetStrValue;
