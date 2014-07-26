@@ -33,7 +33,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this package. If not, see &lt;http://www.gnu.org/licenses/>."/>
     <Version Minor="1"/>
-    <Files Count="5">
+    <Files Count="6">
       <Item1>
         <Filename Value="pasvirtualdbscrollmemo.pas"/>
         <HasRegisterProc Value="True"/>
@@ -55,6 +55,11 @@ along with this package. If not, see &lt;http://www.gnu.org/licenses/>."/>
         <Filename Value="pasformateditor.pas"/>
         <UnitName Value="pasformateditor"/>
       </Item5>
+      <Item6>
+        <Filename Value="pasvirtualdbscrollbase.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="PASVirtualDBScrollBase"/>
+      </Item6>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="3">

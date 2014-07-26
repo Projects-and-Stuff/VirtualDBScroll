@@ -21,6 +21,7 @@ object Form1: TForm1
     EScrollBar.Height = 118
     EScrollBar.Top = 1
     EScrollBar.Width = 17
+    RecordChunkSize = 1
     DataSource = DataSource1
     Format = '---------------------------------------------------------------------------'#13#10'id: [id]'#9#9'Name: [Name]'#13#10'---------------------------------------------------------------------------'#13#10'Entry:'#13#10'[Entry]'
     TabOrder = 0
