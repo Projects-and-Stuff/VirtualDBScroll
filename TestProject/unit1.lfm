@@ -1,0 +1,68 @@
+object Form1: TForm1
+  Left = 389
+  Height = 240
+  Top = 156
+  Width = 322
+  Caption = 'Form1'
+  ClientHeight = 240
+  ClientWidth = 322
+  LCLVersion = '1.2.2.0'
+  object PASVirtualDBScrollMemo1: TPASVirtualDBScrollMemo
+    Left = 8
+    Height = 120
+    Top = 8
+    Width = 306
+    EMemo.Left = 1
+    EMemo.Height = 118
+    EMemo.Top = 1
+    EMemo.Width = 287
+    EMemo.ScrollBars = ssNone
+    EScrollBar.Left = 288
+    EScrollBar.Height = 118
+    EScrollBar.Top = 1
+    EScrollBar.Width = 17
+    DataSource = DataSource1
+    Format = 'Testing This Out'#13#10'This'#9'Is'#9'A'#9'Test'#13#10#13#10#13#10'New String'#13#10#13#10#13#10'Line 1'#13#10'Line 2'#13#10'Line 3'#13#10'Line 4'#13#10'Line 5'#13#10#13#10#13#10#13#10#13#10#9#9#9#9#9'Testing'#13#10#13#10#13#10#13#10#13#10#13#10#13#10#13#10#13#10#13#10'XXXX'
+    TabOrder = 0
+    UseDockManager = True
+  end
+  object Button1: TButton
+    Left = 120
+    Height = 25
+    Top = 192
+    Width = 75
+    Caption = 'Button1'
+    OnClick = Button1Click
+    TabOrder = 1
+  end
+  object DataSource1: TDataSource
+    DataSet = SQLQuery1
+    left = 96
+    top = 133
+  end
+  object SQLQuery1: TSQLQuery
+    FieldDefs = <>
+    Database = SQLite3Connection1
+    Transaction = SQLTransaction1
+    Params = <>
+    left = 176
+    top = 133
+  end
+  object SQLite3Connection1: TSQLite3Connection
+    Connected = False
+    LoginPrompt = False
+    DatabaseName = 'DBTest.db3'
+    KeepConnection = False
+    Transaction = SQLTransaction1
+    LogEvents = []
+    Options = []
+    left = 256
+    top = 133
+  end
+  object SQLTransaction1: TSQLTransaction
+    Active = False
+    Database = SQLite3Connection1
+    left = 25
+    top = 133
+  end
+end

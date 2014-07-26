@@ -94,6 +94,7 @@ type
     property DataLink : TComponentDataLink read FDataLink write FDataLink;
     property DataSource : TDataSource read GetDataSource write SetDataSource;
     property LineResolution : Integer read FLineResolution;
+    property RecordCount : Integer read FRecordCount;
 
     property Format : String read GetFormat write SetFormat;
 
@@ -176,14 +177,19 @@ end;
 function TPASVirtualDBScrollMemo.GetRecordCount: Integer;
 begin
   // Need to move to the last record in the dataset in order to get an accurate count
-  FDataLink.DataSet.Last;
-
+  //FDataLink.DataSet.Last;
+  DataLink.DataSet.Last;
+  //FDataLink.DataSource.DataSet.Last;
 
   if FDataLink.DataSet.RecordCount < 1 then
   begin
 
   end
-  else if (FDataLink.DataSet.RecordCount > 0) and (FDataLink.DataSet.RecordCount < 268436) then
+  else if (FDataLink.DataSet.RecordCount > 0) and (FDataLink.DataSet.RecordCount < 134218) then
+  begin
+    FLineResolution := 16000;
+  end
+  else if (FDataLink.DataSet.RecordCount > 134217) and (FDataLink.DataSet.RecordCount < 268436) then
   begin
     FLineResolution := 8000;
   end
@@ -207,15 +213,17 @@ begin
   begin
     FLineResolution := 250;
   end;
-
-  // If RecordCount is between 0 and 268,435 FLineResolution = 8000
+  // If RecordCount is between 0 and 134,217 FLineResolution = 16000
+  // If RecordCount is between 134,218 and 268,435 FLineResolution = 8000
   // If RecordCount is between 268,436 and 536,870 FLineResolution = 4000
   // If RecordCount is between 536,871 and 1,073,741 FLineResolution = 2000
   // If RecordCount is between 1,073,742 and 2,147,483 FLineResolution = 1000
   // If RecordCount is between 2,147,484 and 4,294,966 we can reduce FLineResolution to 500
   // If RecordCount is between 4,294,967 and 8,589,932 we can reduce FLineResolution to 250
 
-  result := FDataLink.DataSet.RecordCount;
+  //result := FDataLink.DataSet.RecordCount;
+  result := DataLink.DataSet.RecordCount;
+  //result := FDataLink.DataSource.DataSet.RecordCount;
 end;
 
 procedure TPASVirtualDBScrollMemo.DataLinkOnRecordChanged(Field: TField);
@@ -225,22 +233,29 @@ end;
 
 procedure TPASVirtualDBScrollMemo.DataLinkOnDataSetChanged(ADataSet: TDataSet);
 begin
-
+  // Every time we move positions within the DataSet
+  // ShowMessage('OnDataSetChanged');
 end;
 
 procedure TPASVirtualDBScrollMemo.DataLinkOnDataSetOpen(ADataSet: TDataSet);
 begin
-
+  // Probably the most useful DataSet event
+  // Every time this fires we need to get the record count and perform our calculations
+  // ShowMessage('OnDataSetOpen');
+  GetRecordCount;
+  ShowMessage(IntToStr(FRecordCount));
 end;
 
 procedure TPASVirtualDBScrollMemo.DataLinkOnDataSetClose(ADataSet: TDataSet);
 begin
-
+  // May be useful for clean-up
+  // ShowMessage('OnDataSetClose');
 end;
 
 procedure TPASVirtualDBScrollMemo.DataLinkOnNewDataSet(ADataSet: TDataSet);
 begin
-
+  // Not particularly useful for my purposes
+  // ShowMessage('OnNewDataSet');
 end;
 
 procedure TPASVirtualDBScrollMemo.DataLinkOnInvalidDataset(ADataSet: TDataSet);
@@ -256,12 +271,12 @@ end;
 procedure TPASVirtualDBScrollMemo.DataLinkOnDataSetScrolled(ADataSet: TDataSet;
   Distance: Integer);
 begin
-
+  ShowMessage('OnDataSetScrolled');
 end;
 
 procedure TPASVirtualDBScrollMemo.DataLinkOnLayoutChanged(ADataSet: TDataSet);
 begin
-
+  ShowMessage('OnDataSetLayoutChanged');
 end;
 
 procedure TPASVirtualDBScrollMemo.DataLinkOnEditingChanged(ADataSet: TDataSet);
@@ -298,14 +313,13 @@ constructor TPASVirtualDBScrollMemo.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
 
-  // Set default width and height
+  // Set default component size and values
+  Height := 50;
+  Caption := '';
   with GetControlClassDefaultSize do
   begin
     SetInitialBounds(0, 0, CX, CY);
   end;
-
-  Height := 50;
-  Caption := '';
 
   // Initialize the Embedded Memo
   FMemo := TPASEmbeddedMemo.Create(Self); // Add the embedded memo
@@ -349,7 +363,8 @@ begin
   FRecordChunkSize := 50;
 
   // Inititally allow 1000 positions on EmbeddedScrollBar per record in the dataset (but this may need to be adjusted when we check the RecordCount)
-  FLineResolution := 1000;
+  // This is set when the DataSet changes and FRecordCount is determined
+  //FLineResolution := 1000;
 
   // Set Format property default value (blank)
   FFormat := '';

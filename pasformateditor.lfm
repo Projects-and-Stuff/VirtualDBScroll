@@ -9,10 +9,20 @@ object formPASFormatEditor: TformPASFormatEditor
   ClientWidth = 320
   LCLVersion = '1.2.2.0'
   object memoFormat: TMemo
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Label1
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = btnOK
     Left = 16
-    Height = 152
-    Top = 32
+    Height = 153
+    Top = 31
     Width = 288
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Left = 16
+    BorderSpacing.Right = 16
+    BorderSpacing.Bottom = 16
     ScrollBars = ssAutoBoth
     TabOrder = 0
     WantTabs = True
@@ -27,19 +37,32 @@ object formPASFormatEditor: TformPASFormatEditor
     ParentColor = False
   end
   object btnOK: TButton
+    AnchorSideLeft.Control = Owner
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
     Left = 16
-    Height = 25
+    Height = 24
     Top = 200
     Width = 75
+    Anchors = [akLeft, akBottom]
+    BorderSpacing.Left = 16
+    BorderSpacing.Bottom = 16
     Caption = 'OK'
     ModalResult = 1
+    OnClick = btnOKClick
     TabOrder = 1
   end
   object btnCancel: TButton
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Side = asrBottom
     Left = 229
     Height = 25
     Top = 200
     Width = 75
+    Anchors = [akRight, akBottom]
+    BorderSpacing.Right = 16
+    BorderSpacing.Bottom = 16
     Caption = 'Cancel'
     ModalResult = 2
     TabOrder = 2

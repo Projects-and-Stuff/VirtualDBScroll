@@ -17,6 +17,7 @@ type
     btnCancel: TButton;
     Label1: TLabel;
     memoFormat: TMemo;
+    procedure btnOKClick(Sender: TObject);
   private
     { private declarations }
   public
@@ -37,6 +38,19 @@ var
 implementation
 
 {$R *.lfm}
+
+{ TformPASFormatEditor }
+
+procedure TformPASFormatEditor.btnOKClick(Sender: TObject);
+begin
+
+
+  // Test that the statement is correctly formatted
+  // If not, set ModalResult := mrNone;
+
+
+
+end;
 
 { TPASFormatEditor }
 
