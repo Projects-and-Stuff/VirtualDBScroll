@@ -10,13 +10,15 @@ Most data-aware components fall into two variants:
 
 I was developing a software application for logbooks, and found that I could either use a data grid, in which case displaying records that had significant variation in length would be cumbersome and unaesthetic, or write the records to a plain memo component which would eventually result in memory issues as the number of records increased.
 
-In order to get around these constraints, my goal was to create a set of components that meet the following requirements:
+In order to get around these constraints, my goal was to create a set of Lazarus components that meet the following requirements:
 
-- Scroll through datasets of up to millions of records without knowing beforehand how large each record is
+- Scroll through DataSets of up to millions of records without knowing beforehand how large each record is
 - Display each record in its entirety, with hundreds or thousands of lines allowed per record
-- Allow programmers to determine how the data is formatted in the display
- 
-I am still currently in the process of developing and improving these components, but I wecome everyone to view, use, or contribute toward this project.
+- Allow programmers to determine how the data will be formatted in the display
+
+I am still currently in the process of developing and improving these components, but I welcome everyone to view, use, or contribute toward this project.
+
+The repository includes a test project that is being developed along with the components, as well as a set of SQLite Databases with 100, 200, 1000, 5000, 10000, and 20000 dummy records of approximately 1 to 20 lines of text each.
 
 ---
 
