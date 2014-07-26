@@ -182,17 +182,33 @@ begin
 
   {
   Based on the number of records in the DataSet, we set the resolution
-  per record. If there are less than 134,218 records, for instance, we
-  allot up to 16,000 positions on the scrollbar per record. In this case,
-  as long as there are less than 16,000 lines in the record, we can scroll
-  smoothly through every line. This should only be a problem when there
-  are millions of records which are very long (several hundred lines).
+  per record. If there are less than 8,389 records, for instance, we
+  allot up to 256,000 positions on the scrollbar per record. In this case,
+  as long as there are less than 256,000 lines in the record, we can scroll
+  smoothly through every line. There should only be a problem when there
+  are millions of records which are very long (several hundred lines each).
   }
   if RecordCount < 1 then
   begin
     FLineResolution := 0;
   end
-  else if (RecordCount > 0) and (RecordCount < 134218) then
+  else if (RecordCount > 0) and (RecordCount < 8389) then
+  begin
+    FLineResolution := 256000;
+  end
+  else if (RecordCount > 8388) and (RecordCount < 16778) then
+  begin
+    FLineResolution := 128000;
+  end
+  else if (RecordCount > 16777) and (RecordCount < 33555) then
+  begin
+    FLineResolution := 64000;
+  end
+  else if (RecordCount > 33554) and (RecordCount < 67109) then
+  begin
+    FLineResolution := 32000;
+  end
+  else if (RecordCount > 67108) and (RecordCount < 134218) then
   begin
     FLineResolution := 16000;
   end
@@ -212,11 +228,11 @@ begin
   begin
     FLineResolution := 1000;
   end
-  else if (RecordCount > 2147483) and (RecordCount < 4294967) then
+  else if (RecordCount > 2147483) and (RecordCount < 4294968) then
   begin
     FLineResolution := 500;
   end
-  else if (RecordCount > 4294966) and (RecordCount < 8589933) then
+  else if (RecordCount > 4294967) and (RecordCount < 8589934) then
   begin
     FLineResolution := 250;
   end;

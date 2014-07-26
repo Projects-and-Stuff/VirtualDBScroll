@@ -53,9 +53,12 @@ begin
 
     Open;
 
-    Last;
+    {
+    Eventually, once the DataSet (in this case, the SQLQuery) is opened, the
+    data will be automatically displayed in the memo, formatted based upon the
+    'Format' property.
+    }
 
-    First;
   end;
 
   SQLTransaction1.Commit;
