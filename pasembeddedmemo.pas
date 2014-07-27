@@ -33,10 +33,12 @@ type
 
   TPASEmbeddedMemo = class (TCustomMemo)
   private
+    function GetAlign: TAlign;
     function GetReadOnly: Boolean;
     { Private declarations }
     function GetScrollBars: TScrollStyle;
     function GetWordWrap: Boolean;
+    procedure SetAlign(AValue: TAlign);
     procedure SetReadOnly(AValue: Boolean);
     procedure SetScrollBars(const Value: TScrollStyle);
     procedure SetWordWrap(AValue: Boolean);
@@ -45,8 +47,8 @@ type
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
-    property Align;
   published
+    property Align : TAlign read GetAlign write SetAlign default alNone;
     property Alignment;
     property CharCase;
     property Color;
@@ -98,6 +100,11 @@ end;
 
 { TEmbeddedMemo }
 
+function TPASEmbeddedMemo.GetAlign: TAlign;
+begin
+  Result := inherited Align;
+end;
+
 function TPASEmbeddedMemo.GetReadOnly: Boolean;
 begin
   Result := inherited ReadOnly;
@@ -111,6 +118,11 @@ end;
 function TPASEmbeddedMemo.GetWordWrap: Boolean;
 begin
   Result := inherited WordWrap;
+end;
+
+procedure TPASEmbeddedMemo.SetAlign(AValue: TAlign);
+begin
+  inherited Align := alNone;
 end;
 
 procedure TPASEmbeddedMemo.SetReadOnly(AValue: Boolean);

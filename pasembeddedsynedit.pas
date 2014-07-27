@@ -33,9 +33,11 @@ type
 
   TPASEmbeddedSynEdit = class (TSynEdit)
   private
+    function GetAlign: TAlign;
     function GetReadOnly: Boolean;
     { Private declarations }
     function GetScrollBars: TScrollStyle;
+    procedure SetAlign(AValue: TAlign);
     procedure SetReadOnly(AValue: Boolean);
     procedure SetScrollBars(const Value: TScrollStyle);
   protected
@@ -43,11 +45,8 @@ type
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
-    property Align;
-    //property WordWrap;
   published
-    //property Alignment;
-    //property CharCase;
+    property Align : TAlign read GetAlign write SetAlign default alNone;
     property Color;
     property Cursor;
     property DragCursor;
@@ -57,7 +56,6 @@ type
     property HideSelection;
     property Hint;
     property Lines;
-    //property MaxLength;
     property ParentColor;
     property ParentFont;
     property ParentShowHint;
@@ -65,7 +63,6 @@ type
     property ReadOnly: Boolean read GetReadOnly write SetReadOnly default False; // Must remain set to false
     property ScrollBars: TScrollStyle read GetScrollBars write SetScrollBars default ssHorizontal; // The only allowed values are ssNone, ssHorizontal, and ssAutoHorizontal
     property ShowHint;
-    //property WantReturns;
     property WantTabs;
 
   end;
@@ -97,6 +94,11 @@ end;
 
 { TEmbeddedMemo }
 
+function TPASEmbeddedSynEdit.GetAlign: TAlign;
+begin
+  Result := inherited Align;
+end;
+
 function TPASEmbeddedSynEdit.GetReadOnly: Boolean;
 begin
   Result := inherited ReadOnly;
@@ -105,6 +107,11 @@ end;
 function TPASEmbeddedSynEdit.GetScrollBars: TScrollStyle;
 begin
   Result := inherited ScrollBars;
+end;
+
+procedure TPASEmbeddedSynEdit.SetAlign(AValue: TAlign);
+begin
+  inherited Align := alNone;
 end;
 
 procedure TPASEmbeddedSynEdit.SetReadOnly(AValue: Boolean);
