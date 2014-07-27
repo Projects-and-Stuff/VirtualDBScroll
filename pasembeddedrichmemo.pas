@@ -127,7 +127,7 @@ end;
 
 procedure TPASEmbeddedRichMemo.SetReadOnly(AValue: Boolean);
 begin
-  inherited ReadOnly := False;
+  inherited ReadOnly := True;
 end;
 
 procedure TPASEmbeddedRichMemo.SetScrollBars(const Value: TScrollStyle);
@@ -151,7 +151,7 @@ constructor TPASEmbeddedRichMemo.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
 
-  // Permanently set the values for these private properties
+  // Set the initial values for these properties
   Align := alClient;
   WordWrap := False;
   ReadOnly := True;

@@ -116,7 +116,7 @@ end;
 
 procedure TPASEmbeddedSynEdit.SetReadOnly(AValue: Boolean);
 begin
-  inherited ReadOnly := False;
+  inherited ReadOnly := True;
 end;
 
 procedure TPASEmbeddedSynEdit.SetScrollBars(const Value: TScrollStyle);
@@ -135,9 +135,8 @@ constructor TPASEmbeddedSynEdit.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
 
-  // Permanently set the values for these private properties
+  // Set the initial values for these properties
   Align := alClient;
-  //WordWrap := False;
   ReadOnly := True;
   Gutter.Visible := False;
 end;
