@@ -25,7 +25,7 @@ interface
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, PASEmbeddedSynEdit, PASEmbeddedScrollBar, db, DBGrids, PropEdits,
-  PASFormatEditor, PASVirtualDBScrollBase;
+  PASFormatEditor, PASVirtualDBScrollBase, SynEdit, SynCompletion;
 
 type
 
@@ -37,6 +37,7 @@ type
     { Private declarations }
     //FDataLink : TComponentDataLink;
     FSynEdit : TPASEmbeddedSynEdit;
+    FCompletion : TSynCompletion;
 
     //FRecordCount : Integer;                       // Total number of records in the DataSet
     //FRecordChunkSize : Integer;                   // The maximum number of records per record chunk
@@ -76,6 +77,8 @@ type
     destructor Destroy; override;
   published
     { Published declarations }
+
+    property Completion : TSynCompletion read FCompletion write FCompletion;
 
 
     property ESynEdit : TPASEmbeddedSynEdit read FSynEdit;

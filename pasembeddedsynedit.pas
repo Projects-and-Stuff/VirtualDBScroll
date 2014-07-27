@@ -29,10 +29,14 @@ type
 
   { TEmbeddedMemo }
 
+  { TPASEmbeddedSynEdit }
+
   TPASEmbeddedSynEdit = class (TSynEdit)
   private
+    function GetReadOnly: Boolean;
     { Private declarations }
     function GetScrollBars: TScrollStyle;
+    procedure SetReadOnly(AValue: Boolean);
     procedure SetScrollBars(const Value: TScrollStyle);
   protected
     { Protected declarations }
@@ -40,7 +44,6 @@ type
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     property Align;
-    property ReadOnly;
     //property WordWrap;
   published
     //property Alignment;
@@ -59,10 +62,12 @@ type
     property ParentFont;
     property ParentShowHint;
     property PopupMenu;
+    property ReadOnly: Boolean read GetReadOnly write SetReadOnly default False; // Must remain set to false
     property ScrollBars: TScrollStyle read GetScrollBars write SetScrollBars default ssHorizontal; // The only allowed values are ssNone, ssHorizontal, and ssAutoHorizontal
     property ShowHint;
     //property WantReturns;
     property WantTabs;
+
   end;
 
   TPASEmbeddedSynEditPropertyEditor = class(TEnumPropertyEditor)
@@ -92,9 +97,19 @@ end;
 
 { TEmbeddedMemo }
 
+function TPASEmbeddedSynEdit.GetReadOnly: Boolean;
+begin
+  Result := inherited ReadOnly;
+end;
+
 function TPASEmbeddedSynEdit.GetScrollBars: TScrollStyle;
 begin
   Result := inherited ScrollBars;
+end;
+
+procedure TPASEmbeddedSynEdit.SetReadOnly(AValue: Boolean);
+begin
+  inherited ReadOnly := False;
 end;
 
 procedure TPASEmbeddedSynEdit.SetScrollBars(const Value: TScrollStyle);

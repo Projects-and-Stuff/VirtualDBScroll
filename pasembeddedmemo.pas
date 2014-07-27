@@ -29,19 +29,23 @@ type
 
   { TEmbeddedMemo }
 
+  { TPASEmbeddedMemo }
+
   TPASEmbeddedMemo = class (TCustomMemo)
   private
+    function GetReadOnly: Boolean;
     { Private declarations }
     function GetScrollBars: TScrollStyle;
+    function GetWordWrap: Boolean;
+    procedure SetReadOnly(AValue: Boolean);
     procedure SetScrollBars(const Value: TScrollStyle);
+    procedure SetWordWrap(AValue: Boolean);
   protected
     { Protected declarations }
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     property Align;
-    property ReadOnly;
-    property WordWrap;
   published
     property Alignment;
     property CharCase;
@@ -59,24 +63,26 @@ type
     property ParentFont;
     property ParentShowHint;
     property PopupMenu;
+    property ReadOnly: Boolean read GetReadOnly write SetReadOnly default False; // Must remain set to false
     property ScrollBars: TScrollStyle read GetScrollBars write SetScrollBars default ssHorizontal; // The only allowed values are ssNone, ssHorizontal, and ssAutoHorizontal
     property ShowHint;
     property WantReturns;
     property WantTabs;
+    property WordWrap: Boolean read GetWordWrap write SetWordWrap default False; // Must remain set to false
   end;
 
-  TPASEmbeddedMemoPropertyEditor = class(TEnumPropertyEditor)
-    public
-      procedure GetValues(Proc: TGetStrProc); override;
-    end;
+  TPASEmbeddedMemoScrollPropertyEditor = class(TEnumPropertyEditor)
+  public
+    procedure GetValues(Proc: TGetStrProc); override;
+  end;
+
 
 implementation
 
 
-
 { TPASEmbeddedMemoPropertyEditor }
 
-procedure TPASEmbeddedMemoPropertyEditor.GetValues(Proc: TGetStrProc);
+procedure TPASEmbeddedMemoScrollPropertyEditor.GetValues(Proc: TGetStrProc);
 type
   TRestricted = 1..3;
   TRestrictedNames = array[TRestricted] of shortstring;
@@ -92,9 +98,24 @@ end;
 
 { TEmbeddedMemo }
 
+function TPASEmbeddedMemo.GetReadOnly: Boolean;
+begin
+  Result := inherited ReadOnly;
+end;
+
 function TPASEmbeddedMemo.GetScrollBars: TScrollStyle;
 begin
   Result := inherited ScrollBars;
+end;
+
+function TPASEmbeddedMemo.GetWordWrap: Boolean;
+begin
+  Result := inherited WordWrap;
+end;
+
+procedure TPASEmbeddedMemo.SetReadOnly(AValue: Boolean);
+begin
+  inherited ReadOnly := False;
 end;
 
 procedure TPASEmbeddedMemo.SetScrollBars(const Value: TScrollStyle);
@@ -109,6 +130,11 @@ begin
   end;
 end;
 
+procedure TPASEmbeddedMemo.SetWordWrap(AValue: Boolean);
+begin
+  inherited WordWrap := False;
+end;
+
 constructor TPASEmbeddedMemo.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -120,7 +146,7 @@ begin
 end;
 
 initialization
-  RegisterPropertyEditor(TypeInfo(TScrollStyle), TPASEmbeddedMemo, 'ScrollBars', TPASEmbeddedMemoPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TScrollStyle), TPASEmbeddedMemo, 'ScrollBars', TPASEmbeddedMemoScrollPropertyEditor);
 
 end.
 

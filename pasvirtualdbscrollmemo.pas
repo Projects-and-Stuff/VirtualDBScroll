@@ -36,6 +36,7 @@ type
   private
     { Private declarations }
     //FDataLink : TComponentDataLink;
+    FMemo : TPASEmbeddedMemo;
 
     //FRecordCount : Integer;                       // Total number of records in the DataSet
     //FRecordChunkSize : Integer;                   // The maximum number of records per record chunk
@@ -77,8 +78,8 @@ type
     { Published declarations }
 
 
-
-    property EMemo; // Inherited from TPASVirtualDBScrollBase
+    property EMemo : TPASEmbeddedMemo read FMemo;
+    //property EMemo; // Inherited from TPASVirtualDBScrollBase
     property EScrollBar; // Inherited from TPASVirtualDBScrollBase
 
     property RecordChunkSize;
@@ -230,7 +231,7 @@ begin
     SetInitialBounds(0, 0, CX, CY);
   end;
 
-  {
+
   // Initialize the Embedded Memo
   FMemo := TPASEmbeddedMemo.Create(Self); // Add the embedded memo
   FMemo.Parent := self;         // Show the memo in the panel
@@ -239,7 +240,7 @@ begin
   FMemo.ControlStyle := FMemo.ControlStyle - [csNoDesignSelectable]; // Make sure it can not be selected/deleted within the IDE
   FMemo.Lines.Clear; // Should I allow the user to set some default text?
   FMemo.OnKeyPress := @EMemoOnKeyPress;
-
+  {
   // Initialize the Embedded ScrollBar
   FScrollBar := TPASEmbeddedScrollBar.Create(Self); // Add the embedded memo
   FScrollBar.Parent := self;         // Show the memo in the panel
@@ -286,8 +287,8 @@ begin
   //FDataLink.Free;
   //FDataLink := nil;
 
-  //FMemo.Free;
-  //FMemo := nil;
+  FMemo.Free;
+  FMemo := nil;
 
   //FScrollBar.Free;
   //FScrollBar := nil;

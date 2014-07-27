@@ -33,7 +33,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this package. If not, see &lt;http://www.gnu.org/licenses/>."/>
     <Version Minor="1"/>
-    <Files Count="6">
+    <Files Count="10">
       <Item1>
         <Filename Value="pasvirtualdbscrollmemo.pas"/>
         <HasRegisterProc Value="True"/>
@@ -49,29 +49,53 @@ along with this package. If not, see &lt;http://www.gnu.org/licenses/>."/>
       </Item3>
       <Item4>
         <Filename Value="pasformateditor.pas"/>
-        <UnitName Value="pasformateditor"/>
+        <UnitName Value="PASFormatEditor"/>
       </Item4>
       <Item5>
         <Filename Value="pasformateditor.pas"/>
-        <UnitName Value="pasformateditor"/>
+        <UnitName Value="PASFormatEditor"/>
       </Item5>
       <Item6>
         <Filename Value="pasvirtualdbscrollbase.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="PASVirtualDBScrollBase"/>
       </Item6>
+      <Item7>
+        <Filename Value="pasembeddedrichmemo.pas"/>
+        <UnitName Value="PASEmbeddedRichMemo"/>
+      </Item7>
+      <Item8>
+        <Filename Value="pasembeddedsynedit.pas"/>
+        <UnitName Value="PASEmbeddedSynEdit"/>
+      </Item8>
+      <Item9>
+        <Filename Value="pasvirtualdbscrollrichmemo.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="PASVirtualDBScrollRichMemo"/>
+      </Item9>
+      <Item10>
+        <Filename Value="pasvirtualdbscrollsynedit.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="PASVirtualDBScrollSynEdit"/>
+      </Item10>
     </Files>
     <Type Value="RunAndDesignTime"/>
-    <RequiredPkgs Count="3">
+    <RequiredPkgs Count="5">
       <Item1>
-        <PackageName Value="IDEIntf"/>
+        <PackageName Value="SynEdit"/>
       </Item1>
       <Item2>
-        <PackageName Value="LCL"/>
+        <PackageName Value="richmemopackage"/>
       </Item2>
       <Item3>
-        <PackageName Value="FCL"/>
+        <PackageName Value="IDEIntf"/>
       </Item3>
+      <Item4>
+        <PackageName Value="LCL"/>
+      </Item4>
+      <Item5>
+        <PackageName Value="FCL"/>
+      </Item5>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>

@@ -29,19 +29,23 @@ type
 
   { TEmbeddedMemo }
 
+  { TPASEmbeddedRichMemo }
+
   TPASEmbeddedRichMemo = class (TRichMemo)
   private
+    function GetReadOnly: Boolean;
     { Private declarations }
     function GetScrollBars: TScrollStyle;
+    function GetWordWrap: Boolean;
+    procedure SetReadOnly(AValue: Boolean);
     procedure SetScrollBars(const Value: TScrollStyle);
+    procedure SetWordWrap(AValue: Boolean);
   protected
     { Protected declarations }
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     property Align;
-    property ReadOnly;
-    property WordWrap;
   published
     property Alignment;
     property CharCase;
@@ -59,10 +63,12 @@ type
     property ParentFont;
     property ParentShowHint;
     property PopupMenu;
+    property ReadOnly: Boolean read GetReadOnly write SetReadOnly default False; // Must remain set to false
     property ScrollBars: TScrollStyle read GetScrollBars write SetScrollBars default ssHorizontal; // The only allowed values are ssNone, ssHorizontal, and ssAutoHorizontal
     property ShowHint;
     property WantReturns;
     property WantTabs;
+    property WordWrap: Boolean read GetWordWrap write SetWordWrap default False; // Must remain set to false
   end;
 
   TPASEmbeddedRichMemoPropertyEditor = class(TEnumPropertyEditor)
@@ -92,9 +98,24 @@ end;
 
 { TEmbeddedMemo }
 
+function TPASEmbeddedRichMemo.GetReadOnly: Boolean;
+begin
+  Result := inherited ReadOnly;
+end;
+
 function TPASEmbeddedRichMemo.GetScrollBars: TScrollStyle;
 begin
   Result := inherited ScrollBars;
+end;
+
+function TPASEmbeddedRichMemo.GetWordWrap: Boolean;
+begin
+  Result := inherited WordWrap;
+end;
+
+procedure TPASEmbeddedRichMemo.SetReadOnly(AValue: Boolean);
+begin
+  inherited ReadOnly := False;
 end;
 
 procedure TPASEmbeddedRichMemo.SetScrollBars(const Value: TScrollStyle);
@@ -107,6 +128,11 @@ begin
   begin
     inherited ScrollBars := ssHorizontal;
   end;
+end;
+
+procedure TPASEmbeddedRichMemo.SetWordWrap(AValue: Boolean);
+begin
+  inherited WordWrap := False;
 end;
 
 constructor TPASEmbeddedRichMemo.Create(AOwner: TComponent);

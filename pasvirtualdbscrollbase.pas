@@ -35,7 +35,7 @@ type
 
   private
     { Private declarations }
-    FMemo : TPASEmbeddedMemo;
+    //FMemo : TPASEmbeddedMemo;
     FScrollBar : TPASEmbeddedScrollBar;
     FDataLink : TComponentDataLink;
 
@@ -64,7 +64,7 @@ type
     procedure DataLinkOnLayoutChanged(ADataSet : TDataSet);
     procedure DataLinkOnEditingChanged(ADataSet : TDataSet);
     procedure DataLinkOnUpdateData(ADataSet : TDataSet);
-    procedure EMemoOnKeyPress(Sender: TObject; var Key: char);
+    //procedure EMemoOnKeyPress(Sender: TObject; var Key: char);
     procedure EScrollBarOnChange(Sender: TObject);
     procedure EScrollBarOnKeyPress(Sender: TObject; var Key: char);
     procedure EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode;
@@ -90,7 +90,7 @@ type
 
 
 
-    property EMemo : TPASEmbeddedMemo read FMemo;
+    //property EMemo : TPASEmbeddedMemo read FMemo;
     property EScrollBar : TPASEmbeddedScrollBar read FScrollBar;
 
     property RecordChunkSize : Integer read GetChunkSize write SetChunkSize default 50; // Used to set the number of records per chunk. Allowable range is 1 to 500
@@ -305,12 +305,12 @@ procedure TPASVirtualDBScrollBase.DataLinkOnUpdateData(ADataSet: TDataSet);
 begin
 
 end;
-
+{
 procedure TPASVirtualDBScrollBase.EMemoOnKeyPress(Sender: TObject; var Key: char);
 begin
 
 end;
-
+}
 procedure TPASVirtualDBScrollBase.EScrollBarOnChange(Sender: TObject);
 begin
 
@@ -337,7 +337,7 @@ begin
   begin
     SetInitialBounds(0, 0, CX, CY);
   end;
-
+  {
   // Initialize the Embedded Memo
   FMemo := TPASEmbeddedMemo.Create(Self); // Add the embedded memo
   FMemo.Parent := self;         // Show the memo in the panel
@@ -346,7 +346,7 @@ begin
   FMemo.ControlStyle := FMemo.ControlStyle - [csNoDesignSelectable]; // Make sure it can not be selected/deleted within the IDE
   FMemo.Lines.Clear; // Should I allow the user to set some default text?
   FMemo.OnKeyPress := @EMemoOnKeyPress;
-
+  }
   // Initialize the Embedded ScrollBar
   FScrollBar := TPASEmbeddedScrollBar.Create(Self); // Add the embedded memo
   FScrollBar.Parent := self;         // Show the memo in the panel
@@ -392,8 +392,8 @@ begin
   FDataLink.Free;
   FDataLink := nil;
 
-  FMemo.Free;
-  FMemo := nil;
+  //FMemo.Free;
+  //FMemo := nil;
 
   FScrollBar.Free;
   FScrollBar := nil;
