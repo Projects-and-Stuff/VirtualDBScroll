@@ -35,18 +35,13 @@ type
 
   private
     { Private declarations }
-    //FDataLink : TComponentDataLink;
     FRichMemo : TPASEmbeddedRichMemo;
 
-    //FRecordCount : Integer;                       // Total number of records in the DataSet
-    //FRecordChunkSize : Integer;                   // The maximum number of records per record chunk
     FRecordChunkCount : Integer;                  // Number of record chunks in the DataSet
     FRecordChunkLineCounts : Array of Integer;    // Keeps track of the number of lines displayed per chunk
     FCurrentRecordChunk : Integer;                // Tracks which chunk is currently at the center of display
-    //FLineResolution : Integer;                    // The number of lines positions on the scrollbar allocated to each record
     FVisibleLines : Integer;                      // How many lines are visible in EmbeddedRichMemo
 
-    //FFormat : String;                             // The format for displaying content
 
     FError : String;                              //
 
@@ -240,58 +235,15 @@ begin
   FRichMemo.ControlStyle := FRichMemo.ControlStyle - [csNoDesignSelectable]; // Make sure it can not be selected/deleted within the IDE
   FRichMemo.Lines.Clear; // Should I allow the user to set some default text?
   FRichMemo.OnKeyPress := @ERichMemoOnKeyPress;
-  {
-  // Initialize the Embedded ScrollBar
-  FScrollBar := TPASEmbeddedScrollBar.Create(Self); // Add the embedded RichMemo
-  FScrollBar.Parent := self;         // Show the RichMemo in the panel
-  FScrollBar.SetSubComponent(true);  // Tell the IDE to store the modified properties
-  FScrollBar.Name := 'EScrollBar';
-  FScrollBar.ControlStyle := FScrollBar.ControlStyle - [csNoDesignSelectable]; // Make sure it can not be selected/deleted within the IDE
-  FScrollBar.Width := 15;
-  FScrollBar.Align := alRight;
-  FScrollBar.Kind := sbVertical;
-  FScrollBar.OnChange := @EScrollBarOnChange;
-  FScrollBar.OnScroll := @EScrollBarOnScroll;
-  FScrollBar.OnKeyPress := @EScrollBarOnKeyPress;
-
-
-  // Initialize the Dataset
-  FDataLink := TComponentDataLink.Create;
-  FDataLink.OnRecordChanged := @DataLinkOnRecordChanged;
-  FDataLink.OnDatasetChanged := @DataLinkOnDataSetChanged;
-  FDataLink.OnDataSetOpen := @DataLinkOnDataSetOpen;
-  FDataLink.OnDataSetClose := @DataLinkOnDataSetClose;
-  FDataLink.OnNewDataSet := @DataLinkOnNewDataSet;
-  FDataLink.OnInvalidDataSet := @DataLinkOnInvalidDataset;
-  FDataLink.OnInvalidDataSource := @DataLinkOnInvalidDataSource;
-  FDataLink.OnDataSetScrolled := @DataLinkOnDataSetScrolled;
-  FDataLink.OnLayoutChanged := @DataLinkOnLayoutChanged;
-  FDataLink.OnEditingChanged := @DataLinkOnEditingChanged;
-  FDataLink.OnUpdateData := @DataLinkOnUpdateData;
-  FDataLink.VisualControl := True;
-
-
-  // Initially set the chunk size to 50
-  FRecordChunkSize := 50;
-
-
-  // Set Format property default value (blank)
-  FFormat := '';
-  }
 
 
 end;
 
 destructor TPASVirtualDBScrollRichMemo.Destroy;
 begin
-  //FDataLink.Free;
-  //FDataLink := nil;
 
   FRichMemo.Free;
   FRichMemo := nil;
-
-  //FScrollBar.Free;
-  //FScrollBar := nil;
 
   inherited Destroy;
 end;

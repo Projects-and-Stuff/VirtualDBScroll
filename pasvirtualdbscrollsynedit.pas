@@ -35,19 +35,14 @@ type
 
   private
     { Private declarations }
-    //FDataLink : TComponentDataLink;
     FSynEdit : TPASEmbeddedSynEdit;
     FCompletion : TSynCompletion;
 
-    //FRecordCount : Integer;                       // Total number of records in the DataSet
-    //FRecordChunkSize : Integer;                   // The maximum number of records per record chunk
     FRecordChunkCount : Integer;                  // Number of record chunks in the DataSet
     FRecordChunkLineCounts : Array of Integer;    // Keeps track of the number of lines displayed per chunk
     FCurrentRecordChunk : Integer;                // Tracks which chunk is currently at the center of display
-    //FLineResolution : Integer;                    // The number of lines positions on the scrollbar allocated to each record
     FVisibleLines : Integer;                      // How many lines are visible in EmbeddedSynEdit
 
-    //FFormat : String;                             // The format for displaying content
 
     FError : String;                              //
 
@@ -243,58 +238,17 @@ begin
   FSynEdit.ControlStyle := FSynEdit.ControlStyle - [csNoDesignSelectable]; // Make sure it can not be selected/deleted within the IDE
   FSynEdit.Lines.Clear; // Should I allow the user to set some default text?
   FSynEdit.OnKeyPress := @ESynEditOnKeyPress;
-  {
-  // Initialize the Embedded ScrollBar
-  FScrollBar := TPASEmbeddedScrollBar.Create(Self); // Add the embedded SynEdit
-  FScrollBar.Parent := self;         // Show the SynEdit in the panel
-  FScrollBar.SetSubComponent(true);  // Tell the IDE to store the modified properties
-  FScrollBar.Name := 'EScrollBar';
-  FScrollBar.ControlStyle := FScrollBar.ControlStyle - [csNoDesignSelectable]; // Make sure it can not be selected/deleted within the IDE
-  FScrollBar.Width := 15;
-  FScrollBar.Align := alRight;
-  FScrollBar.Kind := sbVertical;
-  FScrollBar.OnChange := @EScrollBarOnChange;
-  FScrollBar.OnScroll := @EScrollBarOnScroll;
-  FScrollBar.OnKeyPress := @EScrollBarOnKeyPress;
-
-
-  // Initialize the Dataset
-  FDataLink := TComponentDataLink.Create;
-  FDataLink.OnRecordChanged := @DataLinkOnRecordChanged;
-  FDataLink.OnDatasetChanged := @DataLinkOnDataSetChanged;
-  FDataLink.OnDataSetOpen := @DataLinkOnDataSetOpen;
-  FDataLink.OnDataSetClose := @DataLinkOnDataSetClose;
-  FDataLink.OnNewDataSet := @DataLinkOnNewDataSet;
-  FDataLink.OnInvalidDataSet := @DataLinkOnInvalidDataset;
-  FDataLink.OnInvalidDataSource := @DataLinkOnInvalidDataSource;
-  FDataLink.OnDataSetScrolled := @DataLinkOnDataSetScrolled;
-  FDataLink.OnLayoutChanged := @DataLinkOnLayoutChanged;
-  FDataLink.OnEditingChanged := @DataLinkOnEditingChanged;
-  FDataLink.OnUpdateData := @DataLinkOnUpdateData;
-  FDataLink.VisualControl := True;
-
-
-  // Initially set the chunk size to 50
-  FRecordChunkSize := 50;
-
-
-  // Set Format property default value (blank)
-  FFormat := '';
-  }
 
 
 end;
 
 destructor TPASVirtualDBScrollSynEdit.Destroy;
 begin
-  //FDataLink.Free;
-  //FDataLink := nil;
+
 
   FSynEdit.Free;
   FSynEdit := nil;
 
-  //FScrollBar.Free;
-  //FScrollBar := nil;
 
   inherited Destroy;
 end;
