@@ -37,9 +37,9 @@ type
     { Private declarations }
     FRichMemo : TPASEmbeddedRichMemo;
 
-    FRecordChunkCount : Integer;                  // Number of record chunks in the DataSet
-    FRecordChunkLineCounts : Array of Integer;    // Keeps track of the number of lines displayed per chunk
-    FCurrentRecordChunk : Integer;                // Tracks which chunk is currently at the center of display
+    FRecordSliceCount : Integer;                  // Number of record Slices in the DataSet
+    FRecordSliceLineCounts : Array of Integer;    // Keeps track of the number of lines displayed per Slice
+    FCurrentRecordSlice : Integer;                // Tracks which Slice is currently at the center of display
     FVisibleLines : Integer;                      // How many lines are visible in EmbeddedRichMemo
 
 
@@ -77,8 +77,8 @@ type
     //property ERichMemo; // Inherited from TPASVirtualDBScrollBase
     property EScrollBar; // Inherited from TPASVirtualDBScrollBase
 
-    property RecordChunkSize;
-    // property RecordChunkSize : Integer read GetChunkSize write SetChunkSize default 50; // Used to set the number of records per chunk. Allowable range is 1 to 500
+    property RecordSliceSize;
+    // property RecordSliceSize : Integer read GetSliceSize write SetSliceSize default 50; // Used to set the number of records per Slice. Allowable range is 1 to 500
 
     property DataLink;
     // property DataLink : TComponentDataLink read FDataLink write FDataLink;

@@ -39,10 +39,10 @@ type
     FDataLink : TComponentDataLink;
 
     FRecordCount : Integer;                       // Total number of records in the DataSet
-    FRecordChunkSize : Integer;                   // The maximum number of records per record chunk
-    FRecordChunkCount : Integer;                  // Number of record chunks in the DataSet
-    FRecordChunkLineCounts : Array of Integer;    // Keeps track of the number of lines displayed per chunk
-    FCurrentRecordChunk : Integer;                // Tracks which chunk is currently at the center of display
+    FRecordSliceSize : Integer;                   // The maximum number of records per record Slice
+    FRecordSliceCount : Integer;                  // Number of record Slices in the DataSet
+    FRecordSliceLineCounts : Array of Integer;    // Keeps track of the number of lines displayed per Slice
+    FCurrentRecordSlice : Integer;                // Tracks which Slice is currently at the center of display
     FLineResolution : Integer;                    // The number of lines positions on the scrollbar allocated to each record
     FVisibleLines : Integer;                      // How many lines are visible in EmbeddedMemo
 
@@ -80,18 +80,19 @@ type
     function GetFormat : String;
     procedure SetFormat(Value : String);
 
-    function GetChunkSize : Integer;
+    function GetSliceSize : Integer;
     function GetDataSource : TDataSource;
-    procedure SetChunkSize(const Value : Integer);
+    procedure SetSliceSize(const Value : Integer);
     procedure SetDataSource(Value : TDataSource);
 
     procedure GetRecordCount;
     procedure CalculateLineResolution;
     procedure CalculateScrollBarMax;
+    procedure CalculateRecordSliceCount; // Actually calculates both FRecordSliceCount and the length of array FRecordSliceLineCounts
 
     property EScrollBar : TPASEmbeddedScrollBar read FScrollBar;
 
-    property RecordChunkSize : Integer read GetChunkSize write SetChunkSize default 50; // Used to set the number of records per chunk. Allowable range is 1 to 500
+    property RecordSliceSize : Integer read GetSliceSize write SetSliceSize default 50; // Used to set the number of records per Slice. Allowable range is 1 to 500
     property DataLink : TComponentDataLink read FDataLink write FDataLink;
     property DataSource : TDataSource read GetDataSource write SetDataSource; // Used to access the DataLink. The DataLink property of the DataSource must be set for this component to operate
     property LineResolution : Integer read FLineResolution; // The number of positions on the scrollbar allocated per record. This property is automatically calculated based upon the number of Records in the DataSet
@@ -147,9 +148,9 @@ begin
   FFormat := Value;
 end;
 
-function TPASVirtualDBScrollBase.GetChunkSize: Integer;
+function TPASVirtualDBScrollBase.GetSliceSize: Integer;
 begin
-  Result := FRecordChunkSize;
+  Result := FRecordSliceSize;
 end;
 
 function TPASVirtualDBScrollBase.GetDataSource: TDataSource;
@@ -157,19 +158,19 @@ begin
   result := FDataLink.DataSource;
 end;
 
-procedure TPASVirtualDBScrollBase.SetChunkSize(const Value: Integer);
+procedure TPASVirtualDBScrollBase.SetSliceSize(const Value: Integer);
 begin
   if Value < 1 then
   begin
-    FRecordChunkSize := 1;
+    FRecordSliceSize := 1;
   end
   else if Value > 500 then
   begin
-    FRecordChunkSize := 500;
+    FRecordSliceSize := 500;
   end
   else
   begin
-    FRecordChunkSize := Value;
+    FRecordSliceSize := Value;
   end;
 end;
 
@@ -253,6 +254,23 @@ end;
 procedure TPASVirtualDBScrollBase.CalculateScrollBarMax;
 begin
   EScrollBar.Max := RecordCount * LineResolution;
+end;
+
+// Count the number of Slices required based on RecordCount and RecordSliceSize
+procedure TPASVirtualDBScrollBase.CalculateRecordSliceCount;
+begin
+  // if the record count divides into the Slice size, getting the Slice count is easy
+  if FRecordCount mod FRecordSliceSize = 0 then
+  begin
+    FRecordSliceCount := FRecordCount div FRecordSliceSize;
+    SetLength(FRecordSliceLineCounts, FRecordCount div FRecordSliceSize);
+  end
+  // Otherwise we need to add one more Slice
+  else
+  begin
+    FRecordSliceCount := (FRecordCount div FRecordSliceSize) + 1;
+    SetLength(FRecordSliceLineCounts, (FRecordCount div FRecordSliceSize) + 1);
+  end;
 end;
 
 procedure TPASVirtualDBScrollBase.DataLinkOnRecordChanged(Field: TField);
@@ -386,8 +404,8 @@ begin
   FDataLink.VisualControl := True;
 
 
-  // Initially set the chunk size to 50
-  FRecordChunkSize := 50;
+  // Initially set the Slice size to 50
+  FRecordSliceSize := 50;
 
 
   // Set Format property default value (blank)
