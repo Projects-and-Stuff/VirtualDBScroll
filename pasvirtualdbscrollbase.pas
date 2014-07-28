@@ -52,6 +52,7 @@ type
 
 
     // Event Handlers
+
     procedure DataLinkOnRecordChanged(Field : TField);
     procedure DataLinkOnDataSetChanged(ADataSet : TDataSet);
     procedure DataLinkOnDataSetOpen(ADataSet : TDataSet);
@@ -63,10 +64,10 @@ type
     procedure DataLinkOnLayoutChanged(ADataSet : TDataSet);
     procedure DataLinkOnEditingChanged(ADataSet : TDataSet);
     procedure DataLinkOnUpdateData(ADataSet : TDataSet);
-    procedure EScrollBarOnChange(Sender: TObject);
-    procedure EScrollBarOnKeyPress(Sender: TObject; var Key: char);
-    procedure EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode;
-      var ScrollPos: Integer);
+    procedure EScrollBarOnChange(Sender : TObject);
+    procedure EScrollBarOnKeyPress(Sender : TObject; var Key : char);
+    procedure EScrollBarOnScroll(Sender : TObject; ScrollCode : TScrollCode;
+      var ScrollPos : Integer);
   protected
     { Protected declarations }
   public
@@ -79,22 +80,26 @@ type
     function GetFormat : String;
     procedure SetFormat(Value : String);
 
-    function GetChunkSize: Integer;
-    function GetDataSource: TDataSource;
-    procedure SetChunkSize(const Value: Integer);
-    procedure SetDataSource(Value: TDataSource);
+    function GetChunkSize : Integer;
+    function GetDataSource : TDataSource;
+    procedure SetChunkSize(const Value : Integer);
+    procedure SetDataSource(Value : TDataSource);
 
-    procedure GetRecordCount; // Also sets FLineResolution
-
+    procedure GetRecordCount;
+    procedure CalculateLineResolution;
+    procedure CalculateScrollBarMax;
 
     property EScrollBar : TPASEmbeddedScrollBar read FScrollBar;
 
     property RecordChunkSize : Integer read GetChunkSize write SetChunkSize default 50; // Used to set the number of records per chunk. Allowable range is 1 to 500
     property DataLink : TComponentDataLink read FDataLink write FDataLink;
-    property DataSource : TDataSource read GetDataSource write SetDataSource;
-    property LineResolution : Integer read FLineResolution;
-    property RecordCount : Integer read FRecordCount;
+    property DataSource : TDataSource read GetDataSource write SetDataSource; // Used to access the DataLink. The DataLink property of the DataSource must be set for this component to operate
+    property LineResolution : Integer read FLineResolution; // The number of positions on the scrollbar allocated per record. This property is automatically calculated based upon the number of Records in the DataSet
+    property RecordCount : Integer read FRecordCount; // The number of records in the dataset. For instance, if the DataSet is an SQLQuery, this value is the number of records returned from a query. This property is automatically calculated when the dataset is opened.
 
+
+
+    {The Format property allows the programmer to determine how records will be displayed within the component}
     property Format : String read GetFormat write SetFormat;
 
     property Align;
@@ -173,12 +178,20 @@ begin
   FDataLink.DataSource := Value;
 end;
 
+// Sets the following properties:
+// - FRecordCount
+// - FLineResolution
+// - EScrollBar.Max
 procedure TPASVirtualDBScrollBase.GetRecordCount;
 begin
   // Need to move to the last record in the dataset in order to get an accurate count
   DataLink.DataSet.Last;
   FRecordCount := DataLink.DataSet.RecordCount;
 
+end;
+
+procedure TPASVirtualDBScrollBase.CalculateLineResolution;
+begin
   {
   Based on the number of records in the DataSet, we set the resolution
   per record. If there are less than 8,389 records, for instance, we
@@ -235,7 +248,10 @@ begin
   begin
     FLineResolution := 250;
   end;
+end;
 
+procedure TPASVirtualDBScrollBase.CalculateScrollBarMax;
+begin
   EScrollBar.Max := RecordCount * LineResolution;
 end;
 
@@ -246,6 +262,15 @@ end;
 
 procedure TPASVirtualDBScrollBase.DataLinkOnDataSetChanged(ADataSet: TDataSet);
 begin
+  if ADataSet.State = dsBrowse then
+  begin
+    ShowMessage('dsBrowse');
+  end
+  else if ADataSet.State = dsInactive then
+  begin
+    ShowMessage('dsInactive');
+  end;
+
   // Every time we move positions within the DataSet
   // ShowMessage('OnDataSetChanged');
 end;
@@ -254,15 +279,18 @@ procedure TPASVirtualDBScrollBase.DataLinkOnDataSetOpen(ADataSet: TDataSet);
 begin
   // Probably the most useful DataSet event
   // Every time this fires we need to get the record count and perform our calculations
-  ShowMessage('OnDataSetOpen');
+  //ShowMessage('OnDataSetOpen');
   GetRecordCount;
+  CalculateLineResolution;
+  CalculateScrollBarMax;
+
   //ShowMessage(IntToStr(FRecordCount));
 end;
 
 procedure TPASVirtualDBScrollBase.DataLinkOnDataSetClose(ADataSet: TDataSet);
 begin
   // May be useful for clean-up
-  ShowMessage('OnDataSetClose');
+  //ShowMessage('OnDataSetClose');
 end;
 
 procedure TPASVirtualDBScrollBase.DataLinkOnNewDataSet(ADataSet: TDataSet);
@@ -273,12 +301,12 @@ end;
 
 procedure TPASVirtualDBScrollBase.DataLinkOnInvalidDataset(ADataSet: TDataSet);
 begin
-
+  // Return an error
 end;
 
 procedure TPASVirtualDBScrollBase.DataLinkOnInvalidDataSource(ADataSet: TDataSet);
 begin
-
+  // Return an error
 end;
 
 procedure TPASVirtualDBScrollBase.DataLinkOnDataSetScrolled(ADataSet: TDataSet;
