@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, db, sqldb, sqlite3conn, FileUtil, Forms, Controls,
-  Graphics, Dialogs, StdCtrls, PASVirtualDBScrollMemo;
+  Graphics, Dialogs, StdCtrls, PASVirtualDBScrollMemo,
+  PASVirtualDBScrollSynEdit;
 
 type
 
@@ -15,7 +16,7 @@ type
   TForm1 = class(TForm)
     Button1: TButton;
     DataSource1: TDataSource;
-    PASVirtualDBScrollMemo1: TPASVirtualDBScrollMemo;
+    PASVirtualDBScrollSynEdit1: TPASVirtualDBScrollSynEdit;
     SQLite3Connection1: TSQLite3Connection;
     SQLQuery1: TSQLQuery;
     SQLTransaction1: TSQLTransaction;
