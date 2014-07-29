@@ -25,7 +25,7 @@ interface
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, PASEmbeddedSynEdit, PASEmbeddedScrollBar, db, DBGrids, PropEdits,
-  PASFormatEditor, PASVirtualDBScrollBase, SynEdit, SynCompletion;
+  PASFormatEditor, PASVirtualDBScrollBase, SynEdit, SynCompletion, windows;
 
 type
 
@@ -45,6 +45,8 @@ type
 
 
     FError : String;                              //
+
+    function GetVisibleLineCount : Integer; // Approximates the visible line count of ESynEdit
 
 
     // Event Handlers
@@ -132,6 +134,28 @@ begin
   RegisterComponents('Additional', [TPASVirtualDBScrollSynEdit]);
 
   RegisterPropertyEditor(TypeInfo(String), TPASVirtualDBScrollSynEdit, 'Format', TPASFormatEditor);
+end;
+
+function TPASVirtualDBScrollSynEdit.GetVisibleLineCount : Integer;
+var
+  OldFont : HFont;
+  Hand : THandle;
+  TM : TTextMetric;
+  TempInt : integer;
+begin
+  Hand := GetDC(ESynEdit.Handle);
+  try
+    OldFont := SelectObject(Hand, ESynEdit.Font.Handle);
+    try
+      GetTextMetrics(Hand, TM);
+      TempInt := ESynEdit.Height div TM.tmHeight;
+    finally
+      SelectObject(Hand, OldFont);
+    end;
+  finally
+    ReleaseDC(ESynEdit.Handle, Hand);
+  end;
+  Result := TempInt;
 end;
 
 procedure TPASVirtualDBScrollSynEdit.DataLinkOnRecordChanged(Field: TField);

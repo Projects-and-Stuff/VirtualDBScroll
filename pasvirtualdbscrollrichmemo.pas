@@ -25,7 +25,7 @@ interface
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, PASEmbeddedRichMemo, PASEmbeddedScrollBar, db, DBGrids, PropEdits,
-  PASFormatEditor, PASVirtualDBScrollBase;
+  PASFormatEditor, PASVirtualDBScrollBase, windows;
 
 type
 
@@ -44,6 +44,8 @@ type
 
 
     FError : String;                              //
+
+    function GetVisibleLineCount : Integer; // Approximates the visible line count of ERichMemo
 
 
     // Event Handlers
@@ -129,6 +131,28 @@ begin
   RegisterComponents('Additional', [TPASVirtualDBScrollRichMemo]);
 
   RegisterPropertyEditor(TypeInfo(String), TPASVirtualDBScrollRichMemo, 'Format', TPASFormatEditor);
+end;
+
+function TPASVirtualDBScrollRichMemo.GetVisibleLineCount : Integer;
+var
+  OldFont : HFont;
+  Hand : THandle;
+  TM : TTextMetric;
+  TempInt : integer;
+begin
+  Hand := GetDC(ERichMemo.Handle);
+  try
+    OldFont := SelectObject(Hand, ERichMemo.Font.Handle);
+    try
+      GetTextMetrics(Hand, TM);
+      TempInt := ERichMemo.Height div TM.tmHeight;
+    finally
+      SelectObject(Hand, OldFont);
+    end;
+  finally
+    ReleaseDC(ERichMemo.Handle, Hand);
+  end;
+  Result := TempInt;
 end;
 
 procedure TPASVirtualDBScrollRichMemo.DataLinkOnRecordChanged(Field: TField);
