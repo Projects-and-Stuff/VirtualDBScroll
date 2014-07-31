@@ -45,6 +45,7 @@ type
 
     FError : String;                              //
 
+
     function GetVisibleLineCount : Integer; // Approximates the visible line count of EMemo
 
     // Event Handlers
@@ -60,10 +61,13 @@ type
     procedure DataLinkOnEditingChanged(ADataSet : TDataSet);
     procedure DataLinkOnUpdateData(ADataSet : TDataSet);
     procedure EMemoOnKeyPress(Sender: TObject; var Key: char);
+    procedure EMemoOnResize(Sender: TObject);
     procedure EScrollBarOnChange(Sender: TObject);
     procedure EScrollBarOnKeyPress(Sender: TObject; var Key: char);
     procedure EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode;
       var ScrollPos: Integer);
+
+    //procedure OnResize(Sender: TObject);
   protected
     { Protected declarations }
   public
@@ -97,7 +101,7 @@ type
     // property Format : String read GetFormat write SetFormat;
 
 
-    property Align;
+    //property Align;
     property Anchors;
     property AutoSize;
     property BevelInner;
@@ -118,6 +122,7 @@ type
     property Visible;
     property Width;
 
+    procedure OnResize(Sender: TObject);
   end;
 
 procedure Register;
@@ -133,25 +138,12 @@ begin
 end;
 
 function TPASVirtualDBScrollMemo.GetVisibleLineCount : Integer;
-var
-  OldFont : HFont;
-  Hand : THandle;
-  TM : TTextMetric;
-  TempInt : integer;
 begin
-  Hand := GetDC(EMemo.Handle);
   try
-    OldFont := SelectObject(Hand, EMemo.Font.Handle);
-    try
-      GetTextMetrics(Hand, TM);
-      TempInt := EMemo.Height div TM.tmHeight;
-    finally
-      SelectObject(Hand, OldFont);
-    end;
-  finally
-    ReleaseDC(EMemo.Handle, Hand);
+    Result := FMemo.Height div FMemo.Font.GetTextHeight('I');
+  except
+    Result := FMemo.Height div 12;
   end;
-  Result := TempInt;
 end;
 
 procedure TPASVirtualDBScrollMemo.DataLinkOnRecordChanged(Field: TField);
@@ -219,7 +211,7 @@ end;
 
 procedure TPASVirtualDBScrollMemo.EMemoOnKeyPress(Sender: TObject; var Key: char);
 begin
-
+  ShowMessage('KeyPress: ' + Key); // Works
 end;
 
 procedure TPASVirtualDBScrollMemo.EScrollBarOnChange(Sender: TObject);
@@ -230,6 +222,12 @@ end;
 procedure TPASVirtualDBScrollMemo.EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode; var ScrollPos: Integer);
 begin
   ShowMessage('');
+end;
+
+procedure TPASVirtualDBScrollMemo.EMemoOnResize(Sender: TObject);
+begin
+  FVisibleLines := GetVisibleLineCount;
+  //ShowMessage(IntToStr(FVisibleLines));
 end;
 
 procedure TPASVirtualDBScrollMemo.EScrollBarOnKeyPress(Sender: TObject; var Key: char);
@@ -257,8 +255,19 @@ begin
   FMemo.Name := 'EMemo';
   FMemo.ControlStyle := FMemo.ControlStyle - [csNoDesignSelectable]; // Make sure it can not be selected/deleted within the IDE
   FMemo.Lines.Clear; // Should I allow the user to set some default text?
-  FMemo.OnKeyPress := @EMemoOnKeyPress;
+  FMemo.Align := alClient;
 
+  // Set up Memo Events
+  FMemo.OnKeyPress := @EMemoOnKeyPress;
+  FMemo.OnResize := @EMemoOnResize;
+
+  // Set up Scrollbar Events
+  EScrollBar.OnChange := @EScrollBarOnChange;
+  EScrollBar.OnKeyPress := @EScrollBarOnKeyPress;
+  EScrollBar.OnScroll := @EScrollBarOnScroll;
+
+
+  FVisibleLines := GetVisibleLineCount;
 
 end;
 
@@ -268,6 +277,12 @@ begin
   FMemo := nil;
 
   inherited Destroy;
+end;
+
+procedure TPASVirtualDBScrollMemo.OnResize(Sender: TObject);
+begin
+  //ShowMessage('');
+  //FMemo.Width := Self.Width - EScrollBar.Width;
 end;
 
 initialization

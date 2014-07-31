@@ -27,8 +27,6 @@ uses
 
 type
 
-  { TEmbeddedMemo }
-
   { TPASEmbeddedRichMemo }
 
   TPASEmbeddedRichMemo = class (TRichMemo)
@@ -48,7 +46,7 @@ type
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
   published
-    property Align : TAlign read GetAlign write SetAlign default alNone;
+    //property Align : TAlign read GetAlign write SetAlign default alNone;
     property Alignment;
     property CharCase;
     property Color;
@@ -65,8 +63,8 @@ type
     property ParentFont;
     property ParentShowHint;
     property PopupMenu;
-    property ReadOnly: Boolean read GetReadOnly write SetReadOnly default False; // Must remain set to false
-    property ScrollBars: TScrollStyle read GetScrollBars write SetScrollBars default ssHorizontal; // The only allowed values are ssNone, ssHorizontal, and ssAutoHorizontal
+    property ReadOnly: Boolean read GetReadOnly write SetReadOnly default True; // Must remain set to True
+    property ScrollBars: TScrollStyle read GetScrollBars write SetScrollBars default ssAutoHorizontal; // The only allowed values are ssNone, ssHorizontal, and ssAutoHorizontal
     property ShowHint;
     property WantReturns;
     property WantTabs;
@@ -132,13 +130,13 @@ end;
 
 procedure TPASEmbeddedRichMemo.SetScrollBars(const Value: TScrollStyle);
 begin
-  if Value in [ssNone, ssAutoHorizontal] then
+  if Value in [ssNone, ssHorizontal] then
   begin
     inherited ScrollBars := Value;
   end
   else
   begin
-    inherited ScrollBars := ssHorizontal;
+    inherited ScrollBars := ssAutoHorizontal;
   end;
 end;
 

@@ -61,6 +61,7 @@ type
     procedure DataLinkOnEditingChanged(ADataSet : TDataSet);
     procedure DataLinkOnUpdateData(ADataSet : TDataSet);
     procedure ERichMemoOnKeyPress(Sender: TObject; var Key: char);
+    procedure ERichMemoOnResize(Sender: TObject);
     procedure EScrollBarOnChange(Sender: TObject);
     procedure EScrollBarOnKeyPress(Sender: TObject; var Key: char);
     procedure EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode;
@@ -76,7 +77,6 @@ type
 
 
     property ERichMemo : TPASEmbeddedRichMemo read FRichMemo;
-    //property ERichMemo; // Inherited from TPASVirtualDBScrollBase
     property EScrollBar; // Inherited from TPASVirtualDBScrollBase
 
     property RecordSliceSize;
@@ -98,7 +98,7 @@ type
     // property Format : String read GetFormat write SetFormat;
 
 
-    property Align;
+    //property Align;
     property Anchors;
     property AutoSize;
     property BevelInner;
@@ -134,25 +134,12 @@ begin
 end;
 
 function TPASVirtualDBScrollRichMemo.GetVisibleLineCount : Integer;
-var
-  OldFont : HFont;
-  Hand : THandle;
-  TM : TTextMetric;
-  TempInt : integer;
 begin
-  Hand := GetDC(ERichMemo.Handle);
   try
-    OldFont := SelectObject(Hand, ERichMemo.Font.Handle);
-    try
-      GetTextMetrics(Hand, TM);
-      TempInt := ERichMemo.Height div TM.tmHeight;
-    finally
-      SelectObject(Hand, OldFont);
-    end;
-  finally
-    ReleaseDC(ERichMemo.Handle, Hand);
+    Result := FRichMemo.Height div FRichMemo.Font.GetTextHeight('I');
+  except
+    Result := FRichMemo.Height div 12;
   end;
-  Result := TempInt;
 end;
 
 procedure TPASVirtualDBScrollRichMemo.DataLinkOnRecordChanged(Field: TField);
@@ -223,6 +210,11 @@ begin
 
 end;
 
+procedure TPASVirtualDBScrollRichMemo.ERichMemoOnResize(Sender: TObject);
+begin
+
+end;
+
 procedure TPASVirtualDBScrollRichMemo.EScrollBarOnChange(Sender: TObject);
 begin
 
@@ -258,8 +250,18 @@ begin
   FRichMemo.Name := 'ERichMemo';
   FRichMemo.ControlStyle := FRichMemo.ControlStyle - [csNoDesignSelectable]; // Make sure it can not be selected/deleted within the IDE
   FRichMemo.Lines.Clear; // Should I allow the user to set some default text?
-  FRichMemo.OnKeyPress := @ERichMemoOnKeyPress;
+  FRichMemo.Align := alClient;
 
+  // Set up RichMemo Events
+  FRichMemo.OnKeyPress := @ERichMemoOnKeyPress;
+  FRichMemo.OnResize := @ERichMemoOnResize;
+
+  // Set up Scrollbar Events
+  EScrollBar.OnChange := @EScrollBarOnChange;
+  EScrollBar.OnKeyPress := @EScrollBarOnKeyPress;
+  EScrollBar.OnScroll := @EScrollBarOnScroll;
+
+  FVisibleLines := GetVisibleLineCount;
 
 end;
 

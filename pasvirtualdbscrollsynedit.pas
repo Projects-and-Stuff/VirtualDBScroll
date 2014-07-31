@@ -62,6 +62,7 @@ type
     procedure DataLinkOnEditingChanged(ADataSet : TDataSet);
     procedure DataLinkOnUpdateData(ADataSet : TDataSet);
     procedure ESynEditOnKeyPress(Sender: TObject; var Key: char);
+    procedure ESynEditOnResize(Sender: TObject);
     procedure EScrollBarOnChange(Sender: TObject);
     procedure EScrollBarOnKeyPress(Sender: TObject; var Key: char);
     procedure EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode;
@@ -70,6 +71,11 @@ type
     { Protected declarations }
   public
     { Public declarations }
+
+
+
+
+
     constructor Create(AOwner : TComponent); override;
     destructor Destroy; override;
   published
@@ -101,7 +107,7 @@ type
     // property Format : String read GetFormat write SetFormat;
 
 
-    property Align;
+    //property Align;
     property Anchors;
     property AutoSize;
     property BevelInner;
@@ -137,25 +143,12 @@ begin
 end;
 
 function TPASVirtualDBScrollSynEdit.GetVisibleLineCount : Integer;
-var
-  OldFont : HFont;
-  Hand : THandle;
-  TM : TTextMetric;
-  TempInt : integer;
 begin
-  Hand := GetDC(ESynEdit.Handle);
   try
-    OldFont := SelectObject(Hand, ESynEdit.Font.Handle);
-    try
-      GetTextMetrics(Hand, TM);
-      TempInt := ESynEdit.Height div TM.tmHeight;
-    finally
-      SelectObject(Hand, OldFont);
-    end;
-  finally
-    ReleaseDC(ESynEdit.Handle, Hand);
+    Result := FSynEdit.Height div FSynEdit.Font.GetTextHeight('I');
+  except
+    Result := FSynEdit.Height div 12;
   end;
-  Result := TempInt;
 end;
 
 procedure TPASVirtualDBScrollSynEdit.DataLinkOnRecordChanged(Field: TField);
@@ -226,6 +219,11 @@ begin
 
 end;
 
+procedure TPASVirtualDBScrollSynEdit.ESynEditOnResize(Sender: TObject);
+begin
+
+end;
+
 procedure TPASVirtualDBScrollSynEdit.EScrollBarOnChange(Sender: TObject);
 begin
 
@@ -233,7 +231,7 @@ end;
 
 procedure TPASVirtualDBScrollSynEdit.EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode; var ScrollPos: Integer);
 begin
-  ShowMessage('');
+
 end;
 
 procedure TPASVirtualDBScrollSynEdit.EScrollBarOnKeyPress(Sender: TObject; var Key: char);
@@ -260,9 +258,20 @@ begin
   FSynEdit.SetSubComponent(true);  // Tell the IDE to store the modified properties
   FSynEdit.Name := 'ESynEdit';
   FSynEdit.ControlStyle := FSynEdit.ControlStyle - [csNoDesignSelectable]; // Make sure it can not be selected/deleted within the IDE
-  FSynEdit.Lines.Clear; // Should I allow the user to set some default text?
-  FSynEdit.OnKeyPress := @ESynEditOnKeyPress;
+  FSynEdit.Lines.Clear; // Should I allow the user to set some default text
+  FSynEdit.Align := alClient;
 
+  // Set up SynEdit Events
+  FSynEdit.OnKeyPress := @ESynEditOnKeyPress;
+  FSynEdit.OnResize := @ESynEditOnResize;
+
+  // Set up Scrollbar Events
+  EScrollBar.OnChange := @EScrollBarOnChange;
+  EScrollBar.OnKeyPress := @EScrollBarOnKeyPress;
+  EScrollBar.OnScroll := @EScrollBarOnScroll;
+
+
+  FVisibleLines := GetVisibleLineCount;
 
 end;
 

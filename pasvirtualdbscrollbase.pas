@@ -111,6 +111,7 @@ type
     property BevelWidth;
     property BorderStyle;
     property BorderWidth;
+    property Caption;
     property Color;
     property Enabled;
     property Height;
@@ -368,12 +369,12 @@ begin
   inherited Create(AOwner);
 
   // Set default component size and values
-  Height := 50;
-  Caption := '';
   with GetControlClassDefaultSize do
   begin
     SetInitialBounds(0, 0, CX, CY);
   end;
+  Height := 50;
+  Caption := '';
 
   // Initialize the Embedded ScrollBar
   FScrollBar := TPASEmbeddedScrollBar.Create(Self); // Add the embedded memo
