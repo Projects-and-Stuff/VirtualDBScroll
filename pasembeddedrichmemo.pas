@@ -153,6 +153,7 @@ begin
   Align := alClient;
   WordWrap := False;
   ReadOnly := True;
+  ScrollBars := ssAutoHorizontal;
 end;
 
 initialization
