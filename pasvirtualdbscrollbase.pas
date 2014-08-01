@@ -68,6 +68,7 @@ type
     procedure EScrollBarOnKeyPress(Sender : TObject; var Key : char);
     procedure EScrollBarOnScroll(Sender : TObject; ScrollCode : TScrollCode;
       var ScrollPos : Integer);
+
   protected
     { Protected declarations }
   public

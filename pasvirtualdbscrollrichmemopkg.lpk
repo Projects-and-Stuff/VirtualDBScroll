@@ -2,7 +2,7 @@
 <CONFIG>
   <Package Version="4">
     <PathDelim Value="\"/>
-    <Name Value="PASVirtualDBScroll"/>
+    <Name Value="PASVirtualDBScrollRichMemoPkg"/>
     <Author Value="Jack Linke"/>
     <CompilerOptions>
       <Version Value="11"/>
@@ -17,7 +17,7 @@
         <CompilerPath Value="$(CompPath)"/>
       </Other>
     </CompilerOptions>
-    <License Value="PASVirtualDBScroll Package
+    <License Value="PASVirtualDBScrollRichMemoPkg Package
 Copyright 2014 Jack D Linke
 
 This package is free software: you can redistribute it and/or modify
@@ -33,45 +33,34 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this package. If not, see &lt;http://www.gnu.org/licenses/>."/>
     <Version Minor="1"/>
-    <Files Count="6">
+    <Files Count="2">
       <Item1>
-        <Filename Value="pasvirtualdbscrollmemo.pas"/>
-        <HasRegisterProc Value="True"/>
-        <UnitName Value="PASVirtualDBScrollMemo"/>
+        <Filename Value="pasembeddedrichmemo.pas"/>
+        <UnitName Value="PASEmbeddedRichMemo"/>
       </Item1>
       <Item2>
-        <Filename Value="pasembeddedmemo.pas"/>
-        <UnitName Value="PASEmbeddedMemo"/>
-      </Item2>
-      <Item3>
-        <Filename Value="pasembeddedscrollbar.pas"/>
-        <UnitName Value="PASEmbeddedScrollBar"/>
-      </Item3>
-      <Item4>
-        <Filename Value="pasformateditor.pas"/>
-        <UnitName Value="PASFormatEditor"/>
-      </Item4>
-      <Item5>
-        <Filename Value="pasformateditor.pas"/>
-        <UnitName Value="PASFormatEditor"/>
-      </Item5>
-      <Item6>
-        <Filename Value="pasvirtualdbscrollbase.pas"/>
+        <Filename Value="pasvirtualdbscrollrichmemo.pas"/>
         <HasRegisterProc Value="True"/>
-        <UnitName Value="PASVirtualDBScrollBase"/>
-      </Item6>
+        <UnitName Value="PASVirtualDBScrollRichMemo"/>
+      </Item2>
     </Files>
     <Type Value="RunAndDesignTime"/>
-    <RequiredPkgs Count="3">
+    <RequiredPkgs Count="5">
       <Item1>
-        <PackageName Value="IDEIntf"/>
+        <PackageName Value="PASVirtualDBScroll"/>
       </Item1>
       <Item2>
-        <PackageName Value="LCL"/>
+        <PackageName Value="richmemopackage"/>
       </Item2>
       <Item3>
-        <PackageName Value="FCL"/>
+        <PackageName Value="IDEIntf"/>
       </Item3>
+      <Item4>
+        <PackageName Value="LCL"/>
+      </Item4>
+      <Item5>
+        <PackageName Value="FCL"/>
+      </Item5>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>
