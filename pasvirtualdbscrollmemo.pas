@@ -25,7 +25,7 @@ interface
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, PASEmbeddedMemo, PASEmbeddedScrollBar, db, DBGrids, PropEdits,
-  PASFormatEditor, PASVirtualDBScrollBase, windows;
+  PASFormatEditor, PASVirtualDBScrollBase, windows, types;
 
 type
 
@@ -67,7 +67,7 @@ type
     procedure EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode;
       var ScrollPos: Integer);
 
-    //procedure OnResize(Sender: TObject);
+    procedure MoveToLine(LineNo: Integer);
   protected
     { Protected declarations }
   public
@@ -221,7 +221,13 @@ end;
 
 procedure TPASVirtualDBScrollMemo.EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode; var ScrollPos: Integer);
 begin
-  ShowMessage('');
+  //ShowMessage('');
+end;
+
+procedure TPASVirtualDBScrollMemo.MoveToLine(LineNo: Integer);
+begin
+  EMemo.CaretPos := Point(0, LineNo);
+  EMemo.SetFocus;
 end;
 
 procedure TPASVirtualDBScrollMemo.EMemoOnResize(Sender: TObject);

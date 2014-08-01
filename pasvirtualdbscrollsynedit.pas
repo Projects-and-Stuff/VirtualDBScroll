@@ -25,7 +25,7 @@ interface
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, PASEmbeddedSynEdit, PASEmbeddedScrollBar, db, DBGrids, PropEdits,
-  PASFormatEditor, PASVirtualDBScrollBase, SynEdit, SynCompletion, windows;
+  PASFormatEditor, PASVirtualDBScrollBase, SynEdit, SynCompletion, windows, types;
 
 type
 
@@ -67,6 +67,8 @@ type
     procedure EScrollBarOnKeyPress(Sender: TObject; var Key: char);
     procedure EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode;
       var ScrollPos: Integer);
+
+    procedure MoveToLine(LineNo: Integer);
   protected
     { Protected declarations }
   public
@@ -232,6 +234,12 @@ end;
 procedure TPASVirtualDBScrollSynEdit.EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode; var ScrollPos: Integer);
 begin
 
+end;
+
+procedure TPASVirtualDBScrollSynEdit.MoveToLine(LineNo: Integer);
+begin
+  ESynEdit.CaretXY := Point(0, LineNo);
+  ESynEdit.SetFocus;
 end;
 
 procedure TPASVirtualDBScrollSynEdit.EScrollBarOnKeyPress(Sender: TObject; var Key: char);
