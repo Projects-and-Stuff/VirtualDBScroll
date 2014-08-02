@@ -29,10 +29,10 @@ uses
 
 type
 
+
   { TPASVirtualDBScrollMemo }
 
   TPASVirtualDBScrollMemo = class(TPASVirtualDBScrollBase)
-
   private
     { Private declarations }
     FMemo : TPASEmbeddedMemo;
@@ -61,8 +61,11 @@ type
     procedure DataLinkOnEditingChanged(ADataSet : TDataSet);
     procedure DataLinkOnUpdateData(ADataSet : TDataSet);
     procedure EMemoOnKeyPress(Sender: TObject; var Key: char);
+    procedure EMemoOnKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure EMemoOnResize(Sender: TObject);
     procedure EScrollBarOnChange(Sender: TObject);
+    procedure EScrollBarOnStartDrag(Sender: TObject; var DragObject: TDragObject);
+    procedure EScrollBarOnEndDrag(Sender, Target: TObject; X, Y: Integer);
     procedure EScrollBarOnKeyPress(Sender: TObject; var Key: char);
     procedure EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode;
       var ScrollPos: Integer);
@@ -79,8 +82,9 @@ type
 
 
     property EMemo : TPASEmbeddedMemo read FMemo;
-    //property EMemo; // Inherited from TPASVirtualDBScrollBase
     property EScrollBar; // Inherited from TPASVirtualDBScrollBase
+    property EPopupInfo; // Inherited from TPASVirtualDBScrollBase
+
 
     property RecordSliceSize;
     // property RecordSliceSize : Integer read GetSliceSize write SetSliceSize default 50; // Used to set the number of records per Slice. Allowable range is 1 to 500
@@ -100,8 +104,6 @@ type
     property Format;
     // property Format : String read GetFormat write SetFormat;
 
-
-    //property Align;
     property Anchors;
     property AutoSize;
     property BevelInner;
@@ -122,7 +124,6 @@ type
     property Visible;
     property Width;
 
-    procedure OnResize(Sender: TObject);
   end;
 
 procedure Register;
@@ -211,7 +212,38 @@ end;
 
 procedure TPASVirtualDBScrollMemo.EMemoOnKeyPress(Sender: TObject; var Key: char);
 begin
-  ShowMessage('KeyPress: ' + Key); // Works
+  //ShowMessage('KeyPress: ' + Key); // Works
+
+end;
+
+procedure TPASVirtualDBScrollMemo.EMemoOnKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_DOWN then
+  begin
+
+  end
+  else if Key = VK_UP then
+  begin
+
+  end
+  else if Key = VK_PRIOR then // Page Up
+  begin
+
+  end
+  else if Key = VK_NEXT then // Page Down
+  begin
+
+  end
+  else if Key = VK_HOME then
+  begin
+
+  end
+  else if Key = VK_END then
+  begin
+
+  end;
+
 end;
 
 procedure TPASVirtualDBScrollMemo.EScrollBarOnChange(Sender: TObject);
@@ -219,9 +251,45 @@ begin
 
 end;
 
+procedure TPASVirtualDBScrollMemo.EScrollBarOnStartDrag(Sender: TObject;
+  var DragObject: TDragObject);
+begin
+
+end;
+
+procedure TPASVirtualDBScrollMemo.EScrollBarOnEndDrag(Sender, Target: TObject;
+  X, Y: Integer);
+begin
+
+end;
+
 procedure TPASVirtualDBScrollMemo.EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode; var ScrollPos: Integer);
 begin
-  //ShowMessage('');
+
+  if EPopupInfo.IsDisplayed then
+  begin
+    EPopupInfo.Visible := True;
+    EPopupInfo.Left := EScrollBar.Left - EPopupInfo.Width;
+    EPopupInfo.Top := Mouse.CursorPos.y - Parent.Top - Self.Top - EPopupInfo.Height;
+    EPopupInfo.Caption := IntToStr(EScrollBar.Position);
+    EPopupInfo.BringToFront;
+    EMemo.Text := 'x: ' + (IntToStr(Mouse.CursorPos.x) + ' - ' + IntToStr(Parent.Left) + ' = ' + IntToStr(Mouse.CursorPos.x - Parent.Left)) +
+    ' and y: ' + (IntToStr(Mouse.CursorPos.y) + ' - ' + IntToStr(Parent.Top) + ' = ' + IntToStr(Mouse.CursorPos.y - Parent.Top));
+  end;
+
+  case ScrollCode of
+    scLineUp : ; //
+    scLineDown : ; //
+    scPageUp : ; //
+    scPageDown : ; //
+    scPosition : ; //
+    scTrack : ; //
+    scTop : ; //
+    scBottom : ; //
+    scEndScroll : EPopupInfo.Visible := False; //
+  end;
+
+
 end;
 
 procedure TPASVirtualDBScrollMemo.MoveToLine(LineNo: Integer);
@@ -257,7 +325,7 @@ begin
   // Initialize the Embedded Memo
   FMemo := TPASEmbeddedMemo.Create(Self); // Add the embedded memo
   FMemo.Parent := self;         // Show the memo in the panel
-  FMemo.SetSubComponent(true);  // Tell the IDE to store the modified properties
+  FMemo.SetSubComponent(True);  // Tell the IDE to store the modified properties
   FMemo.Name := 'EMemo';
   FMemo.ControlStyle := FMemo.ControlStyle - [csNoDesignSelectable]; // Make sure it can not be selected/deleted within the IDE
   FMemo.Lines.Clear; // Should I allow the user to set some default text?
@@ -265,6 +333,7 @@ begin
 
   // Set up Memo Events
   FMemo.OnKeyPress := @EMemoOnKeyPress;
+  FMemo.OnKeyDown := @EMemoOnKeyDown;
   FMemo.OnResize := @EMemoOnResize;
 
   // Set up Scrollbar Events
@@ -283,12 +352,6 @@ begin
   FMemo := nil;
 
   inherited Destroy;
-end;
-
-procedure TPASVirtualDBScrollMemo.OnResize(Sender: TObject);
-begin
-  //ShowMessage('');
-  //FMemo.Width := Self.Width - EScrollBar.Width;
 end;
 
 initialization

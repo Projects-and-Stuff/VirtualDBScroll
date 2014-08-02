@@ -33,7 +33,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this package. If not, see &lt;http://www.gnu.org/licenses/>."/>
     <Version Minor="1"/>
-    <Files Count="6">
+    <Files Count="7">
       <Item1>
         <Filename Value="pasvirtualdbscrollmemo.pas"/>
         <HasRegisterProc Value="True"/>
@@ -60,6 +60,10 @@ along with this package. If not, see &lt;http://www.gnu.org/licenses/>."/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="PASVirtualDBScrollBase"/>
       </Item6>
+      <Item7>
+        <Filename Value="pasembeddedpanel.pas"/>
+        <UnitName Value="PASEmbeddedPanel"/>
+      </Item7>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="3">

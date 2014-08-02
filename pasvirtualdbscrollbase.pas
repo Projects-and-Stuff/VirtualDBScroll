@@ -25,7 +25,7 @@ interface
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, PASEmbeddedMemo, PASEmbeddedScrollBar, db, DBGrids, PropEdits,
-  PASFormatEditor;
+  PASFormatEditor, PASEmbeddedPanel;
 
 type
 
@@ -36,6 +36,7 @@ type
   private
     { Private declarations }
     FScrollBar : TPASEmbeddedScrollBar;
+    FPopupInfo : TPASEmbeddedPanel;
     FDataLink : TComponentDataLink;
 
     FRecordCount : Integer;                       // Total number of records in the DataSet
@@ -92,6 +93,7 @@ type
     procedure CalculateRecordSliceCount; // Actually calculates both FRecordSliceCount and the length of array FRecordSliceLineCounts
 
     property EScrollBar : TPASEmbeddedScrollBar read FScrollBar;
+    property EPopupInfo : TPASEmbeddedPanel read FPopupInfo;
 
     property RecordSliceSize : Integer read GetSliceSize write SetSliceSize default 50; // Used to set the number of records per Slice. Allowable range is 1 to 500
     property DataLink : TComponentDataLink read FDataLink write FDataLink;
@@ -377,10 +379,12 @@ begin
   Height := 50;
   Caption := '';
 
+
+
   // Initialize the Embedded ScrollBar
   FScrollBar := TPASEmbeddedScrollBar.Create(Self); // Add the embedded memo
-  FScrollBar.Parent := self;         // Show the memo in the panel
-  FScrollBar.SetSubComponent(true);  // Tell the IDE to store the modified properties
+  FScrollBar.Parent := Self;         // Show the memo in the panel
+  FScrollBar.SetSubComponent(True);  // Tell the IDE to store the modified properties
   FScrollBar.Name := 'EScrollBar';
   FScrollBar.ControlStyle := FScrollBar.ControlStyle - [csNoDesignSelectable]; // Make sure it can not be selected/deleted within the IDE
   FScrollBar.Width := 15;
@@ -389,6 +393,23 @@ begin
   FScrollBar.OnChange := @EScrollBarOnChange;
   FScrollBar.OnScroll := @EScrollBarOnScroll;
   FScrollBar.OnKeyPress := @EScrollBarOnKeyPress;
+
+
+  // Initialize the Embedded Label
+  FPopupInfo := TPASEmbeddedPanel.Create(Self);
+  FPopupInfo.Parent := Self;
+  FPopupInfo.SetSubComponent(True);
+  FPopupInfo.Name := 'EPopupInfo';
+  FPopupInfo.ControlStyle := FPopupInfo.ControlStyle - [csNoDesignSelectable];
+  FPopupInfo.IsDisplayed := True;
+  FPopupInfo.Width := 50;
+  FPopupInfo.Height := 24;
+  FPopupInfo.Caption := '0';
+  FPopupInfo.Left := 0; //Mouse.CursorPos.x;
+  FPopupInfo.Top := 0; //Mouse.CursorPos.y;
+  FPopupInfo.BringToFront;
+
+
 
   // Initialize the Dataset
   FDataLink := TComponentDataLink.Create;
@@ -420,11 +441,13 @@ end;
 destructor TPASVirtualDBScrollBase.Destroy;
 begin
   FDataLink.Free;
-  FDataLink := nil;
+  FDataLink := Nil;
 
+  FPopupInfo.Free;
+  FPopupInfo := Nil;
 
   FScrollBar.Free;
-  FScrollBar := nil;
+  FScrollBar := Nil;
 
   inherited Destroy;
 end;
