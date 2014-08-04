@@ -159,6 +159,7 @@ implementation
 procedure Register;
 begin
   RegisterPropertyEditor(TypeInfo(TOperationMode), TPASVirtualDBScrollBase, 'OperationMode', TEnumPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(String), TPASVirtualDBScrollBase, 'Format', TPASFormatEditor);
 end;
 
 { TPASOperationModePropertyEditor }

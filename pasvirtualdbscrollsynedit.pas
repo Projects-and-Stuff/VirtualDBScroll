@@ -32,7 +32,6 @@ type
   { TPASVirtualDBScrollSynEdit }
 
   TPASVirtualDBScrollSynEdit = class(TPASVirtualDBScrollBase)
-
   private
     { Private declarations }
     FSynEdit : TPASEmbeddedSynEdit;
@@ -62,6 +61,7 @@ type
     procedure DataLinkOnEditingChanged(ADataSet : TDataSet);
     procedure DataLinkOnUpdateData(ADataSet : TDataSet);
     procedure ESynEditOnKeyPress(Sender: TObject; var Key: char);
+    procedure ESynEditOnKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ESynEditOnResize(Sender: TObject);
     procedure EScrollBarOnChange(Sender: TObject);
     procedure EScrollBarOnKeyPress(Sender: TObject; var Key: char);
@@ -73,43 +73,31 @@ type
     { Protected declarations }
   public
     { Public declarations }
-
-
-
-
-
     constructor Create(AOwner : TComponent); override;
     destructor Destroy; override;
   published
     { Published declarations }
-
     property Completion : TSynCompletion read FCompletion write FCompletion;
 
-
     property ESynEdit : TPASEmbeddedSynEdit read FSynEdit;
-    //property ESynEdit; // Inherited from TPASVirtualDBScrollBase
     property EScrollBar; // Inherited from TPASVirtualDBScrollBase
+    property EPopupInfo; // Inherited from TPASVirtualDBScrollBase
+
+
+    property OperationMode;
 
     property RecordSliceSize;
-    // property RecordSliceSize : Integer read GetSliceSize write SetSliceSize default 50; // Used to set the number of records per Slice. Allowable range is 1 to 500
 
     property DataLink;
-    // property DataLink : TComponentDataLink read FDataLink write FDataLink;
 
     property DataSource;
-    // property DataSource : TDataSource read GetDataSource write SetDataSource;
 
     property LineResolution;
-    // property LineResolution : Integer read FLineResolution;
 
     property RecordCount;
-    // property RecordCount : Integer read FRecordCount;
 
     property Format;
-    // property Format : String read GetFormat write SetFormat;
 
-
-    //property Align;
     property Anchors;
     property AutoSize;
     property BevelInner;
@@ -141,7 +129,7 @@ procedure Register;
 begin
   RegisterComponents('Additional', [TPASVirtualDBScrollSynEdit]);
 
-  RegisterPropertyEditor(TypeInfo(String), TPASVirtualDBScrollSynEdit, 'Format', TPASFormatEditor);
+  //RegisterPropertyEditor(TypeInfo(String), TPASVirtualDBScrollSynEdit, 'Format', TPASFormatEditor);
 end;
 
 function TPASVirtualDBScrollSynEdit.GetVisibleLineCount : Integer;
@@ -221,9 +209,38 @@ begin
 
 end;
 
+procedure TPASVirtualDBScrollSynEdit.ESynEditOnKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_DOWN then
+  begin
+
+  end
+  else if Key = VK_UP then
+  begin
+
+  end
+  else if Key = VK_PRIOR then // Page Up
+  begin
+
+  end
+  else if Key = VK_NEXT then // Page Down
+  begin
+
+  end
+  else if Key = VK_HOME then
+  begin
+
+  end
+  else if Key = VK_END then
+  begin
+
+  end;
+end;
+
 procedure TPASVirtualDBScrollSynEdit.ESynEditOnResize(Sender: TObject);
 begin
-
+  FVisibleLines := GetVisibleLineCount;
 end;
 
 procedure TPASVirtualDBScrollSynEdit.EScrollBarOnChange(Sender: TObject);
@@ -233,7 +250,31 @@ end;
 
 procedure TPASVirtualDBScrollSynEdit.EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode; var ScrollPos: Integer);
 begin
+  if EPopupInfo.IsDisplayed then
+  begin
+    EPopupInfo.Visible := True;
+    EPopupInfo.Left := EScrollBar.Left - EPopupInfo.Width;
+    EPopupInfo.Top := Mouse.CursorPos.y - Parent.Top - Self.Top - EPopupInfo.Height;
+    // Try using the scrollbar height and the scrollbar position divided by the scrollbar max to determine PopupInfo Top
+    // This way, it's not dependent upon the mouse position at all
 
+    EPopupInfo.Caption := IntToStr(EScrollBar.Position); // Eventually this should specify which record we're on
+    EPopupInfo.BringToFront;
+    ESynEdit.Text := 'x: ' + (IntToStr(Mouse.CursorPos.x) + ' - ' + IntToStr(Parent.Left) + ' = ' + IntToStr(Mouse.CursorPos.x - Parent.Left)) +
+    ' and y: ' + (IntToStr(Mouse.CursorPos.y) + ' - ' + IntToStr(Parent.Top) + ' = ' + IntToStr(Mouse.CursorPos.y - Parent.Top));
+  end;
+
+  case ScrollCode of
+    scLineUp : ; //
+    scLineDown : ; //
+    scPageUp : ; //
+    scPageDown : ; //
+    scPosition : ; //
+    scTrack : ; //
+    scTop : ; //
+    scBottom : ; //
+    scEndScroll : EPopupInfo.Visible := False; //
+  end;
 end;
 
 procedure TPASVirtualDBScrollSynEdit.MoveToLine(LineNo: Integer);
@@ -271,6 +312,7 @@ begin
 
   // Set up SynEdit Events
   FSynEdit.OnKeyPress := @ESynEditOnKeyPress;
+  FSynEdit.OnKeyDown := @ESynEditOnKeyDown;
   FSynEdit.OnResize := @ESynEditOnResize;
 
   // Set up Scrollbar Events

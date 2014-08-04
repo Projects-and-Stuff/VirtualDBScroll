@@ -129,7 +129,7 @@ procedure Register;
 begin
   RegisterComponents('Additional', [TPASVirtualDBScrollRichMemo]);
 
-  RegisterPropertyEditor(TypeInfo(String), TPASVirtualDBScrollRichMemo, 'Format', TPASFormatEditor);
+  //RegisterPropertyEditor(TypeInfo(String), TPASVirtualDBScrollRichMemo, 'Format', TPASFormatEditor);
 end;
 
 function TPASVirtualDBScrollRichMemo.GetVisibleLineCount : Integer;

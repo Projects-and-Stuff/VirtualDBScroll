@@ -29,7 +29,6 @@ uses
 
 type
 
-
   { TPASVirtualDBScrollMemo }
 
   TPASVirtualDBScrollMemo = class(TPASVirtualDBScrollBase)
@@ -44,7 +43,6 @@ type
 
 
     FError : String;                              //
-
 
     function GetVisibleLineCount : Integer; // Approximates the visible line count of EMemo
 
@@ -64,8 +62,6 @@ type
     procedure EMemoOnKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure EMemoOnResize(Sender: TObject);
     procedure EScrollBarOnChange(Sender: TObject);
-    procedure EScrollBarOnStartDrag(Sender: TObject; var DragObject: TDragObject);
-    procedure EScrollBarOnEndDrag(Sender, Target: TObject; X, Y: Integer);
     procedure EScrollBarOnKeyPress(Sender: TObject; var Key: char);
     procedure EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode;
       var ScrollPos: Integer);
@@ -80,29 +76,24 @@ type
   published
     { Published declarations }
 
-
     property EMemo : TPASEmbeddedMemo read FMemo;
     property EScrollBar; // Inherited from TPASVirtualDBScrollBase
     property EPopupInfo; // Inherited from TPASVirtualDBScrollBase
 
 
+    property OperationMode;
+
     property RecordSliceSize;
-    // property RecordSliceSize : Integer read GetSliceSize write SetSliceSize default 50; // Used to set the number of records per Slice. Allowable range is 1 to 500
 
     property DataLink;
-    // property DataLink : TComponentDataLink read FDataLink write FDataLink;
 
     property DataSource;
-    // property DataSource : TDataSource read GetDataSource write SetDataSource;
 
     property LineResolution;
-    // property LineResolution : Integer read FLineResolution;
 
     property RecordCount;
-    // property RecordCount : Integer read FRecordCount;
 
     property Format;
-    // property Format : String read GetFormat write SetFormat;
 
     property Anchors;
     property AutoSize;
@@ -135,7 +126,7 @@ procedure Register;
 begin
   RegisterComponents('Additional', [TPASVirtualDBScrollMemo]);
 
-  RegisterPropertyEditor(TypeInfo(String), TPASVirtualDBScrollMemo, 'Format', TPASFormatEditor);
+  //RegisterPropertyEditor(TypeInfo(String), TPASVirtualDBScrollMemo, 'Format', TPASFormatEditor);
 end;
 
 function TPASVirtualDBScrollMemo.GetVisibleLineCount : Integer;
@@ -247,18 +238,6 @@ begin
 end;
 
 procedure TPASVirtualDBScrollMemo.EScrollBarOnChange(Sender: TObject);
-begin
-
-end;
-
-procedure TPASVirtualDBScrollMemo.EScrollBarOnStartDrag(Sender: TObject;
-  var DragObject: TDragObject);
-begin
-
-end;
-
-procedure TPASVirtualDBScrollMemo.EScrollBarOnEndDrag(Sender, Target: TObject;
-  X, Y: Integer);
 begin
 
 end;
