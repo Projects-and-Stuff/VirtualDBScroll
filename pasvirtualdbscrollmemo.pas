@@ -271,7 +271,10 @@ begin
     EPopupInfo.Visible := True;
     EPopupInfo.Left := EScrollBar.Left - EPopupInfo.Width;
     EPopupInfo.Top := Mouse.CursorPos.y - Parent.Top - Self.Top - EPopupInfo.Height;
-    EPopupInfo.Caption := IntToStr(EScrollBar.Position);
+    // Try using the scrollbar height and the scrollbar position divided by the scrollbar max to determine PopupInfo Top
+    // This way, it's not dependent upon the mouse position at all
+
+    EPopupInfo.Caption := IntToStr(EScrollBar.Position); // Eventually this should specify which record we're on
     EPopupInfo.BringToFront;
     EMemo.Text := 'x: ' + (IntToStr(Mouse.CursorPos.x) + ' - ' + IntToStr(Parent.Left) + ' = ' + IntToStr(Mouse.CursorPos.x - Parent.Left)) +
     ' and y: ' + (IntToStr(Mouse.CursorPos.y) + ' - ' + IntToStr(Parent.Top) + ' = ' + IntToStr(Mouse.CursorPos.y - Parent.Top));

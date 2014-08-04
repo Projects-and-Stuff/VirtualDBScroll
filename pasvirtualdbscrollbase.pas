@@ -29,6 +29,15 @@ uses
 
 type
 
+  { TOperationMode }
+
+  TOperationMode = (Standard, SmallDataSet, Disconnected);
+  // Standard :      The default behavior for scrolling through large DataSets
+  // SmallDataSet:   Can be selected when scrolling through a small DataSet (smoother operation)
+  // Disconnected :  Allows the programmer to specify the content of the memo (disconnecting from DataSet content)
+  //                 Hides the Embedded Scrollbar, sets Memo Scrollbar to ssAutoBoth
+
+
   { TPASVirtualDBScrollBase }
 
   TPASVirtualDBScrollBase = class(TCustomPanel)
@@ -51,6 +60,7 @@ type
 
     FError : String;                              //
 
+    FOperationMode : TOperationMode;
 
     // Event Handlers
 
@@ -69,6 +79,7 @@ type
     procedure EScrollBarOnKeyPress(Sender : TObject; var Key : char);
     procedure EScrollBarOnScroll(Sender : TObject; ScrollCode : TScrollCode;
       var ScrollPos : Integer);
+    procedure SetOperationMode(AValue: TOperationMode);
 
   protected
     { Protected declarations }
@@ -105,6 +116,7 @@ type
 
     {The Format property allows the programmer to determine how records will be displayed within the component}
     property Format : String read GetFormat write SetFormat;
+    property OperationMode: TOperationMode read FOperationMode write SetOperationMode default Standard;
 
     property Align;
     property Anchors;
@@ -132,6 +144,15 @@ type
 
   end;
 
+
+
+  { TPASOperationModePropertyEditor }
+
+  TPASOperationModePropertyEditor = class(TEnumPropertyEditor)
+  public
+    procedure GetValues(Proc: TGetStrProc); override;
+  end;
+
 procedure Register;
 
 
@@ -139,7 +160,23 @@ implementation
 
 procedure Register;
 begin
-  RegisterPropertyEditor(TypeInfo(String), TPASVirtualDBScrollBase, 'Format', TPASFormatEditor);
+  RegisterPropertyEditor(TypeInfo(TOperationMode), TPASVirtualDBScrollBase, 'Format', TPASFormatEditor);
+end;
+
+{ TPASOperationModePropertyEditor }
+
+procedure TPASOperationModePropertyEditor.GetValues(Proc: TGetStrProc);
+type
+  TRestricted = 1..3;
+  TRestrictedNames = array[TRestricted] of ShortString;
+const
+  RestrictedStyleNames: TRestrictedNames =
+                          ('Standard', 'SmallDataSet', 'Disconnected');
+var
+  i: TRestricted;
+begin
+  for i := Low(TRestricted) to High(TRestricted) do
+    Proc(RestrictedStyleNames[i]);
 end;
 
 function TPASVirtualDBScrollBase.GetFormat: String;
@@ -362,6 +399,18 @@ begin
 
 end;
 
+procedure TPASVirtualDBScrollBase.SetOperationMode(AValue: TOperationMode);
+begin
+  if AValue in [SmallDataSet, Disconnected] then
+  begin
+    FOperationMode := AValue;
+  end
+  else
+  begin
+    FOperationMode := Standard;
+  end;
+end;
+
 procedure TPASVirtualDBScrollBase.EScrollBarOnKeyPress(Sender: TObject; var Key: char);
 begin
 
@@ -451,6 +500,10 @@ begin
 
   inherited Destroy;
 end;
+
+initialization
+  RegisterPropertyEditor(TypeInfo(TOperationMode), TPASVirtualDBScrollBase, 'OperationMode', TPASOperationModePropertyEditor);
+
 
 
 
