@@ -141,9 +141,7 @@ type
     property Width;
 
 
-
   end;
-
 
 
   { TPASOperationModePropertyEditor }
@@ -160,7 +158,7 @@ implementation
 
 procedure Register;
 begin
-  RegisterPropertyEditor(TypeInfo(TOperationMode), TPASVirtualDBScrollBase, 'Format', TPASFormatEditor);
+  RegisterPropertyEditor(TypeInfo(TOperationMode), TPASVirtualDBScrollBase, 'OperationMode', TEnumPropertyEditor);
 end;
 
 { TPASOperationModePropertyEditor }
