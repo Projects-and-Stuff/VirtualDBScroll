@@ -61,6 +61,7 @@ type
     procedure DataLinkOnEditingChanged(ADataSet : TDataSet);
     procedure DataLinkOnUpdateData(ADataSet : TDataSet);
     procedure ERichMemoOnKeyPress(Sender: TObject; var Key: char);
+    procedure ERichMemoOnKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ERichMemoOnResize(Sender: TObject);
     procedure EScrollBarOnChange(Sender: TObject);
     procedure EScrollBarOnKeyPress(Sender: TObject; var Key: char);
@@ -80,27 +81,23 @@ type
 
     property ERichMemo : TPASEmbeddedRichMemo read FRichMemo;
     property EScrollBar; // Inherited from TPASVirtualDBScrollBase
+    property EPopupInfo; // Inherited from TPASVirtualDBScrollBase
+
+
+    property OperationMode;
 
     property RecordSliceSize;
-    // property RecordSliceSize : Integer read GetSliceSize write SetSliceSize default 50; // Used to set the number of records per Slice. Allowable range is 1 to 500
 
     property DataLink;
-    // property DataLink : TComponentDataLink read FDataLink write FDataLink;
 
     property DataSource;
-    // property DataSource : TDataSource read GetDataSource write SetDataSource;
 
     property LineResolution;
-    // property LineResolution : Integer read FLineResolution;
 
     property RecordCount;
-    // property RecordCount : Integer read FRecordCount;
 
     property Format;
-    // property Format : String read GetFormat write SetFormat;
 
-
-    //property Align;
     property Anchors;
     property AutoSize;
     property BevelInner;
@@ -212,9 +209,38 @@ begin
 
 end;
 
+procedure TPASVirtualDBScrollRichMemo.ERichMemoOnKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_DOWN then
+  begin
+
+  end
+  else if Key = VK_UP then
+  begin
+
+  end
+  else if Key = VK_PRIOR then // Page Up
+  begin
+
+  end
+  else if Key = VK_NEXT then // Page Down
+  begin
+
+  end
+  else if Key = VK_HOME then
+  begin
+
+  end
+  else if Key = VK_END then
+  begin
+
+  end;
+end;
+
 procedure TPASVirtualDBScrollRichMemo.ERichMemoOnResize(Sender: TObject);
 begin
-
+  FVisibleLines := GetVisibleLineCount;
 end;
 
 procedure TPASVirtualDBScrollRichMemo.EScrollBarOnChange(Sender: TObject);
@@ -224,7 +250,33 @@ end;
 
 procedure TPASVirtualDBScrollRichMemo.EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode; var ScrollPos: Integer);
 begin
-  //ShowMessage('');
+
+    if EPopupInfo.IsDisplayed then
+    begin
+      EPopupInfo.Visible := True;
+      EPopupInfo.Left := EScrollBar.Left - EPopupInfo.Width;
+      EPopupInfo.Top := Mouse.CursorPos.y - Parent.Top - Self.Top - EPopupInfo.Height;
+      // Try using the scrollbar height and the scrollbar position divided by the scrollbar max to determine PopupInfo Top
+      // This way, it's not dependent upon the mouse position at all
+
+      EPopupInfo.Caption := IntToStr(EScrollBar.Position); // Eventually this should specify which record we're on
+      EPopupInfo.BringToFront;
+      ERichMemo.Text := 'x: ' + (IntToStr(Mouse.CursorPos.x) + ' - ' + IntToStr(Parent.Left) + ' = ' + IntToStr(Mouse.CursorPos.x - Parent.Left)) +
+      ' and y: ' + (IntToStr(Mouse.CursorPos.y) + ' - ' + IntToStr(Parent.Top) + ' = ' + IntToStr(Mouse.CursorPos.y - Parent.Top));
+    end;
+
+    case ScrollCode of
+      scLineUp : ; //
+      scLineDown : ; //
+      scPageUp : ; //
+      scPageDown : ; //
+      scPosition : ; //
+      scTrack : ; //
+      scTop : ; //
+      scBottom : ; //
+      scEndScroll : EPopupInfo.Visible := False; //
+    end;
+
 end;
 
 procedure TPASVirtualDBScrollRichMemo.MoveToLine(LineNo: Integer);
@@ -262,6 +314,7 @@ begin
 
   // Set up RichMemo Events
   FRichMemo.OnKeyPress := @ERichMemoOnKeyPress;
+  FRichMemo.OnKeyDown := @ERichMemoOnKeyDown;
   FRichMemo.OnResize := @ERichMemoOnResize;
 
   // Set up Scrollbar Events
