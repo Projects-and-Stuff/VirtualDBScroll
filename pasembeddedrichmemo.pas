@@ -19,12 +19,12 @@ along with this package. If not, see <http://www.gnu.org/licenses/>.
 }
 
 {$mode objfpc}{$H+}
-{$DEFINE DoLog}
+{$DEFINE dbgDBScroll}
 
 interface
 
 uses
-  Classes, SysUtils, Controls, StdCtrls, IDEIntf, PropEdits, typinfo, RichMemo {$ifdef DoLog}, LazLogger{$endif};
+  Classes, SysUtils, Controls, StdCtrls, IDEIntf, PropEdits, typinfo, RichMemo {$ifdef dbgDBScroll}, LazLogger{$endif};
 
 type
 

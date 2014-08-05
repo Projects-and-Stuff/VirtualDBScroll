@@ -1,12 +1,12 @@
 unit PASFormatEditor;
 
 {$mode objfpc}{$H+}
-{$DEFINE DoLog}
+{$DEFINE dbgDBScroll}
 
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls {$ifdef DoLog}, LazLogger{$endif},
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls {$ifdef dbgDBScroll}, LazLogger{$endif},
   PropEdits;
 
 type

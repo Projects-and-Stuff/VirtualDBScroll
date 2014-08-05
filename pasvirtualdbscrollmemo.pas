@@ -19,14 +19,14 @@ along with this package. If not, see <http://www.gnu.org/licenses/>.
 }
 
 {$mode objfpc}{$H+}
-{$DEFINE DoLog}
+{$DEFINE dbgDBScroll}
 
 interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, PASEmbeddedMemo, PASEmbeddedScrollBar, db, DBGrids, PropEdits,
-  PASFormatEditor, PASVirtualDBScrollBase, windows, types {$ifdef DoLog}, LazLogger{$endif};
+  PASFormatEditor, PASVirtualDBScrollBase, windows, types {$ifdef dbgDBScroll}, LazLogger{$endif};
 
 type
 
@@ -329,7 +329,7 @@ end;
 
 destructor TPASVirtualDBScrollMemo.Destroy;
 begin
-  {$ifdef DoLog}
+  {$ifdef dbgDBScroll}
     DebugLn('TPASVirtualDBScrollMemo.Destroy');
   {$endif}
 

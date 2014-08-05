@@ -19,7 +19,7 @@ along with this package. If not, see <http://www.gnu.org/licenses/>.
 }
 
 {$mode objfpc}{$H+}
-{$DEFINE DoLog}
+{$DEFINE dbgDBScroll}
 
 interface
 
@@ -27,7 +27,7 @@ uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, PASEmbeddedSynEdit, PASEmbeddedScrollBar, db, DBGrids, PropEdits,
   PASFormatEditor, PASVirtualDBScrollBase, SynEdit, SynCompletion, windows, types
-  {$ifdef DoLog}, LazLogger{$endif};
+  {$ifdef dbgDBScroll}, LazLogger{$endif};
 
 type
 
@@ -327,7 +327,7 @@ end;
 
 destructor TPASVirtualDBScrollSynEdit.Destroy;
 begin
-  {$ifdef DoLog}
+  {$ifdef dbgDBScroll}
     DebugLn('TPASVirtualDBScrollSynEdit.Destroy');
   {$endif}
 
