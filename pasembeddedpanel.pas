@@ -19,11 +19,12 @@ along with this package. If not, see <http://www.gnu.org/licenses/>.
 }
 
 {$mode objfpc}{$H+}
+{$DEFINE DoLog}
 
 interface
 
 uses
-  Classes, SysUtils, Controls, StdCtrls, IDEIntf, PropEdits, typinfo, ExtCtrls;
+  Classes, SysUtils, Controls, StdCtrls, IDEIntf, PropEdits, typinfo, ExtCtrls {$ifdef DoLog}, LazLogger{$endif};
 
 type
 

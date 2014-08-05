@@ -1,11 +1,12 @@
 unit PASFormatEditor;
 
 {$mode objfpc}{$H+}
+{$DEFINE DoLog}
 
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls {$ifdef DoLog}, LazLogger{$endif},
   PropEdits;
 
 type

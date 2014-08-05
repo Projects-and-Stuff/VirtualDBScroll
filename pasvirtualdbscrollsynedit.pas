@@ -19,13 +19,15 @@ along with this package. If not, see <http://www.gnu.org/licenses/>.
 }
 
 {$mode objfpc}{$H+}
+{$DEFINE DoLog}
 
 interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, PASEmbeddedSynEdit, PASEmbeddedScrollBar, db, DBGrids, PropEdits,
-  PASFormatEditor, PASVirtualDBScrollBase, SynEdit, SynCompletion, windows, types;
+  PASFormatEditor, PASVirtualDBScrollBase, SynEdit, SynCompletion, windows, types
+  {$ifdef DoLog}, LazLogger{$endif};
 
 type
 
@@ -128,8 +130,6 @@ implementation
 procedure Register;
 begin
   RegisterComponents('Additional', [TPASVirtualDBScrollSynEdit]);
-
-  //RegisterPropertyEditor(TypeInfo(String), TPASVirtualDBScrollSynEdit, 'Format', TPASFormatEditor);
 end;
 
 function TPASVirtualDBScrollSynEdit.GetVisibleLineCount : Integer;
@@ -327,7 +327,9 @@ end;
 
 destructor TPASVirtualDBScrollSynEdit.Destroy;
 begin
-
+  {$ifdef DoLog}
+    DebugLn('TPASVirtualDBScrollSynEdit.Destroy');
+  {$endif}
 
   FSynEdit.Free;
   FSynEdit := nil;

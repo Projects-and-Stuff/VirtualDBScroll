@@ -19,13 +19,14 @@ along with this package. If not, see <http://www.gnu.org/licenses/>.
 }
 
 {$mode objfpc}{$H+}
+{$DEFINE DoLog}
 
 interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, PASEmbeddedMemo, PASEmbeddedScrollBar, db, DBGrids, PropEdits,
-  PASFormatEditor, PASVirtualDBScrollBase, windows, types;
+  PASFormatEditor, PASVirtualDBScrollBase, windows, types {$ifdef DoLog}, LazLogger{$endif};
 
 type
 
@@ -125,8 +126,6 @@ implementation
 procedure Register;
 begin
   RegisterComponents('Additional', [TPASVirtualDBScrollMemo]);
-
-  //RegisterPropertyEditor(TypeInfo(String), TPASVirtualDBScrollMemo, 'Format', TPASFormatEditor);
 end;
 
 function TPASVirtualDBScrollMemo.GetVisibleLineCount : Integer;
@@ -203,7 +202,6 @@ end;
 
 procedure TPASVirtualDBScrollMemo.EMemoOnKeyPress(Sender: TObject; var Key: char);
 begin
-  //ShowMessage('KeyPress: ' + Key); // Works
 
 end;
 
@@ -249,7 +247,9 @@ begin
   begin
     EPopupInfo.Visible := True;
     EPopupInfo.Left := EScrollBar.Left - EPopupInfo.Width;
-    EPopupInfo.Top := Mouse.CursorPos.y - Parent.Top - Self.Top - EPopupInfo.Height;
+    EPopupInfo.Top := Mouse.CursorPos.y - Parent.Top - Self.Top - (EPopupInfo.Height);
+
+    //EPopupInfo.Top := Self.Top + ((EScrollBar.Height * ((EScrollBar.Position * 10) div EScrollBar.Max)) div 10);//  (100*EScrollBar.Position div 100*EScrollBar.Max);
     // Try using the scrollbar height and the scrollbar position divided by the scrollbar max to determine PopupInfo Top
     // This way, it's not dependent upon the mouse position at all
 
@@ -283,7 +283,6 @@ end;
 procedure TPASVirtualDBScrollMemo.EMemoOnResize(Sender: TObject);
 begin
   FVisibleLines := GetVisibleLineCount;
-  //ShowMessage(IntToStr(FVisibleLines));
 end;
 
 procedure TPASVirtualDBScrollMemo.EScrollBarOnKeyPress(Sender: TObject; var Key: char);
@@ -330,6 +329,10 @@ end;
 
 destructor TPASVirtualDBScrollMemo.Destroy;
 begin
+  {$ifdef DoLog}
+    DebugLn('TPASVirtualDBScrollMemo.Destroy');
+  {$endif}
+
   FMemo.Free;
   FMemo := nil;
 

@@ -19,13 +19,14 @@ along with this package. If not, see <http://www.gnu.org/licenses/>.
 }
 
 {$mode objfpc}{$H+}
+{$DEFINE DoLog}
 
 interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, PASEmbeddedMemo, PASEmbeddedScrollBar, db, DBGrids, PropEdits,
-  PASFormatEditor, PASEmbeddedPanel;
+  PASFormatEditor, PASEmbeddedPanel {$ifdef DoLog}, LazLogger{$endif};
 
 type
 
@@ -63,7 +64,6 @@ type
     FOperationMode : TOperationMode;
 
     // Event Handlers
-
     procedure DataLinkOnRecordChanged(Field : TField);
     procedure DataLinkOnDataSetChanged(ADataSet : TDataSet);
     procedure DataLinkOnDataSetOpen(ADataSet : TDataSet);
@@ -79,6 +79,7 @@ type
     procedure EScrollBarOnKeyPress(Sender : TObject; var Key : char);
     procedure EScrollBarOnScroll(Sender : TObject; ScrollCode : TScrollCode;
       var ScrollPos : Integer);
+
     procedure SetOperationMode(AValue: TOperationMode);
 
   protected
@@ -219,15 +220,12 @@ begin
   FDataLink.DataSource := Value;
 end;
 
-// Sets the following properties:
-// - FRecordCount
-// - FLineResolution
-// - EScrollBar.Max
 procedure TPASVirtualDBScrollBase.GetRecordCount;
 begin
-  // Need to move to the last record in the dataset in order to get an accurate count
-  DataLink.DataSet.Last;
+
+  DataLink.DataSet.Last; // Need to move to the last record in the dataset in order to get an accurate count
   FRecordCount := DataLink.DataSet.RecordCount;
+  DataLink.DataSet.First; // Move back to the front
 
 end;
 
@@ -299,7 +297,7 @@ end;
 // Count the number of Slices required based on RecordCount and RecordSliceSize
 procedure TPASVirtualDBScrollBase.CalculateRecordSliceCount;
 begin
-  // if the record count divides into the Slice size, getting the Slice count is easy
+  // If the record count divides into the Slice size, getting the Slice count is easy
   if FRecordCount mod FRecordSliceSize = 0 then
   begin
     FRecordSliceCount := FRecordCount div FRecordSliceSize;
@@ -320,14 +318,15 @@ end;
 
 procedure TPASVirtualDBScrollBase.DataLinkOnDataSetChanged(ADataSet: TDataSet);
 begin
-  if ADataSet.State = dsBrowse then
+  //ShowMessage('Changed');
+  {if ADataSet.State = dsBrowse then
   begin
     ShowMessage('dsBrowse');
   end
   else if ADataSet.State = dsInactive then
   begin
     ShowMessage('dsInactive');
-  end;
+  end;}
 
   // Every time we move positions within the DataSet
   // ShowMessage('OnDataSetChanged');
@@ -337,12 +336,18 @@ procedure TPASVirtualDBScrollBase.DataLinkOnDataSetOpen(ADataSet: TDataSet);
 begin
   // Probably the most useful DataSet event
   // Every time this fires we need to get the record count and perform our calculations
-  //ShowMessage('OnDataSetOpen');
+
+  {
+  //////////////////////
+   BEFORE ANYTHING ELSE - We need to clear any old values/set back to default
+  //////////////////////
+  }
+
+
   GetRecordCount;
   CalculateLineResolution;
   CalculateScrollBarMax;
 
-  //ShowMessage(IntToStr(FRecordCount));
 end;
 
 procedure TPASVirtualDBScrollBase.DataLinkOnDataSetClose(ADataSet: TDataSet);
@@ -458,7 +463,6 @@ begin
   FPopupInfo.BringToFront;
 
 
-
   // Initialize the Dataset
   FDataLink := TComponentDataLink.Create;
   FDataLink.OnRecordChanged := @DataLinkOnRecordChanged;
@@ -488,6 +492,10 @@ end;
 
 destructor TPASVirtualDBScrollBase.Destroy;
 begin
+  {$ifdef DoLog}
+    DebugLn('TPASVirtualDBScrollBase.Destroy');
+  {$endif}
+
   FDataLink.Free;
   FDataLink := Nil;
 

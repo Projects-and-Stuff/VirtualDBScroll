@@ -19,13 +19,14 @@ along with this package. If not, see <http://www.gnu.org/licenses/>.
 }
 
 {$mode objfpc}{$H+}
+{$DEFINE DoLog}
 
 interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, PASEmbeddedRichMemo, PASEmbeddedScrollBar, db, DBGrids, PropEdits,
-  PASFormatEditor, PASVirtualDBScrollBase, windows, types;
+  PASFormatEditor, PASVirtualDBScrollBase, windows, types {$ifdef DoLog}, LazLogger{$endif};
 
 type
 
@@ -128,8 +129,6 @@ implementation
 procedure Register;
 begin
   RegisterComponents('Additional', [TPASVirtualDBScrollRichMemo]);
-
-  //RegisterPropertyEditor(TypeInfo(String), TPASVirtualDBScrollRichMemo, 'Format', TPASFormatEditor);
 end;
 
 function TPASVirtualDBScrollRichMemo.GetVisibleLineCount : Integer;
@@ -328,6 +327,9 @@ end;
 
 destructor TPASVirtualDBScrollRichMemo.Destroy;
 begin
+  {$ifdef DoLog}
+    DebugLn('TPASVirtualDBScrollRichMemo.Destroy');
+  {$endif}
 
   FRichMemo.Free;
   FRichMemo := nil;
