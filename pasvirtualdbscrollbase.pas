@@ -19,14 +19,14 @@ along with this package. If not, see <http://www.gnu.org/licenses/>.
 }
 
 {$mode objfpc}{$H+}
-{$DEFINE DoLog}
+{$DEFINE dbgDBScroll}
 
 interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, PASEmbeddedMemo, PASEmbeddedScrollBar, db, DBGrids, PropEdits,
-  PASFormatEditor, PASEmbeddedPanel {$ifdef DoLog}, LazLogger{$endif};
+  PASFormatEditor, PASEmbeddedPanel, PASDataLink {$ifdef dbgDBScroll}, LazLogger{$endif};
 
 type
 
@@ -47,7 +47,8 @@ type
     { Private declarations }
     FScrollBar : TPASEmbeddedScrollBar;
     FPopupInfo : TPASEmbeddedPanel;
-    FDataLink : TComponentDataLink;
+    //FDataLink : TComponentDataLink;
+    FDataLink : TPASDataLink;
 
     FRecordCount : Integer;                       // Total number of records in the DataSet
     FRecordSliceSize : Integer;                   // The maximum number of records per record Slice
@@ -75,6 +76,8 @@ type
     procedure DataLinkOnLayoutChanged(ADataSet : TDataSet);
     procedure DataLinkOnEditingChanged(ADataSet : TDataSet);
     procedure DataLinkOnUpdateData(ADataSet : TDataSet);
+    procedure DataLinkOnDataSetBrowse(ADataSet : TDataSet);
+    procedure DataLinkOnActiveChanged(ADataSet : TDataSet);
     procedure EScrollBarOnChange(Sender : TObject);
     procedure EScrollBarOnKeyPress(Sender : TObject; var Key : char);
     procedure EScrollBarOnScroll(Sender : TObject; ScrollCode : TScrollCode;
@@ -108,7 +111,8 @@ type
     property EPopupInfo : TPASEmbeddedPanel read FPopupInfo;
 
     property RecordSliceSize : Integer read GetSliceSize write SetSliceSize default 50; // Used to set the number of records per Slice. Allowable range is 1 to 500
-    property DataLink : TComponentDataLink read FDataLink write FDataLink;
+    //property DataLink : TComponentDataLink read FDataLink write FDataLink;
+    property DataLink : TPASDataLink read FDataLink write FDataLink;
     property DataSource : TDataSource read GetDataSource write SetDataSource; // Used to access the DataLink. The DataLink property of the DataSource must be set for this component to operate
     property LineResolution : Integer read FLineResolution; // The number of positions on the scrollbar allocated per record. This property is automatically calculated based upon the number of Records in the DataSet
     property RecordCount : Integer read FRecordCount; // The number of records in the dataset. For instance, if the DataSet is an SQLQuery, this value is the number of records returned from a query. This property is automatically calculated when the dataset is opened.
@@ -393,6 +397,16 @@ begin
 
 end;
 
+procedure TPASVirtualDBScrollBase.DataLinkOnDataSetBrowse(ADataSet: TDataSet);
+begin
+  ShowMessage('DataLinkOnDataSetBrowse');
+end;
+
+procedure TPASVirtualDBScrollBase.DataLinkOnActiveChanged(ADataSet: TDataSet);
+begin
+  ShowMessage('DataLinkOnActiveChanged');
+end;
+
 procedure TPASVirtualDBScrollBase.EScrollBarOnChange(Sender: TObject);
 begin
 
@@ -464,7 +478,8 @@ begin
 
 
   // Initialize the Dataset
-  FDataLink := TComponentDataLink.Create;
+  //FDataLink := TComponentDataLink.Create;
+  FDataLink := TPASDataLink.Create;
   FDataLink.OnRecordChanged := @DataLinkOnRecordChanged;
   FDataLink.OnDatasetChanged := @DataLinkOnDataSetChanged;
   FDataLink.OnDataSetOpen := @DataLinkOnDataSetOpen;
@@ -476,6 +491,8 @@ begin
   FDataLink.OnLayoutChanged := @DataLinkOnLayoutChanged;
   FDataLink.OnEditingChanged := @DataLinkOnEditingChanged;
   FDataLink.OnUpdateData := @DataLinkOnUpdateData;
+  FDataLink.OnDataSetBrowse := @DataLinkOnDataSetBrowse;
+  FDataLink.OnActiveChanged := @DataLinkOnActiveChanged;
   FDataLink.VisualControl := True;
 
 
@@ -492,7 +509,7 @@ end;
 
 destructor TPASVirtualDBScrollBase.Destroy;
 begin
-  {$ifdef DoLog}
+  {$ifdef dbgDBScroll}
     DebugLn('TPASVirtualDBScrollBase.Destroy');
   {$endif}
 
