@@ -28,28 +28,31 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="7">
+    <RequiredPackages Count="8">
       <Item1>
-        <PackageName Value="PASVirtualDBScrollRichMemoPkg"/>
+        <PackageName Value="PASVirtualDBScrollSynEditPkg"/>
       </Item1>
       <Item2>
-        <PackageName Value="richmemopackage"/>
+        <PackageName Value="PASVirtualDBScrollRichMemoPkg"/>
       </Item2>
       <Item3>
-        <PackageName Value="PASVirtualDBScroll"/>
+        <PackageName Value="richmemopackage"/>
       </Item3>
       <Item4>
-        <PackageName Value="SynEdit"/>
+        <PackageName Value="PASVirtualDBScroll"/>
       </Item4>
       <Item5>
-        <PackageName Value="SQLDBLaz"/>
+        <PackageName Value="SynEdit"/>
       </Item5>
       <Item6>
-        <PackageName Value="FCL"/>
+        <PackageName Value="SQLDBLaz"/>
       </Item6>
       <Item7>
-        <PackageName Value="LCL"/>
+        <PackageName Value="FCL"/>
       </Item7>
+      <Item8>
+        <PackageName Value="LCL"/>
+      </Item8>
     </RequiredPackages>
     <Units Count="2">
       <Unit0>
