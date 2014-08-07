@@ -294,12 +294,14 @@ begin
   begin
     FLineResolution := 250;
   end;
-  {$ifdef dbgDBScroll} DebugLnExit(ClassName,'(inherited).CalculateLineResolution DONE'); {$endif}
+  {$ifdef dbgDBScroll} DebugLnExit(ClassName,'(inherited).CalculateLineResolution DONE RecordCount=',IntToStr(RecordCount), ' FLineResolution=',IntToStr(FLineResolution)); {$endif}
 end;
 
 procedure TPASVirtualDBScrollBase.CalculateScrollBarMax;
 begin
+  {$ifdef dbgDBScroll} DebugLnEnter(ClassName,'(inherited).CalculateScrollBarMax INIT'); {$endif}
   EScrollBar.Max := RecordCount * LineResolution;
+  {$ifdef dbgDBScroll} DebugLnExit(ClassName,'(inherited).CalculateScrollBarMax DONE EScrollBar.Max=',IntToStr(EScrollBar.Max)); {$endif}
 end;
 
 // Count the number of Slices required based on RecordCount and RecordSliceSize
