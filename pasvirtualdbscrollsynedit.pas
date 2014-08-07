@@ -25,8 +25,8 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  ExtCtrls, PASEmbeddedSynEdit, PASEmbeddedScrollBar, db, DBGrids, PropEdits,
-  PASFormatEditor, PASVirtualDBScrollBase, SynEdit, SynCompletion, windows, types
+  ExtCtrls, PASEmbeddedSynEdit, PASEmbeddedScrollBar, db, PropEdits,
+  PASVirtualDBScrollBase, SynEdit, SynCompletion, windows, types
   {$ifdef dbgDBScroll}, LazLogger{$endif};
 
 type
@@ -136,8 +136,10 @@ function TPASVirtualDBScrollSynEdit.GetVisibleLineCount : Integer;
 begin
   try
     Result := FSynEdit.Height div FSynEdit.Font.GetTextHeight('I');
+    {$ifdef dbgDBScroll} DebugLn(ClassName,'.GetVisibleLineCount Count=',IntToStr(Result)); {$endif}
   except
     Result := FSynEdit.Height div 12;
+    {$ifdef dbgDBScroll} DebugLn(ClassName,'.GetVisibleLineCount (Exception Occurred) Count=',IntToStr(Result)); {$endif}
   end;
 end;
 
@@ -240,6 +242,7 @@ end;
 
 procedure TPASVirtualDBScrollSynEdit.ESynEditOnResize(Sender: TObject);
 begin
+  {$ifdef dbgDBScroll} DebugLn(Classname,'.ESynEditOnResize'); {$endif}
   FVisibleLines := GetVisibleLineCount;
 end;
 
@@ -292,6 +295,8 @@ constructor TPASVirtualDBScrollSynEdit.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
 
+  {$ifdef dbgDBScroll} DebugLnEnter(Classname,'.Create INIT'); {$endif}
+
   // Set default component size and values
   Height := 50;
   Caption := '';
@@ -321,15 +326,14 @@ begin
   EScrollBar.OnScroll := @EScrollBarOnScroll;
 
 
-  FVisibleLines := GetVisibleLineCount;
+  //FVisibleLines := GetVisibleLineCount;
 
+  {$ifdef dbgDBScroll} DebugLnExit(Classname,'.Create DONE'); {$endif}
 end;
 
 destructor TPASVirtualDBScrollSynEdit.Destroy;
 begin
-  {$ifdef dbgDBScroll}
-    DebugLn('TPASVirtualDBScrollSynEdit.Destroy');
-  {$endif}
+  {$ifdef dbgDBScroll} DebugLn(Classname,'.Destroy'); {$endif}
 
   FSynEdit.Free;
   FSynEdit := nil;

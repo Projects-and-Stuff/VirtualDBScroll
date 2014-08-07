@@ -24,7 +24,7 @@ along with this package. If not, see <http://www.gnu.org/licenses/>.
 interface
 
 uses
-  Classes, SysUtils, Controls, StdCtrls, IDEIntf, PropEdits, typinfo, ExtCtrls {$ifdef dbgDBScroll}, LazLogger{$endif};
+  Classes, SysUtils, Controls, IDEIntf, PropEdits, typinfo, ExtCtrls {$ifdef dbgDBScroll}, LazLogger{$endif};
 
 type
 

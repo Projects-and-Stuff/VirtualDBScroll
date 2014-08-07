@@ -25,8 +25,8 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  ExtCtrls, PASEmbeddedMemo, PASEmbeddedScrollBar, db, DBGrids, PropEdits,
-  PASFormatEditor, PASVirtualDBScrollBase, windows, types {$ifdef dbgDBScroll}, LazLogger{$endif};
+  ExtCtrls, PASEmbeddedMemo, PASEmbeddedScrollBar, db, PropEdits,
+  PASVirtualDBScrollBase, windows, types {$ifdef dbgDBScroll}, LazLogger{$endif};
 
 type
 
@@ -132,8 +132,10 @@ function TPASVirtualDBScrollMemo.GetVisibleLineCount : Integer;
 begin
   try
     Result := FMemo.Height div FMemo.Font.GetTextHeight('I');
+    {$ifdef dbgDBScroll} DebugLn(ClassName,'.GetVisibleLineCount Count=',IntToStr(Result)); {$endif}
   except
     Result := FMemo.Height div 12;
+    {$ifdef dbgDBScroll} DebugLn(ClassName,'.GetVisibleLineCount (Exception Occurred) Count=',IntToStr(Result)); {$endif}
   end;
 end;
 
@@ -282,6 +284,7 @@ end;
 
 procedure TPASVirtualDBScrollMemo.EMemoOnResize(Sender: TObject);
 begin
+  {$ifdef dbgDBScroll} DebugLn(Classname,'.EMemoOnResize'); {$endif}
   FVisibleLines := GetVisibleLineCount;
 end;
 
@@ -293,6 +296,8 @@ end;
 constructor TPASVirtualDBScrollMemo.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+
+  {$ifdef dbgDBScroll} DebugLnEnter(Classname,'.Create INIT'); {$endif}
 
   // Set default component size and values
   Height := 50;
@@ -323,15 +328,14 @@ begin
   EScrollBar.OnScroll := @EScrollBarOnScroll;
 
 
-  FVisibleLines := GetVisibleLineCount;
+  //FVisibleLines := GetVisibleLineCount;
 
+  {$ifdef dbgDBScroll} DebugLnExit(Classname,'.Create DONE'); {$endif}
 end;
 
 destructor TPASVirtualDBScrollMemo.Destroy;
 begin
-  {$ifdef dbgDBScroll}
-    DebugLn('TPASVirtualDBScrollMemo.Destroy');
-  {$endif}
+  {$ifdef dbgDBScroll} DebugLn(Classname,'.Destroy'); {$endif}
 
   FMemo.Free;
   FMemo := nil;

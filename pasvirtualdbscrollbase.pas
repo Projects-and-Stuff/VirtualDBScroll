@@ -25,8 +25,9 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  ExtCtrls, PASEmbeddedMemo, PASEmbeddedScrollBar, db, DBGrids, PropEdits,
-  PASFormatEditor, PASEmbeddedPanel, PASDataLink {$ifdef dbgDBScroll}, LazLogger{$endif};
+  ExtCtrls, PASEmbeddedMemo, PASEmbeddedScrollBar, db, PropEdits,
+  PASFormatEditor, PASEmbeddedPanel, PASDataLink
+  {$ifdef dbgDBScroll}, LazLogger{$endif};
 
 type
 
@@ -47,7 +48,6 @@ type
     { Private declarations }
     FScrollBar : TPASEmbeddedScrollBar;
     FPopupInfo : TPASEmbeddedPanel;
-    //FDataLink : TComponentDataLink;
     FDataLink : TPASDataLink;
 
     FRecordCount : Integer;                       // Total number of records in the DataSet
@@ -68,6 +68,7 @@ type
     procedure DataLinkOnRecordChanged(Field : TField);
     procedure DataLinkOnDataSetChanged(ADataSet : TDataSet);
     procedure DataLinkOnDataSetOpen(ADataSet : TDataSet);
+    procedure DataLinkOnDataSetOpening(ADataSet : TDataSet);
     procedure DataLinkOnDataSetClose(ADataSet : TDataSet);
     procedure DataLinkOnNewDataSet(ADataSet : TDataSet);
     procedure DataLinkOnInvalidDataset(ADataSet : TDataSet);
@@ -226,6 +227,7 @@ end;
 
 procedure TPASVirtualDBScrollBase.GetRecordCount;
 begin
+  {$ifdef dbgDBScroll} DebugLn(ClassName,'(inherited).GetRecordCount'); {$endif}
 
   DataLink.DataSet.Last; // Need to move to the last record in the dataset in order to get an accurate count
   FRecordCount := DataLink.DataSet.RecordCount;
@@ -235,6 +237,7 @@ end;
 
 procedure TPASVirtualDBScrollBase.CalculateLineResolution;
 begin
+  {$ifdef dbgDBScroll} DebugLnEnter(ClassName,'(inherited).CalculateLineResolution INIT'); {$endif}
   {
   Based on the number of records in the DataSet, we set the resolution
   per record. If there are less than 8,389 records, for instance, we
@@ -291,6 +294,7 @@ begin
   begin
     FLineResolution := 250;
   end;
+  {$ifdef dbgDBScroll} DebugLnExit(ClassName,'(inherited).CalculateLineResolution DONE'); {$endif}
 end;
 
 procedure TPASVirtualDBScrollBase.CalculateScrollBarMax;
@@ -346,12 +350,17 @@ begin
    BEFORE ANYTHING ELSE - We need to clear any old values/set back to default
   //////////////////////
   }
-
+  ShowMessage('OPEN!');
 
   GetRecordCount;
   CalculateLineResolution;
   CalculateScrollBarMax;
 
+end;
+
+procedure TPASVirtualDBScrollBase.DataLinkOnDataSetOpening(ADataSet: TDataSet);
+begin
+  ShowMessage('OPENING!');
 end;
 
 procedure TPASVirtualDBScrollBase.DataLinkOnDataSetClose(ADataSet: TDataSet);
@@ -436,6 +445,10 @@ end;
 
 constructor TPASVirtualDBScrollBase.Create(AOwner: TComponent);
 begin
+  {$ifdef dbgDBScroll}
+    DebugLnEnter(ClassName,'(inherited).Create INIT');
+  {$endif}
+
   inherited Create(AOwner);
 
   // Set default component size and values
@@ -483,6 +496,7 @@ begin
   FDataLink.OnRecordChanged := @DataLinkOnRecordChanged;
   FDataLink.OnDatasetChanged := @DataLinkOnDataSetChanged;
   FDataLink.OnDataSetOpen := @DataLinkOnDataSetOpen;
+  FDataLink.OnDataSetOpening := @DataLinkOnDataSetOpening;
   FDataLink.OnDataSetClose := @DataLinkOnDataSetClose;
   FDataLink.OnNewDataSet := @DataLinkOnNewDataSet;
   FDataLink.OnInvalidDataSet := @DataLinkOnInvalidDataset;
@@ -503,14 +517,16 @@ begin
   // Set Format property default value (blank)
   FFormat := '';
 
-
+  {$ifdef dbgDBScroll}
+    DebugLnExit(ClassName,'(inherited).Create DONE');
+  {$endif}
 
 end;
 
 destructor TPASVirtualDBScrollBase.Destroy;
 begin
   {$ifdef dbgDBScroll}
-    DebugLn('TPASVirtualDBScrollBase.Destroy');
+    DebugLn(ClassName,'(inherited).Destroy');
   {$endif}
 
   FDataLink.Free;
@@ -523,6 +539,7 @@ begin
   FScrollBar := Nil;
 
   inherited Destroy;
+
 end;
 
 initialization
