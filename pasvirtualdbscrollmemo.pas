@@ -37,15 +37,14 @@ type
     { Private declarations }
     FMemo : TPASEmbeddedMemo;
 
-    FRecordSliceCount : Integer;                  // Number of record Slices in the DataSet
-    FRecordSliceLineCounts : Array of Integer;    // Keeps track of the number of lines displayed per Slice
+
     FCurrentRecordSlice : Integer;                // Tracks which Slice is currently at the center of display
     FVisibleLines : Integer;                      // How many lines are visible in EmbeddedMemo
 
 
     FError : String;                              //
 
-    function GetVisibleLineCount : Integer; // Approximates the visible line count of EMemo
+
 
     // Event Handlers
     procedure DataLinkOnRecordChanged(Field : TField);
@@ -68,6 +67,10 @@ type
       var ScrollPos: Integer);
 
     procedure MoveToLine(LineNo: Integer);
+    function GetVisibleLineCount : Integer; // Approximates the visible line count of EMemo
+    procedure CalcSmallStep(var ASmallStep : Integer);
+    procedure CalcStepsPerLine(var AStepsPerLine : Integer);
+    procedure CalcCurrentSlice(var ATempCurrentSlice : Integer);
   protected
     { Protected declarations }
   public
@@ -137,6 +140,39 @@ begin
     Result := FMemo.Height div 12;
     {$ifdef dbgDBScroll} DebugLn(ClassName,'.GetVisibleLineCount (Exception Occurred) Count=',IntToStr(Result)); {$endif}
   end;
+end;
+
+procedure TPASVirtualDBScrollMemo.CalcSmallStep(var ASmallStep: Integer);
+begin
+  {$ifdef dbgDBScroll} DebugLnEnter(Classname,'.CalcSmallStep INIT FRecordSliceCount=',IntToStr(FRecordSliceCount)); {$endif}
+  try
+    ASmallStep := (EScrollBar.Max div FRecordSliceCount) div EMemo.Lines.Count;
+  except
+    ASmallStep := 1
+  end;
+  {$ifdef dbgDBScroll} DebugLnExit(Classname,'.CalcSmallStep DONE ASmallStep=',IntToStr(ASmallStep)); {$endif}
+end;
+
+procedure TPASVirtualDBScrollMemo.CalcStepsPerLine(var AStepsPerLine: Integer);
+begin
+  {$ifdef dbgDBScroll} DebugLnEnter(Classname,'.CalcStepsPerLine INIT'); {$endif}
+  try
+    AStepsPerLine := EScrollBar.Max div (FRecordSliceCount * EMemo.Lines.Count);
+  except
+    AStepsPerLine := 1
+  end;
+  {$ifdef dbgDBScroll} DebugLnExit(Classname,'.CalcStepsPerLine DONE AStepsPerLine=',IntToStr(AStepsPerLine)); {$endif}
+end;
+
+procedure TPASVirtualDBScrollMemo.CalcCurrentSlice(var ATempCurrentSlice: Integer);
+begin
+  {$ifdef dbgDBScroll} DebugLnEnter(Classname,'.CalcCurrentSlice INIT FLineResolution=',IntToStr(FLineResolution),' FRecordSliceSize=',IntToStr(FRecordSliceSize)); {$endif}
+  try
+    ATempCurrentSlice := (((EScrollBar.Position div FLineResolution) div FRecordSliceSize) + 1);
+  except
+    ATempCurrentSlice := 1;
+  end;
+  {$ifdef dbgDBScroll} DebugLnExit(Classname,'.CalcCurrentSlice DONE ATempCurrentSlice=',IntToStr(ATempCurrentSlice)); {$endif}
 end;
 
 procedure TPASVirtualDBScrollMemo.DataLinkOnRecordChanged(Field: TField);
@@ -242,19 +278,27 @@ begin
 
 end;
 
+
 procedure TPASVirtualDBScrollMemo.EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode; var ScrollPos: Integer);
+var
+  SmallStep : Integer; // How many positions we move on the scrollbar for each arrow press on the scrollbar
+  StepsPerLine : Integer; // How many positions on the scrollbar moves the caret one line down in the memo
+  LinesCurrentSliceSet : Integer; // Lines in the current set of three slices
+  TempCurrentSlice : Integer; // The center slice of the 3 current slices
+  ScrollingDone : Boolean; // Whether we've finished scrolling or not
 begin
+  ScrollingDone := False;
+
+  CalcSmallStep(SmallStep);
+  CalcStepsPerLine(StepsPerLine);
+  CalcCurrentSlice(TempCurrentSlice);
 
   if EPopupInfo.IsDisplayed then
   begin
     EPopupInfo.Visible := True;
     EPopupInfo.Left := EScrollBar.Left - EPopupInfo.Width;
     EPopupInfo.Top := Mouse.CursorPos.y - Parent.Top - Self.Top - (EPopupInfo.Height);
-
-    //EPopupInfo.Top := Self.Top + ((EScrollBar.Height * ((EScrollBar.Position * 10) div EScrollBar.Max)) div 10);//  (100*EScrollBar.Position div 100*EScrollBar.Max);
-    // Try using the scrollbar height and the scrollbar position divided by the scrollbar max to determine PopupInfo Top
-    // This way, it's not dependent upon the mouse position at all
-
+    // ToDo: Improve EPopupInfo.Top placement
     EPopupInfo.Caption := IntToStr(EScrollBar.Position); // Eventually this should specify which record we're on
     EPopupInfo.BringToFront;
     EMemo.Text := 'x: ' + (IntToStr(Mouse.CursorPos.x) + ' - ' + IntToStr(Parent.Left) + ' = ' + IntToStr(Mouse.CursorPos.x - Parent.Left)) +
@@ -262,15 +306,18 @@ begin
   end;
 
   case ScrollCode of
-    scLineUp : ; //
-    scLineDown : ; //
-    scPageUp : ; //
-    scPageDown : ; //
+    scLineUp : ScrollPos := ScrollPos - (SmallStep - 1); //
+    scLineDown : ScrollPos := ScrollPos + SmallStep - 1; //
+    scPageUp : ScrollPos := ScrollPos - (SmallStep * FVisibleLines); //
+    scPageDown : ScrollPos := ScrollPos + (SmallStep * FVisibleLines); //
     scPosition : ; //
     scTrack : ; //
-    scTop : ; //
-    scBottom : ; //
-    scEndScroll : EPopupInfo.Visible := False; //
+    scTop : ScrollingDone := True; //
+    scBottom : ScrollingDone := True; //
+    scEndScroll : begin
+                    EPopupInfo.Visible := False; // Turn off EPopupInfo
+                    ScrollingDone := True;
+                  end;
   end;
 
 
@@ -278,6 +325,7 @@ end;
 
 procedure TPASVirtualDBScrollMemo.MoveToLine(LineNo: Integer);
 begin
+  {$ifdef dbgDBScroll} DebugLn(Classname,'.MoveToLine LineNo=',IntToStr(LineNo)); {$endif}
   EMemo.CaretPos := Point(0, LineNo);
   EMemo.SetFocus;
 end;

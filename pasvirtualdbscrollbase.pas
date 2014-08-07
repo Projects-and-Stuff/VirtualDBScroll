@@ -50,13 +50,10 @@ type
     FPopupInfo : TPASEmbeddedPanel;
     FDataLink : TPASDataLink;
 
-    FRecordCount : Integer;                       // Total number of records in the DataSet
-    FRecordSliceSize : Integer;                   // The maximum number of records per record Slice
-    FRecordSliceCount : Integer;                  // Number of record Slices in the DataSet
-    FRecordSliceLineCounts : Array of Integer;    // Keeps track of the number of lines displayed per Slice
+
+
+
     FCurrentRecordSlice : Integer;                // Tracks which Slice is currently at the center of display
-    FLineResolution : Integer;                    // The number of lines positions on the scrollbar allocated to each record
-    FVisibleLines : Integer;                      // How many lines are visible in EmbeddedMemo
 
     FFormat : String;                             // The format for displaying content
 
@@ -88,6 +85,11 @@ type
 
   protected
     { Protected declarations }
+    FRecordSliceSize : Integer;                   // The maximum number of records per record Slice
+    FLineResolution : Integer;                    // The number of lines positions on the scrollbar allocated to each record
+    FRecordCount : Integer;                       // Total number of records in the DataSet
+    FRecordSliceCount : Integer;                  // Number of record Slices in the DataSet
+    FRecordSliceLineCounts : Array of Integer;    // Keeps track of the number of lines displayed per Slice
   public
     { Public declarations }
     constructor Create(AOwner : TComponent); override;
@@ -248,7 +250,7 @@ begin
   }
   if RecordCount < 1 then
   begin
-    FLineResolution := 0;
+    FLineResolution := 1;
   end
   else if (RecordCount > 0) and (RecordCount < 8389) then
   begin
