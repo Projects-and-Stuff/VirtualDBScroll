@@ -5,9 +5,9 @@ unit Unit1;
 interface
 
 uses
-  Classes, SysUtils, db, sqldb, sqlite3conn, FileUtil, Forms,
-  Controls, Graphics, Dialogs, StdCtrls, ExtCtrls, PASVirtualDBScrollMemo,
-  PASVirtualDBScrollRichMemo, PASVirtualDBScrollSynEdit;
+  Classes, SysUtils, db, sqldb, sqlite3conn, FileUtil, SynCompletion,
+  SynHighlighterAny, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
+  PASVirtualDBScrollMemo;
 
 type
 
@@ -15,14 +15,14 @@ type
 
   TForm1 = class(TForm)
     Button1: TButton;
+    Button2: TButton;
     DataSource1: TDataSource;
     PASVirtualDBScrollMemo1: TPASVirtualDBScrollMemo;
-    PASVirtualDBScrollSynEdit1: TPASVirtualDBScrollSynEdit;
     SQLite3Connection1: TSQLite3Connection;
     SQLQuery1: TSQLQuery;
     SQLTransaction1: TSQLTransaction;
     procedure Button1Click(Sender: TObject);
-    procedure DataSource1StateChange(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     { private declarations }
@@ -75,9 +75,12 @@ begin
   SQLite3Connection1.Connected := False;
   SQLite3Connection1.Close;}
 
+  SQLite3Connection1.Connected := False;
   SQLite3Connection1.DatabaseName := './DB_5000.db3';
+  //SQLQuery1.Close;
   SQLQuery1.Active := False;
   SQLQuery1.SQL.Text := 'Select * FROM Entries';
+  SQLQuery1.Prepare;
   SQLite3Connection1.Connected := True;
   SQLTransaction1.Active := True;
   SQLQuery1.Active := True;
@@ -85,42 +88,23 @@ begin
 
 
 
+
 end;
 
-procedure TForm1.DataSource1StateChange(Sender: TObject);
+procedure TForm1.Button2Click(Sender: TObject);
 begin
-
-
-  {
-  if DataSource1.DataSet.State = dsInactive then
-  begin
-    ShowMessage('DataSet dsInactive');
-  end
-  else if DataSource1.DataSet.State = dsBrowse then
-  begin
-    ShowMessage('DataSet dsBrowse');
-  end
-  else if DataSource1.DataSet.State = dsOpening then
-  begin
-    ShowMessage('DataSet dsOpening');
-  end;
-
-  if DataSource1.State = dsInactive then
-  begin
-    ShowMessage('dsInactive');
-  end
-  else if DataSource1.State = dsBrowse then
-  begin
-    ShowMessage('dsBrowse');
-  end
-  else if DataSource1.State = dsOpening then
-  begin
-    ShowMessage('dsOpening');
-  end;
-  }
-
-  //ShowMessage('DataSource1StateChange');
+  SQLite3Connection1.Connected := False;
+  SQLite3Connection1.DatabaseName := './DB_1000.db3';
+  //SQLQuery1.Close;
+  SQLQuery1.Active := False;
+  SQLQuery1.SQL.Text := 'Select * FROM Entries';
+  SQLQuery1.Prepare;
+  SQLite3Connection1.Connected := True;
+  SQLTransaction1.Active := True;
+  SQLQuery1.Active := True;
+  SQLQuery1.ApplyUpdates;
 end;
+
 
 procedure TForm1.FormShow(Sender: TObject);
 begin
