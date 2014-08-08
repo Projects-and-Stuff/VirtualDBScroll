@@ -206,6 +206,7 @@ begin
   {$ifdef dbgDBScroll} DebugLnEnter(ClassName, '.ActiveChanged INIT'); {$endif}
   if Active then
   begin
+    if Assigned(OnActiveChanged) then OnActiveChanged(DataSet);
     FDataSet := DataSet;
     if DataSetName <> FDataSetName then
     begin
@@ -221,6 +222,7 @@ begin
       end;
   end else
   begin
+    if Assigned(OnActiveChanged) then OnActiveChanged(DataSet);
     BufferCount := 0;
     if (DataSource = nil) then
     begin

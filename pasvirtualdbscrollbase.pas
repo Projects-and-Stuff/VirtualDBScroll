@@ -50,6 +50,7 @@ type
     FPopupInfo : TPASEmbeddedPanel;
     FDataLink : TPASDataLink;
 
+    FCurrentDBName : String;                      // Stores the current DB Name. This way we can determine if the database has changed
 
     FCountingRecords : Boolean;                   // While performing a RecordCount, this will be set to True
 
@@ -363,9 +364,7 @@ begin
   }
   ShowMessage('OnDataSetOpen');
 
-  GetRecordCount;
-  CalculateLineResolution;
-  CalculateScrollBarMax;
+
 
 end;
 
@@ -382,7 +381,6 @@ end;
 
 procedure TPASVirtualDBScrollBase.OnNewDataSet(ADataSet: TDataSet);
 begin
-  // Not particularly useful for my purposes
   ShowMessage('OnNewDataSet');
 end;
 
@@ -427,7 +425,18 @@ end;
 
 procedure TPASVirtualDBScrollBase.OnActiveChanged(ADataSet: TDataSet);
 begin
-  ShowMessage('OnActiveChanged');
+
+
+  if ADataSet.Active then
+  begin
+    ShowMessage('OnActiveChanged');
+
+
+    GetRecordCount;
+    CalculateLineResolution;
+    CalculateScrollBarMax;
+  end;
+
 end;
 
 procedure TPASVirtualDBScrollBase.EScrollBarOnChange(Sender: TObject);
@@ -475,7 +484,7 @@ begin
   Height := 50;
   Caption := '';
 
-
+  FCurrentDBName := '';
 
   // Initialize the Embedded ScrollBar
   FScrollBar := TPASEmbeddedScrollBar.Create(Self); // Add the embedded memo
