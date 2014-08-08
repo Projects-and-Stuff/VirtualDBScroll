@@ -247,6 +247,7 @@ begin
         if Assigned(FOnDataSetClose) then
         begin
           FOnDataSetClose(DataSet);
+          {$ifdef dbgDBScroll} DebugLn(ClassName, '.ActiveChanged OnDataSetClose Called'); {$endif}
         end;
         if DataSet <> nil then
         begin
