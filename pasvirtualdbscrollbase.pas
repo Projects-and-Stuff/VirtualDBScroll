@@ -54,8 +54,6 @@ type
 
     FCountingRecords : Boolean;                   // While performing a RecordCount, this will be set to True
 
-    FCurrentRecordSlice : Integer;                // Tracks which Slice is currently at the center of display
-
     FFormat : String;                             // The format for displaying content
 
     FError : String;                              //
@@ -82,7 +80,7 @@ type
     procedure EScrollBarOnScroll(Sender : TObject; ScrollCode : TScrollCode;
       var ScrollPos : Integer);
 
-    procedure SetOperationMode(AValue: TOperationMode);
+    procedure InitializeWithData;
 
   protected
     { Protected declarations }
@@ -91,6 +89,7 @@ type
     FRecordCount : Integer;                       // Total number of records in the DataSet
     FRecordSliceCount : Integer;                  // Number of record Slices in the DataSet
     FRecordSliceLineCounts : Array of Integer;    // Keeps track of the number of lines displayed per Slice
+    FCurrentRecordSlice : Integer;                // Tracks which Slice is currently at the center of display
   public
     { Public declarations }
     constructor Create(AOwner : TComponent); override;
@@ -106,6 +105,8 @@ type
     function GetDataSource : TDataSource;
     procedure SetSliceSize(const Value : Integer);
     procedure SetDataSource(Value : TDataSource);
+
+    procedure SetOperationMode(AValue: TOperationMode);
 
     procedure GetRecordCount;
     procedure CalculateLineResolution;
@@ -317,6 +318,7 @@ end;
 // Count the number of Slices required based on RecordCount and RecordSliceSize
 procedure TPASVirtualDBScrollBase.CalculateRecordSliceCount;
 begin
+  {$ifdef dbgDBScroll} DebugLnEnter(ClassName,'(inherited).CalculateRecordSliceCount INIT'); {$endif}
   // If the record count divides into the Slice size, getting the Slice count is easy
   if FRecordCount mod FRecordSliceSize = 0 then
   begin
@@ -329,16 +331,17 @@ begin
     FRecordSliceCount := (FRecordCount div FRecordSliceSize) + 1;
     SetLength(FRecordSliceLineCounts, (FRecordCount div FRecordSliceSize) + 1);
   end;
+  {$ifdef dbgDBScroll} DebugLnExit(ClassName,'(inherited).CalculateRecordSliceCount DONE Length(FRecordSliceLineCounts)=',IntToStr(Length(FRecordSliceLineCounts))); {$endif}
 end;
 
 procedure TPASVirtualDBScrollBase.OnRecordChanged(Field: TField);
 begin
-
+  ShowMessage('OnRecordChanged');
 end;
 
 procedure TPASVirtualDBScrollBase.OnDataSetChanged(ADataSet: TDataSet);
 begin
-  //ShowMessage('Changed');
+  //ShowMessage('OnDataSetChanged');
   {if ADataSet.State = dsBrowse then
   begin
     ShowMessage('dsBrowse');
@@ -354,34 +357,51 @@ end;
 
 procedure TPASVirtualDBScrollBase.OnDataSetOpen(ADataSet: TDataSet);
 begin
-  // Probably the most useful DataSet event
+  // Called every time the DataSet is Opened (Except when a *New* DataSet is Opened)
   // Every time this fires we need to get the record count and perform our calculations
 
-  {
-  //////////////////////
-   BEFORE ANYTHING ELSE - We need to clear any old values/set back to default
-  //////////////////////
-  }
   ShowMessage('OnDataSetOpen');
 
-
+  InitializeWithData;
 
 end;
 
 procedure TPASVirtualDBScrollBase.OnDataSetOpening(ADataSet: TDataSet);
 begin
-  ShowMessage('OPENING!');
+  ShowMessage('OnDataSetOpening!');
 end;
 
 procedure TPASVirtualDBScrollBase.OnDataSetClose(ADataSet: TDataSet);
+var
+  i : Integer;
 begin
-  // May be useful for clean-up
-  //ShowMessage('OnDataSetClose');
+  // Clear all old values/set back to default
+  FCountingRecords := False;
+  FLineResolution := 1;
+  FRecordCount := 0;
+  FRecordSliceCount := 0;
+  FCurrentRecordSlice := 0;
+  FCurrentDBName := '';
+
+  for i := Low(FRecordSliceLineCounts) to High(FRecordSliceLineCounts) do
+  begin
+    FRecordSliceLineCounts[i] := 0;
+  end;
+  SetLength(FRecordSliceLineCounts, 0);
+
+  ShowMessage('OnDataSetClose');
+
 end;
 
 procedure TPASVirtualDBScrollBase.OnNewDataSet(ADataSet: TDataSet);
 begin
+  // Called only when a *New* DataSet is Opened
+  // Every time this fires we need to get the record count and perform our calculations
+
   ShowMessage('OnNewDataSet');
+
+  InitializeWithData;
+
 end;
 
 procedure TPASVirtualDBScrollBase.OnInvalidDataset(ADataSet: TDataSet);
@@ -432,9 +452,7 @@ begin
     ShowMessage('OnActiveChanged');
 
 
-    GetRecordCount;
-    CalculateLineResolution;
-    CalculateScrollBarMax;
+
   end;
 
 end;
@@ -447,6 +465,14 @@ end;
 procedure TPASVirtualDBScrollBase.EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode; var ScrollPos: Integer);
 begin
 
+end;
+
+procedure TPASVirtualDBScrollBase.InitializeWithData;
+begin
+  {$ifdef dbgDBScroll} DebugLn(ClassName,'(inherited).InitializeWithData'); {$endif}
+  GetRecordCount;
+  CalculateLineResolution;
+  CalculateScrollBarMax;
 end;
 
 procedure TPASVirtualDBScrollBase.SetOperationMode(AValue: TOperationMode);
@@ -469,7 +495,7 @@ end;
 constructor TPASVirtualDBScrollBase.Create(AOwner: TComponent);
 begin
   {$ifdef dbgDBScroll}
-    DebugLnEnter('>> ',ClassName,'(inherited).Create INIT');
+  DebugLnEnter('>> ',ClassName,'(inherited).Create INIT');
   {$endif}
 
   inherited Create(AOwner);
