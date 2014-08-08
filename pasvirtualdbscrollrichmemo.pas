@@ -41,23 +41,21 @@ type
     FCurrentRecordSlice : Integer;                // Tracks which Slice is currently at the center of display
     FVisibleLines : Integer;                      // How many lines are visible in EmbeddedRichMemo
 
-
     FError : String;                              //
 
 
-
     // Event Handlers
-    procedure DataLinkOnRecordChanged(Field : TField);
-    procedure DataLinkOnDataSetChanged(ADataSet : TDataSet);
-    procedure DataLinkOnDataSetOpen(ADataSet : TDataSet);
-    procedure DataLinkOnDataSetClose(ADataSet : TDataSet);
-    procedure DataLinkOnNewDataSet(ADataSet : TDataSet);
-    procedure DataLinkOnInvalidDataset(ADataSet : TDataSet);
-    procedure DataLinkOnInvalidDataSource(ADataSet : TDataSet);
-    procedure DataLinkOnDataSetScrolled(ADataSet : TDataSet; Distance : Integer);
-    procedure DataLinkOnLayoutChanged(ADataSet : TDataSet);
-    procedure DataLinkOnEditingChanged(ADataSet : TDataSet);
-    procedure DataLinkOnUpdateData(ADataSet : TDataSet);
+    procedure OnRecordChanged(Field : TField);
+    procedure OnDataSetChanged(ADataSet : TDataSet);
+    procedure OnDataSetOpen(ADataSet : TDataSet);
+    procedure OnDataSetClose(ADataSet : TDataSet);
+    procedure OnNewDataSet(ADataSet : TDataSet);
+    procedure OnInvalidDataset(ADataSet : TDataSet);
+    procedure OnInvalidDataSource(ADataSet : TDataSet);
+    procedure OnDataSetScrolled(ADataSet : TDataSet; Distance : Integer);
+    procedure OnLayoutChanged(ADataSet : TDataSet);
+    procedure OnEditingChanged(ADataSet : TDataSet);
+    procedure OnUpdateData(ADataSet : TDataSet);
     procedure ERichMemoOnKeyPress(Sender: TObject; var Key: char);
     procedure ERichMemoOnKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ERichMemoOnResize(Sender: TObject);
@@ -102,9 +100,9 @@ type
 
     property Anchors;
     property AutoSize;
-    property BevelInner;
-    property BevelOuter;
-    property BevelWidth;
+    //property BevelInner;
+    //property BevelOuter;
+    //property BevelWidth;
     property BorderStyle;
     property BorderWidth;
     property Color;
@@ -178,18 +176,18 @@ begin
   {$ifdef dbgDBScroll} DebugLnExit(Classname,'.CalcCurrentSlice DONE ATempCurrentSlice=',IntToStr(ATempCurrentSlice)); {$endif}
 end;
 
-procedure TPASVirtualDBScrollRichMemo.DataLinkOnRecordChanged(Field: TField);
+procedure TPASVirtualDBScrollRichMemo.OnRecordChanged(Field: TField);
 begin
 
 end;
 
-procedure TPASVirtualDBScrollRichMemo.DataLinkOnDataSetChanged(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollRichMemo.OnDataSetChanged(ADataSet: TDataSet);
 begin
   // Every time we move positions within the DataSet
   // ShowMessage('OnDataSetChanged');
 end;
 
-procedure TPASVirtualDBScrollRichMemo.DataLinkOnDataSetOpen(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollRichMemo.OnDataSetOpen(ADataSet: TDataSet);
 begin
   // Probably the most useful DataSet event
   // Every time this fires we need to get the record count and perform our calculations
@@ -198,45 +196,45 @@ begin
   //ShowMessage(IntToStr(FRecordCount));
 end;
 
-procedure TPASVirtualDBScrollRichMemo.DataLinkOnDataSetClose(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollRichMemo.OnDataSetClose(ADataSet: TDataSet);
 begin
   // May be useful for clean-up
   // ShowMessage('OnDataSetClose');
 end;
 
-procedure TPASVirtualDBScrollRichMemo.DataLinkOnNewDataSet(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollRichMemo.OnNewDataSet(ADataSet: TDataSet);
 begin
   // Not particularly useful for my purposes
   // ShowMessage('OnNewDataSet');
 end;
 
-procedure TPASVirtualDBScrollRichMemo.DataLinkOnInvalidDataset(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollRichMemo.OnInvalidDataset(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TPASVirtualDBScrollRichMemo.DataLinkOnInvalidDataSource(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollRichMemo.OnInvalidDataSource(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TPASVirtualDBScrollRichMemo.DataLinkOnDataSetScrolled(ADataSet: TDataSet;
+procedure TPASVirtualDBScrollRichMemo.OnDataSetScrolled(ADataSet: TDataSet;
   Distance: Integer);
 begin
   ShowMessage('OnDataSetScrolled');
 end;
 
-procedure TPASVirtualDBScrollRichMemo.DataLinkOnLayoutChanged(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollRichMemo.OnLayoutChanged(ADataSet: TDataSet);
 begin
   ShowMessage('OnDataSetLayoutChanged');
 end;
 
-procedure TPASVirtualDBScrollRichMemo.DataLinkOnEditingChanged(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollRichMemo.OnEditingChanged(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TPASVirtualDBScrollRichMemo.DataLinkOnUpdateData(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollRichMemo.OnUpdateData(ADataSet: TDataSet);
 begin
 
 end;

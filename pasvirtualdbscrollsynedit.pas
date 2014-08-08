@@ -42,23 +42,21 @@ type
     FCurrentRecordSlice : Integer;                // Tracks which Slice is currently at the center of display
     FVisibleLines : Integer;                      // How many lines are visible in EmbeddedSynEdit
 
-
     FError : String;                              //
 
 
-
     // Event Handlers
-    procedure DataLinkOnRecordChanged(Field : TField);
-    procedure DataLinkOnDataSetChanged(ADataSet : TDataSet);
-    procedure DataLinkOnDataSetOpen(ADataSet : TDataSet);
-    procedure DataLinkOnDataSetClose(ADataSet : TDataSet);
-    procedure DataLinkOnNewDataSet(ADataSet : TDataSet);
-    procedure DataLinkOnInvalidDataset(ADataSet : TDataSet);
-    procedure DataLinkOnInvalidDataSource(ADataSet : TDataSet);
-    procedure DataLinkOnDataSetScrolled(ADataSet : TDataSet; Distance : Integer);
-    procedure DataLinkOnLayoutChanged(ADataSet : TDataSet);
-    procedure DataLinkOnEditingChanged(ADataSet : TDataSet);
-    procedure DataLinkOnUpdateData(ADataSet : TDataSet);
+    procedure OnRecordChanged(Field : TField);
+    procedure OnDataSetChanged(ADataSet : TDataSet);
+    procedure OnDataSetOpen(ADataSet : TDataSet);
+    procedure OnDataSetClose(ADataSet : TDataSet);
+    procedure OnNewDataSet(ADataSet : TDataSet);
+    procedure OnInvalidDataset(ADataSet : TDataSet);
+    procedure OnInvalidDataSource(ADataSet : TDataSet);
+    procedure OnDataSetScrolled(ADataSet : TDataSet; Distance : Integer);
+    procedure OnLayoutChanged(ADataSet : TDataSet);
+    procedure OnEditingChanged(ADataSet : TDataSet);
+    procedure OnUpdateData(ADataSet : TDataSet);
     procedure ESynEditOnKeyPress(Sender: TObject; var Key: char);
     procedure ESynEditOnKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ESynEditOnResize(Sender: TObject);
@@ -103,9 +101,9 @@ type
 
     property Anchors;
     property AutoSize;
-    property BevelInner;
-    property BevelOuter;
-    property BevelWidth;
+    //property BevelInner;
+    //property BevelOuter;
+    //property BevelWidth;
     property BorderStyle;
     property BorderWidth;
     property Color;
@@ -179,18 +177,18 @@ begin
   {$ifdef dbgDBScroll} DebugLnExit(Classname,'.CalcCurrentSlice DONE ATempCurrentSlice=',IntToStr(ATempCurrentSlice)); {$endif}
 end;
 
-procedure TPASVirtualDBScrollSynEdit.DataLinkOnRecordChanged(Field: TField);
+procedure TPASVirtualDBScrollSynEdit.OnRecordChanged(Field: TField);
 begin
 
 end;
 
-procedure TPASVirtualDBScrollSynEdit.DataLinkOnDataSetChanged(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollSynEdit.OnDataSetChanged(ADataSet: TDataSet);
 begin
   // Every time we move positions within the DataSet
   // ShowMessage('OnDataSetChanged');
 end;
 
-procedure TPASVirtualDBScrollSynEdit.DataLinkOnDataSetOpen(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollSynEdit.OnDataSetOpen(ADataSet: TDataSet);
 begin
   // Probably the most useful DataSet event
   // Every time this fires we need to get the record count and perform our calculations
@@ -199,45 +197,45 @@ begin
   //ShowMessage(IntToStr(FRecordCount));
 end;
 
-procedure TPASVirtualDBScrollSynEdit.DataLinkOnDataSetClose(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollSynEdit.OnDataSetClose(ADataSet: TDataSet);
 begin
   // May be useful for clean-up
   // ShowMessage('OnDataSetClose');
 end;
 
-procedure TPASVirtualDBScrollSynEdit.DataLinkOnNewDataSet(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollSynEdit.OnNewDataSet(ADataSet: TDataSet);
 begin
   // Not particularly useful for my purposes
   // ShowMessage('OnNewDataSet');
 end;
 
-procedure TPASVirtualDBScrollSynEdit.DataLinkOnInvalidDataset(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollSynEdit.OnInvalidDataset(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TPASVirtualDBScrollSynEdit.DataLinkOnInvalidDataSource(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollSynEdit.OnInvalidDataSource(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TPASVirtualDBScrollSynEdit.DataLinkOnDataSetScrolled(ADataSet: TDataSet;
+procedure TPASVirtualDBScrollSynEdit.OnDataSetScrolled(ADataSet: TDataSet;
   Distance: Integer);
 begin
   ShowMessage('OnDataSetScrolled');
 end;
 
-procedure TPASVirtualDBScrollSynEdit.DataLinkOnLayoutChanged(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollSynEdit.OnLayoutChanged(ADataSet: TDataSet);
 begin
   ShowMessage('OnDataSetLayoutChanged');
 end;
 
-procedure TPASVirtualDBScrollSynEdit.DataLinkOnEditingChanged(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollSynEdit.OnEditingChanged(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TPASVirtualDBScrollSynEdit.DataLinkOnUpdateData(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollSynEdit.OnUpdateData(ADataSet: TDataSet);
 begin
 
 end;

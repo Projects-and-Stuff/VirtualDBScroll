@@ -51,7 +51,7 @@ type
     FDataLink : TPASDataLink;
 
 
-
+    FCountingRecords : Boolean;                   // While performing a RecordCount, this will be set to True
 
     FCurrentRecordSlice : Integer;                // Tracks which Slice is currently at the center of display
 
@@ -62,20 +62,20 @@ type
     FOperationMode : TOperationMode;
 
     // Event Handlers
-    procedure DataLinkOnRecordChanged(Field : TField);
-    procedure DataLinkOnDataSetChanged(ADataSet : TDataSet);
-    procedure DataLinkOnDataSetOpen(ADataSet : TDataSet);
-    procedure DataLinkOnDataSetOpening(ADataSet : TDataSet);
-    procedure DataLinkOnDataSetClose(ADataSet : TDataSet);
-    procedure DataLinkOnNewDataSet(ADataSet : TDataSet);
-    procedure DataLinkOnInvalidDataset(ADataSet : TDataSet);
-    procedure DataLinkOnInvalidDataSource(ADataSet : TDataSet);
-    procedure DataLinkOnDataSetScrolled(ADataSet : TDataSet; Distance : Integer);
-    procedure DataLinkOnLayoutChanged(ADataSet : TDataSet);
-    procedure DataLinkOnEditingChanged(ADataSet : TDataSet);
-    procedure DataLinkOnUpdateData(ADataSet : TDataSet);
-    procedure DataLinkOnDataSetBrowse(ADataSet : TDataSet);
-    procedure DataLinkOnActiveChanged(ADataSet : TDataSet);
+    procedure OnRecordChanged(Field : TField);
+    procedure OnDataSetChanged(ADataSet : TDataSet);
+    procedure OnDataSetOpen(ADataSet : TDataSet);
+    procedure OnDataSetOpening(ADataSet : TDataSet);
+    procedure OnDataSetClose(ADataSet : TDataSet);
+    procedure OnNewDataSet(ADataSet : TDataSet);
+    procedure OnInvalidDataset(ADataSet : TDataSet);
+    procedure OnInvalidDataSource(ADataSet : TDataSet);
+    procedure OnDataSetScrolled(ADataSet : TDataSet; Distance : Integer);
+    procedure OnLayoutChanged(ADataSet : TDataSet);
+    procedure OnEditingChanged(ADataSet : TDataSet);
+    procedure OnUpdateData(ADataSet : TDataSet);
+    procedure OnDataSetBrowse(ADataSet : TDataSet);
+    procedure OnActiveChanged(ADataSet : TDataSet);
     procedure EScrollBarOnChange(Sender : TObject);
     procedure EScrollBarOnKeyPress(Sender : TObject; var Key : char);
     procedure EScrollBarOnScroll(Sender : TObject; ScrollCode : TScrollCode;
@@ -94,6 +94,7 @@ type
     { Public declarations }
     constructor Create(AOwner : TComponent); override;
     destructor Destroy; override;
+    procedure Paint; override;
   published
     { Published declarations }
 
@@ -129,9 +130,9 @@ type
     property Align;
     property Anchors;
     property AutoSize;
-    property BevelInner;
-    property BevelOuter;
-    property BevelWidth;
+    //property BevelInner;
+    //property BevelOuter;
+    //property BevelWidth;
     property BorderStyle;
     property BorderWidth;
     property Caption;
@@ -229,12 +230,18 @@ end;
 
 procedure TPASVirtualDBScrollBase.GetRecordCount;
 begin
-  {$ifdef dbgDBScroll} DebugLn(ClassName,'(inherited).GetRecordCount'); {$endif}
+  {$ifdef dbgDBScroll} DebugLnEnter(ClassName,'(inherited).GetRecordCount INIT'); {$endif}
+
+  // Set this to true to that we're not trying to perform work on the dataset for every OnDataSetChange this creates
+  FCountingRecords := True;
 
   DataLink.DataSet.Last; // Need to move to the last record in the dataset in order to get an accurate count
   FRecordCount := DataLink.DataSet.RecordCount;
   DataLink.DataSet.First; // Move back to the front
 
+  // All done
+  FCountingRecords := False;
+  {$ifdef dbgDBScroll} DebugLnExit(ClassName,'(inherited).GetRecordCount DONE RecordCount=', IntToStr(FRecordCount)); {$endif}
 end;
 
 procedure TPASVirtualDBScrollBase.CalculateLineResolution;
@@ -323,12 +330,12 @@ begin
   end;
 end;
 
-procedure TPASVirtualDBScrollBase.DataLinkOnRecordChanged(Field: TField);
+procedure TPASVirtualDBScrollBase.OnRecordChanged(Field: TField);
 begin
 
 end;
 
-procedure TPASVirtualDBScrollBase.DataLinkOnDataSetChanged(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollBase.OnDataSetChanged(ADataSet: TDataSet);
 begin
   //ShowMessage('Changed');
   {if ADataSet.State = dsBrowse then
@@ -344,7 +351,7 @@ begin
   // ShowMessage('OnDataSetChanged');
 end;
 
-procedure TPASVirtualDBScrollBase.DataLinkOnDataSetOpen(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollBase.OnDataSetOpen(ADataSet: TDataSet);
 begin
   // Probably the most useful DataSet event
   // Every time this fires we need to get the record count and perform our calculations
@@ -354,7 +361,7 @@ begin
    BEFORE ANYTHING ELSE - We need to clear any old values/set back to default
   //////////////////////
   }
-  ShowMessage('OPEN!');
+  ShowMessage('OnDataSetOpen');
 
   GetRecordCount;
   CalculateLineResolution;
@@ -362,62 +369,65 @@ begin
 
 end;
 
-procedure TPASVirtualDBScrollBase.DataLinkOnDataSetOpening(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollBase.OnDataSetOpening(ADataSet: TDataSet);
 begin
   ShowMessage('OPENING!');
 end;
 
-procedure TPASVirtualDBScrollBase.DataLinkOnDataSetClose(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollBase.OnDataSetClose(ADataSet: TDataSet);
 begin
   // May be useful for clean-up
   //ShowMessage('OnDataSetClose');
 end;
 
-procedure TPASVirtualDBScrollBase.DataLinkOnNewDataSet(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollBase.OnNewDataSet(ADataSet: TDataSet);
 begin
   // Not particularly useful for my purposes
-  // ShowMessage('OnNewDataSet');
+  ShowMessage('OnNewDataSet');
 end;
 
-procedure TPASVirtualDBScrollBase.DataLinkOnInvalidDataset(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollBase.OnInvalidDataset(ADataSet: TDataSet);
 begin
   // Return an error
 end;
 
-procedure TPASVirtualDBScrollBase.DataLinkOnInvalidDataSource(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollBase.OnInvalidDataSource(ADataSet: TDataSet);
 begin
   // Return an error
 end;
 
-procedure TPASVirtualDBScrollBase.DataLinkOnDataSetScrolled(ADataSet: TDataSet;
+procedure TPASVirtualDBScrollBase.OnDataSetScrolled(ADataSet: TDataSet;
   Distance: Integer);
 begin
   ShowMessage('OnDataSetScrolled');
 end;
 
-procedure TPASVirtualDBScrollBase.DataLinkOnLayoutChanged(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollBase.OnLayoutChanged(ADataSet: TDataSet);
 begin
   ShowMessage('OnDataSetLayoutChanged');
 end;
 
-procedure TPASVirtualDBScrollBase.DataLinkOnEditingChanged(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollBase.OnEditingChanged(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TPASVirtualDBScrollBase.DataLinkOnUpdateData(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollBase.OnUpdateData(ADataSet: TDataSet);
 begin
 
 end;
 
-procedure TPASVirtualDBScrollBase.DataLinkOnDataSetBrowse(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollBase.OnDataSetBrowse(ADataSet: TDataSet);
 begin
-  ShowMessage('DataLinkOnDataSetBrowse');
+  if not FCountingRecords then
+  begin
+    ShowMessage('OnDataSetBrowse');
+  end;
 end;
 
-procedure TPASVirtualDBScrollBase.DataLinkOnActiveChanged(ADataSet: TDataSet);
+procedure TPASVirtualDBScrollBase.OnActiveChanged(ADataSet: TDataSet);
 begin
-  ShowMessage('DataLinkOnActiveChanged');
+  ShowMessage('OnActiveChanged');
 end;
 
 procedure TPASVirtualDBScrollBase.EScrollBarOnChange(Sender: TObject);
@@ -450,10 +460,12 @@ end;
 constructor TPASVirtualDBScrollBase.Create(AOwner: TComponent);
 begin
   {$ifdef dbgDBScroll}
-    DebugLnEnter(ClassName,'(inherited).Create INIT');
+    DebugLnEnter('>> ',ClassName,'(inherited).Create INIT');
   {$endif}
 
   inherited Create(AOwner);
+
+
 
   // Set default component size and values
   with GetControlClassDefaultSize do
@@ -497,22 +509,24 @@ begin
   // Initialize the Dataset
   //FDataLink := TComponentDataLink.Create;
   FDataLink := TPASDataLink.Create;
-  FDataLink.OnRecordChanged := @DataLinkOnRecordChanged;
-  FDataLink.OnDatasetChanged := @DataLinkOnDataSetChanged;
-  FDataLink.OnDataSetOpen := @DataLinkOnDataSetOpen;
-  FDataLink.OnDataSetOpening := @DataLinkOnDataSetOpening;
-  FDataLink.OnDataSetClose := @DataLinkOnDataSetClose;
-  FDataLink.OnNewDataSet := @DataLinkOnNewDataSet;
-  FDataLink.OnInvalidDataSet := @DataLinkOnInvalidDataset;
-  FDataLink.OnInvalidDataSource := @DataLinkOnInvalidDataSource;
-  FDataLink.OnDataSetScrolled := @DataLinkOnDataSetScrolled;
-  FDataLink.OnLayoutChanged := @DataLinkOnLayoutChanged;
-  FDataLink.OnEditingChanged := @DataLinkOnEditingChanged;
-  FDataLink.OnUpdateData := @DataLinkOnUpdateData;
-  FDataLink.OnDataSetBrowse := @DataLinkOnDataSetBrowse;
-  FDataLink.OnActiveChanged := @DataLinkOnActiveChanged;
+  FDataLink.OnRecordChanged := @OnRecordChanged;
+  FDataLink.OnDatasetChanged := @OnDataSetChanged;
+  FDataLink.OnDataSetOpen := @OnDataSetOpen;
+  FDataLink.OnDataSetOpening := @OnDataSetOpening;
+  FDataLink.OnDataSetClose := @OnDataSetClose;
+  FDataLink.OnNewDataSet := @OnNewDataSet;
+  FDataLink.OnInvalidDataSet := @OnInvalidDataset;
+  FDataLink.OnInvalidDataSource := @OnInvalidDataSource;
+  FDataLink.OnDataSetScrolled := @OnDataSetScrolled;
+  FDataLink.OnLayoutChanged := @OnLayoutChanged;
+  FDataLink.OnEditingChanged := @OnEditingChanged;
+  FDataLink.OnUpdateData := @OnUpdateData;
+  FDataLink.OnDataSetBrowse := @OnDataSetBrowse;
+  FDataLink.OnActiveChanged := @OnActiveChanged;
   FDataLink.VisualControl := True;
 
+  // Only true when we're in the midst of performing a RecordCount
+  FCountingRecords := False;
 
   // Initially set the Slice size to 50
   FRecordSliceSize := 50;
@@ -520,6 +534,7 @@ begin
 
   // Set Format property default value (blank)
   FFormat := '';
+
 
   {$ifdef dbgDBScroll}
     DebugLnExit(ClassName,'(inherited).Create DONE');
@@ -530,7 +545,7 @@ end;
 destructor TPASVirtualDBScrollBase.Destroy;
 begin
   {$ifdef dbgDBScroll}
-    DebugLn(ClassName,'(inherited).Destroy');
+    DebugLn('<< ',ClassName,'(inherited).Destroy');
   {$endif}
 
   FDataLink.Free;
@@ -544,6 +559,13 @@ begin
 
   inherited Destroy;
 
+end;
+
+procedure TPASVirtualDBScrollBase.Paint;
+begin
+  inherited Paint;
+
+  //inherited Canvas.Rectangle(0,0,self.Width,self.Height);
 end;
 
 end.
