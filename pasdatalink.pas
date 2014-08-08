@@ -1,11 +1,12 @@
 unit PASDataLink;
 
 {$mode objfpc}{$H+}
+{$DEFINE dbgDBScroll}
 
 interface
 
 uses
-  Classes, SysUtils, db, DBGrids;
+  Classes, SysUtils, db, DBGrids, LazLogger;
 
 type
 
@@ -114,24 +115,20 @@ procedure TPASDataLink.SetDataSetName(const AValue: string);
 begin
   if FDataSetName <> AValue then
   begin
-    FDataSetName:=AValue;
+    FDataSetName := AValue;
   end;
 end;
 
 procedure TPASDataLink.RecordChanged(Field: TField);
 begin
-  {$ifdef dbgDBScroll}
-    DebugLn('TPASDataLink.RecordChanged');
-  {$endif}
+  {$ifdef dbgDBScroll} DebugLn(ClassName,'.RecordChanged'); {$endif}
   if Assigned(OnRecordChanged) then
     OnRecordChanged(Field);
 end;
 
 procedure TPASDataLink.DataSetChanged;
 begin
-  {$ifdef dbgDBScroll}
-  DebugLn(ClassName,'.DataSetChanged, FirstRecord=', dbgs(FirstRecord));
-  {$Endif}
+  {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, FirstRecord=', DbgS(FirstRecord)); {$Endif}
   if Assigned(OnDataSetChanged) then
     OnDataSetChanged(DataSet);
 
@@ -206,9 +203,7 @@ end;
 
 procedure TPASDataLink.ActiveChanged;
 begin
-  {$ifdef dbgDBScroll}
-    DebugLnEnter('TPASDataLink.ActiveChanged INIT');
-  {$endif}
+  {$ifdef dbgDBScroll} DebugLnEnter(ClassName, '.ActiveChanged INIT'); {$endif}
   if Active then
   begin
     FDataSet := DataSet;
@@ -258,76 +253,56 @@ begin
       end;
     end;
   end;
-  {$ifdef dbgDBScroll}
-    DebugLnExit('TPASDataLink.ActiveChanged END');
-  {$endif}
+  {$ifdef dbgDBScroll} DebugLnExit(ClassName, '.ActiveChanged DONE'); {$endif}
 end;
 
 procedure TPASDataLink.LayoutChanged;
 begin
-  {$ifdef dbgDBScroll}
-    DebugLnEnter('TPASDataLink.LayoutChanged INIT');
-  {$Endif}
+  {$ifdef dbgDBScroll} DebugLnEnter(ClassName, '.LayoutChanged INIT'); {$Endif}
   if Assigned(OnLayoutChanged) then
   begin
     OnLayoutChanged(DataSet);
   end;
-  {$ifdef dbgDBScroll}
-    DebugLnExit('TPASDataLink.LayoutChanged END');
-  {$Endif}
+  {$ifdef dbgDBScroll} DebugLnExit(ClassName, '.LayoutChanged DONE'); {$Endif}
 end;
 
 procedure TPASDataLink.DataSetScrolled(Distance: Integer);
 begin
-  {$ifdef dbgDBScroll}
-    DebugLn('TPASDataLink.DataSetScrolled(',IntToStr(Distance),')');
-  {$endif}
+  {$ifdef dbgDBScroll} DebugLn(ClassName, '.DataSetScrolled Distance=',IntToStr(Distance)); {$endif}
   if Assigned(OnDataSetScrolled) then
     OnDataSetScrolled(DataSet, Distance);
 end;
 
 procedure TPASDataLink.FocusControl(Field: TFieldRef);
 begin
-  {$ifdef dbgDBScroll}
-    DebugLn('TPASDataLink.FocusControl');
-  {$endif}
+  {$ifdef dbgDBScroll} DebugLn(ClassName, '.FocusControl'); {$endif}
 end;
 
 procedure TPASDataLink.CheckBrowseMode;
 begin
-  {$ifdef dbgDBScroll}
-    DebugLn(ClassName, '.CheckBrowseMode');
-  {$endif}
+  {$ifdef dbgDBScroll} DebugLn(ClassName, '.CheckBrowseMode'); {$endif}
   inherited CheckBrowseMode;
 end;
 
 procedure TPASDataLink.EditingChanged;
 begin
-  {$ifdef dbgDBScroll}
-    DebugLn(ClassName, '.EditingChanged');
-  {$endif}
+  {$ifdef dbgDBScroll} DebugLn(ClassName, '.EditingChanged'); {$endif}
   if Assigned(OnEditingChanged) then
     OnEditingChanged(DataSet);
 end;
 
 procedure TPASDataLink.UpdateData;
 begin
-  {$ifdef dbgDBScroll}
-    DebugLn(ClassName, '.UpdateData');
-  {$endif}
+  {$ifdef dbgDBScroll} DebugLn(ClassName, '.UpdateData'); {$endif}
   if Assigned(OnUpdatedata) then
     OnUpdateData(DataSet);
 end;
 
 function TPASDataLink.MoveBy(Distance: Integer): Integer;
 begin
-  {$ifdef dbgDBScroll}
-    DebugLn(ClassName, '.MoveBy  INIT: Distance=', Distance);
-  {$endif}
+  {$ifdef dbgDBScroll} DebugLnEnter(ClassName, '.MoveBy INIT Distance=', IntToStr(Distance)); {$endif}
   Result := inherited MoveBy(Distance);
-  {$ifdef dbgDBScroll}
-    DebugLn(ClassName, '.MoveBy  END: Distance=', Distance);
-  {$endif}
+  {$ifdef dbgDBScroll} DebugLnExit(ClassName, '.MoveBy DONE'); {$endif}
 end;
 
 end.
