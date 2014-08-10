@@ -71,13 +71,16 @@ begin
       Top := Mouse.CursorPos.y - (Height div 2);
 
       // Set memo text to current property value
-      memoFormat.Text := GetStrValue;
+      memoFormat.Lines := TStrings(GetObjectValue);
+      //memoFormat.Text := GetStrValue;
 
       ShowModal;
       if ModalResult = mrOk then
       begin
         // If user selects OK, set the property to the memo text value
-        SetStrValue(memoFormat.Text);
+        SetPtrValue(memoFormat.Lines);
+        //SetStrValue(memoFormat.Text);
+        //SetStrValue(memoFormat.Text);
       end;
 
     end;

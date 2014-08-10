@@ -361,10 +361,7 @@ begin
 
   // Set up Scrollbar Events
   EScrollBar.OnChange := @EScrollBarOnChange;
-  EScrollBar.OnKeyPress := @EScrollBarOnKeyPress;
   EScrollBar.OnScroll := @EScrollBarOnScroll;
-
-  //FVisibleLines := GetVisibleLineCount;
 
   {$ifdef dbgDBScroll} DebugLnExit(Classname,'.Create DONE'); {$endif}
 end;

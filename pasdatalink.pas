@@ -135,67 +135,67 @@ begin
   case DataSet.State of
     dsInactive     : begin
                        if Assigned(OnDataSetInactive) then OnDataSetInactive(DataSet);
-	               {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsInactive'); {$Endif}
+                       {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsInactive'); {$Endif}
                      end;
 
     dsBrowse       : begin
                        if Assigned(OnDataSetBrowse) then OnDataSetBrowse(DataSet);
-	               {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsBrowse'); {$Endif}
+                       {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsBrowse'); {$Endif}
                      end;
 
     dsEdit         : begin
                        if Assigned(OnDataSetEdit) then OnDataSetEdit(DataSet);
-	               {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsEdit'); {$Endif}
+                       {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsEdit'); {$Endif}
                      end;
 
     dsInsert       : begin
                        if Assigned(OnDataSetInsert) then OnDataSetInsert(DataSet);
-	               {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsInsert'); {$Endif}
+                       {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsInsert'); {$Endif}
                      end;
 
     dsSetKey       : begin
                        if Assigned(OnDataSetSetKey) then OnDataSetSetKey(DataSet);
-	               {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsSetKey'); {$Endif}
+                       {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsSetKey'); {$Endif}
                      end;
 
     dsCalcFields   : begin
                        if Assigned(OnDataSetCalcField) then OnDataSetCalcField(DataSet);
-	               {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsCalcFields'); {$Endif}
+                       {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsCalcFields'); {$Endif}
                      end;
 
     dsFilter       : begin
                        if Assigned(OnDataSetFilter) then OnDataSetFilter(DataSet);
-	               {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsFilter'); {$Endif}
+                       {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsFilter'); {$Endif}
                      end;
 
     dsNewValue     : begin
                        if Assigned(OnDataSetNewValue) then OnDataSetNewValue(DataSet);
-	               {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsNewValue'); {$Endif}
+                       {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsNewValue'); {$Endif}
                      end;
 
     dsOldValue     : begin
                        if Assigned(OnDataSetOldValue) then OnDataSetOldValue(DataSet);
-	               {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsOldValue'); {$Endif}
+                       {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsOldValue'); {$Endif}
                      end;
 
     dsCurValue     : begin
                        if Assigned(OnDataSetCurValue) then OnDataSetCurValue(DataSet);
-	               {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsCurValue'); {$Endif}
+                       {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsCurValue'); {$Endif}
                      end;
 
     dsBlockRead    : begin
                        if Assigned(OnDataSetBlockRead) then OnDataSetBlockRead(DataSet);
-	               {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsBlockRead'); {$Endif}
+                       {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsBlockRead'); {$Endif}
                      end;
 
     dsInternalCalc : begin
                        if Assigned(OnDataSetInternalCalc) then OnDataSetInternalCalc(DataSet);
-	               {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsInternalCalc'); {$Endif}
+                       {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsInternalCalc'); {$Endif}
                      end;
 
     dsOpening      : begin
                        if Assigned(OnDataSetOpening) then OnDataSetOpening(DataSet);
-	               {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsOpening'); {$Endif}
+                       {$ifdef dbgDBScroll} DebugLn(ClassName,'.DataSetChanged, DataSet.State = dsOpening'); {$Endif}
                      end;
   end;
 

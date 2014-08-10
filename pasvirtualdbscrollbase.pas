@@ -54,13 +54,15 @@ type
 
     FCountingRecords : Boolean;                   // While performing a RecordCount, this will be set to True
 
-    FFormat : String;                             // The format for displaying content
+    FFormat : TStrings;                             // The format for displaying content
+    //FFormat : String;                             // The format for displaying content
 
     FError : String;                              //
 
     FOperationMode : TOperationMode;
 
     // Event Handlers
+    //function GetFormat: String;
     procedure OnRecordChanged(Field : TField);
     procedure OnDataSetChanged(ADataSet : TDataSet);
     procedure OnDataSetOpen(ADataSet : TDataSet);
@@ -81,6 +83,9 @@ type
 
     procedure InitializeWithData;
 
+    procedure SetFormat(const AValue: TStrings);
+    procedure DoFormatChange(Sender: TObject);
+
   protected
     { Protected declarations }
     FRecordSliceSize : Integer;                   // The maximum number of records per record Slice
@@ -97,8 +102,10 @@ type
   published
     { Published declarations }
 
-    function GetFormat : String;
-    procedure SetFormat(Value : String);
+
+    //function GetFormat : String;
+    //procedure SetFormat(Value : String);
+
 
     function GetSliceSize : Integer;
     function GetDataSource : TDataSource;
@@ -124,7 +131,8 @@ type
 
 
     {The Format property allows the programmer to determine how records will be displayed within the component}
-    property Format : String read GetFormat write SetFormat;
+    property Format : TStrings read FFormat write SetFormat;
+    //property Format : String read GetFormat write SetFormat;
     property OperationMode: TOperationMode read FOperationMode write SetOperationMode default Standard;
 
     property Align;
@@ -167,7 +175,8 @@ implementation
 
 procedure Register;
 begin
-  RegisterPropertyEditor(TypeInfo(String), TPASVirtualDBScrollBase, 'Format', TPASFormatEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TPASVirtualDBScrollBase, 'Format', TPASFormatEditor);
+  //RegisterPropertyEditor(TypeInfo(String), TPASVirtualDBScrollBase, 'Format', TPASFormatEditor);
   RegisterPropertyEditor(TypeInfo(TOperationMode), TPASVirtualDBScrollBase, 'OperationMode', TPASOperationModePropertyEditor);
 end;
 
@@ -186,7 +195,7 @@ begin
   for i := Low(TRestricted) to High(TRestricted) do
     Proc(RestrictedStyleNames[i]);
 end;
-
+{
 function TPASVirtualDBScrollBase.GetFormat: String;
 begin
   Result := FFormat;
@@ -196,7 +205,7 @@ procedure TPASVirtualDBScrollBase.SetFormat(Value: String);
 begin
   FFormat := Value;
 end;
-
+}
 function TPASVirtualDBScrollBase.GetSliceSize: Integer;
 begin
   Result := FRecordSliceSize;
@@ -473,6 +482,11 @@ begin
   CalculateScrollBarMax;
 end;
 
+procedure TPASVirtualDBScrollBase.SetFormat(const AValue: TStrings);
+begin
+  FFormat.Assign(AValue);
+end;
+
 procedure TPASVirtualDBScrollBase.SetOperationMode(AValue: TOperationMode);
 begin
   if AValue in [SmallDataSet, Disconnected] then
@@ -516,7 +530,6 @@ begin
   FScrollBar.Kind := sbVertical;
   FScrollBar.OnChange := @EScrollBarOnChange;
   FScrollBar.OnScroll := @EScrollBarOnScroll;
-  FScrollBar.OnKeyPress := @EScrollBarOnKeyPress;
 
 
   // Initialize the Embedded Label
@@ -553,6 +566,9 @@ begin
   FDataLink.OnActiveChanged := @OnActiveChanged;
   FDataLink.VisualControl := True;
 
+  FFormat := TStringList.Create;
+  TStringList(FFormat).OnChange := @DoFormatChange;
+
   // Only true when we're in the midst of performing a RecordCount
   FCountingRecords := False;
 
@@ -561,7 +577,7 @@ begin
 
 
   // Set Format property default value (blank)
-  FFormat := '';
+  //FFormat := '';
 
 
   {$ifdef dbgDBScroll}
@@ -585,6 +601,9 @@ begin
   FScrollBar.Free;
   FScrollBar := Nil;
 
+  FFormat.Free;
+  FFormat := Nil;
+
   inherited Destroy;
 
 end;
@@ -596,5 +615,11 @@ begin
   //inherited Canvas.Rectangle(0,0,self.Width,self.Height);
 
 end;
+
+procedure TPASVirtualDBScrollBase.DoFormatChange(Sender: TObject);
+begin
+  Changed;
+end;
+
 
 end.
