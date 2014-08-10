@@ -33,12 +33,10 @@ type
   { TPASVirtualDBScrollRichMemo }
 
   TPASVirtualDBScrollRichMemo = class(TPASVirtualDBScrollBase)
-
   private
     { Private declarations }
     FRichMemo : TPASEmbeddedRichMemo;
 
-    FCurrentRecordSlice : Integer;                // Tracks which Slice is currently at the center of display
     FVisibleLines : Integer;                      // How many lines are visible in EmbeddedRichMemo
 
     FError : String;                              //
@@ -60,7 +58,6 @@ type
     procedure ERichMemoOnKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ERichMemoOnResize(Sender: TObject);
     procedure EScrollBarOnChange(Sender: TObject);
-    procedure EScrollBarOnKeyPress(Sender: TObject; var Key: char);
     procedure EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode;
       var ScrollPos: Integer);
 
@@ -77,8 +74,6 @@ type
     destructor Destroy; override;
   published
     { Published declarations }
-
-
     property ERichMemo : TPASEmbeddedRichMemo read FRichMemo;
     property EScrollBar; // Inherited from TPASVirtualDBScrollBase
     property EPopupInfo; // Inherited from TPASVirtualDBScrollBase
@@ -100,9 +95,9 @@ type
 
     property Anchors;
     property AutoSize;
-    //property BevelInner;
-    //property BevelOuter;
-    //property BevelWidth;
+    property BevelInner;
+    property BevelOuter;
+    property BevelWidth;
     property BorderStyle;
     property BorderWidth;
     property Color;
@@ -244,6 +239,7 @@ begin
 
 end;
 
+{ Used to allow the end-user to navigate the DataSet using the directional keys }
 procedure TPASVirtualDBScrollRichMemo.ERichMemoOnKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 begin
@@ -332,11 +328,6 @@ begin
   {$ifdef dbgDBScroll} DebugLn(Classname,'.MoveToLine LineNo=',IntToStr(LineNo)); {$endif}
   ERichMemo.CaretPos := Point(0, LineNo);
   ERichMemo.SetFocus;
-end;
-
-procedure TPASVirtualDBScrollRichMemo.EScrollBarOnKeyPress(Sender: TObject; var Key: char);
-begin
-
 end;
 
 constructor TPASVirtualDBScrollRichMemo.Create(AOwner: TComponent);

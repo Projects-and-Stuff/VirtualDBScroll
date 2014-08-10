@@ -26,8 +26,7 @@ interface
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, PASEmbeddedSynEdit, PASEmbeddedScrollBar, db, PropEdits,
-  PASVirtualDBScrollBase, SynEdit, SynCompletion, windows, types
-  {$ifdef dbgDBScroll}, LazLogger{$endif};
+  PASVirtualDBScrollBase, SynEdit, SynCompletion, windows, types {$ifdef dbgDBScroll}, LazLogger{$endif};
 
 type
 
@@ -39,7 +38,6 @@ type
     FSynEdit : TPASEmbeddedSynEdit;
     FCompletion : TSynCompletion;
 
-    FCurrentRecordSlice : Integer;                // Tracks which Slice is currently at the center of display
     FVisibleLines : Integer;                      // How many lines are visible in EmbeddedSynEdit
 
     FError : String;                              //
@@ -61,7 +59,6 @@ type
     procedure ESynEditOnKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ESynEditOnResize(Sender: TObject);
     procedure EScrollBarOnChange(Sender: TObject);
-    procedure EScrollBarOnKeyPress(Sender: TObject; var Key: char);
     procedure EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode;
       var ScrollPos: Integer);
 
@@ -79,7 +76,6 @@ type
   published
     { Published declarations }
     property Completion : TSynCompletion read FCompletion write FCompletion;
-
     property ESynEdit : TPASEmbeddedSynEdit read FSynEdit;
     property EScrollBar; // Inherited from TPASVirtualDBScrollBase
     property EPopupInfo; // Inherited from TPASVirtualDBScrollBase
@@ -101,9 +97,9 @@ type
 
     property Anchors;
     property AutoSize;
-    //property BevelInner;
-    //property BevelOuter;
-    //property BevelWidth;
+    property BevelInner;
+    property BevelOuter;
+    property BevelWidth;
     property BorderStyle;
     property BorderWidth;
     property Color;
@@ -245,6 +241,7 @@ begin
 
 end;
 
+{ Used to allow the end-user to navigate the DataSet using the directional keys }
 procedure TPASVirtualDBScrollSynEdit.ESynEditOnKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 begin
@@ -336,11 +333,6 @@ begin
   ESynEdit.SetFocus;
 end;
 
-procedure TPASVirtualDBScrollSynEdit.EScrollBarOnKeyPress(Sender: TObject; var Key: char);
-begin
-
-end;
-
 constructor TPASVirtualDBScrollSynEdit.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -375,7 +367,6 @@ begin
   EScrollBar.OnKeyPress := @EScrollBarOnKeyPress;
   EScrollBar.OnScroll := @EScrollBarOnScroll;
 
-
   //FVisibleLines := GetVisibleLineCount;
 
   {$ifdef dbgDBScroll} DebugLnExit(Classname,'.Create DONE'); {$endif}
@@ -387,7 +378,6 @@ begin
 
   FSynEdit.Free;
   FSynEdit := nil;
-
 
   inherited Destroy;
 end;

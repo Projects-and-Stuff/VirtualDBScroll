@@ -76,7 +76,6 @@ type
     procedure OnDataSetBrowse(ADataSet : TDataSet);
     procedure OnActiveChanged(ADataSet : TDataSet);
     procedure EScrollBarOnChange(Sender : TObject);
-    procedure EScrollBarOnKeyPress(Sender : TObject; var Key : char);
     procedure EScrollBarOnScroll(Sender : TObject; ScrollCode : TScrollCode;
       var ScrollPos : Integer);
 
@@ -117,7 +116,6 @@ type
     property EPopupInfo : TPASEmbeddedPanel read FPopupInfo;
 
     property RecordSliceSize : Integer read GetSliceSize write SetSliceSize default 50; // Used to set the number of records per Slice. Allowable range is 1 to 500
-    //property DataLink : TComponentDataLink read FDataLink write FDataLink;
     property DataLink : TPASDataLink read FDataLink write FDataLink;
     property DataSource : TDataSource read GetDataSource write SetDataSource; // Used to access the DataLink. The DataLink property of the DataSource must be set for this component to operate
     property LineResolution : Integer read FLineResolution; // The number of positions on the scrollbar allocated per record. This property is automatically calculated based upon the number of Records in the DataSet
@@ -132,9 +130,9 @@ type
     property Align;
     property Anchors;
     property AutoSize;
-    //property BevelInner;
-    //property BevelOuter;
-    //property BevelWidth;
+    property BevelInner;
+    property BevelOuter;
+    property BevelWidth;
     property BorderStyle;
     property BorderWidth;
     property Caption;
@@ -487,11 +485,6 @@ begin
   end;
 end;
 
-procedure TPASVirtualDBScrollBase.EScrollBarOnKeyPress(Sender: TObject; var Key: char);
-begin
-
-end;
-
 constructor TPASVirtualDBScrollBase.Create(AOwner: TComponent);
 begin
   {$ifdef dbgDBScroll}
@@ -601,6 +594,7 @@ begin
   inherited Paint;
 
   //inherited Canvas.Rectangle(0,0,self.Width,self.Height);
+
 end;
 
 end.

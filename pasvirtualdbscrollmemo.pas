@@ -37,7 +37,6 @@ type
     { Private declarations }
     FMemo : TPASEmbeddedMemo;
 
-    FCurrentRecordSlice : Integer;                // Tracks which Slice is currently at the center of display
     FVisibleLines : Integer;                      // How many lines are visible in EmbeddedMemo
 
     FError : String;                              //
@@ -59,7 +58,6 @@ type
     procedure EMemoOnKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure EMemoOnResize(Sender: TObject);
     procedure EScrollBarOnChange(Sender: TObject);
-    procedure EScrollBarOnKeyPress(Sender: TObject; var Key: char);
     procedure EScrollBarOnScroll(Sender: TObject; ScrollCode: TScrollCode;
       var ScrollPos: Integer);
 
@@ -76,7 +74,6 @@ type
     destructor Destroy; override;
   published
     { Published declarations }
-
     property EMemo : TPASEmbeddedMemo read FMemo;
     property EScrollBar; // Inherited from TPASVirtualDBScrollBase
     property EPopupInfo; // Inherited from TPASVirtualDBScrollBase
@@ -98,9 +95,9 @@ type
 
     property Anchors;
     property AutoSize;
-    //property BevelInner;
-    //property BevelOuter;
-    //property BevelWidth;
+    property BevelInner;
+    property BevelOuter;
+    property BevelWidth;
     property BorderStyle;
     property BorderWidth;
     property Color;
@@ -240,6 +237,7 @@ begin
 
 end;
 
+{ Used to allow the end-user to navigate the DataSet using the directional keys }
 procedure TPASVirtualDBScrollMemo.EMemoOnKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 begin
@@ -267,7 +265,6 @@ begin
   begin
 
   end;
-
 end;
 
 procedure TPASVirtualDBScrollMemo.EScrollBarOnChange(Sender: TObject);
@@ -333,11 +330,6 @@ begin
   FVisibleLines := GetVisibleLineCount;
 end;
 
-procedure TPASVirtualDBScrollMemo.EScrollBarOnKeyPress(Sender: TObject; var Key: char);
-begin
-
-end;
-
 constructor TPASVirtualDBScrollMemo.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -371,7 +363,6 @@ begin
   EScrollBar.OnChange := @EScrollBarOnChange;
   EScrollBar.OnKeyPress := @EScrollBarOnKeyPress;
   EScrollBar.OnScroll := @EScrollBarOnScroll;
-
 
   //FVisibleLines := GetVisibleLineCount;
 
