@@ -6,6 +6,7 @@ object Form1: TForm1
   Caption = 'Form1'
   ClientHeight = 240
   ClientWidth = 584
+  OnCreate = FormCreate
   OnShow = FormShow
   LCLVersion = '1.2.2.0'
   object Button1: TButton
@@ -17,32 +18,6 @@ object Form1: TForm1
     OnClick = Button1Click
     TabOrder = 0
   end
-  object PASVirtualDBScrollMemo1: TPASVirtualDBScrollMemo
-    Left = 8
-    Height = 146
-    Top = 16
-    Width = 322
-    EScrollBar.Left = 304
-    EScrollBar.Height = 144
-    EScrollBar.Top = 1
-    EScrollBar.Width = 17
-    EPopupInfo.Left = 0
-    EPopupInfo.Height = 26
-    EPopupInfo.Top = 0
-    EPopupInfo.Width = 100
-    EPopupInfo.Caption = 'Testing'
-    EPopupInfo.TabOrder = 2
-    DataSource = DataSource1
-    Format = 'Test'
-    Caption = 'PASVirtualDBScrollMemo1'
-    TabOrder = 1
-    UseDockManager = True
-    EMemo.Left = 1
-    EMemo.Height = 144
-    EMemo.Top = 1
-    EMemo.Width = 303
-    EMemo.ScrollBars = ssNone
-  end
   object Button2: TButton
     Left = 153
     Height = 25
@@ -50,7 +25,37 @@ object Form1: TForm1
     Width = 75
     Caption = 'Button2'
     OnClick = Button2Click
+    TabOrder = 1
+  end
+  object PASVirtualDBScrollMemo1: TPASVirtualDBScrollMemo
+    Left = 8
+    Height = 114
+    Top = 6
+    Width = 402
+    EScrollBar.Left = 384
+    EScrollBar.Height = 112
+    EScrollBar.Top = 1
+    EScrollBar.Width = 17
+    EPopupInfo.Left = 0
+    EPopupInfo.Height = 24
+    EPopupInfo.Top = 0
+    EPopupInfo.Width = 50
+    EPopupInfo.Caption = '0'
+    EPopupInfo.TabOrder = 1
+    Format.Strings = (
+      '---------------------------------------------'
+      'Record:'#9'[id:Integer]'#9'Name: '#9'[Name:String]'
+      'Entry:'
+      '[Entry:String]'
+    )
+    Caption = 'PASVirtualDBScrollMemo1'
     TabOrder = 2
+    UseDockManager = True
+    EMemo.Left = 1
+    EMemo.Height = 112
+    EMemo.Top = 1
+    EMemo.Width = 383
+    EMemo.ScrollBars = ssNone
   end
   object DataSource1: TDataSource
     DataSet = SQLQuery1

@@ -23,6 +23,7 @@ type
     SQLTransaction1: TSQLTransaction;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     { private declarations }
@@ -103,6 +104,11 @@ begin
   SQLTransaction1.Active := True;
   SQLQuery1.Active := True;
   SQLQuery1.ApplyUpdates;
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+
 end;
 
 
