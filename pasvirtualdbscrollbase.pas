@@ -55,14 +55,12 @@ type
     FCountingRecords : Boolean;                   // While performing a RecordCount, this will be set to True
 
     FFormat : TStrings;                             // The format for displaying content
-    //FFormat : String;                             // The format for displaying content
 
     FError : String;                              //
 
     FOperationMode : TOperationMode;
 
     // Event Handlers
-    //function GetFormat: String;
     procedure OnRecordChanged(Field : TField);
     procedure OnDataSetChanged(ADataSet : TDataSet);
     procedure OnDataSetOpen(ADataSet : TDataSet);
@@ -102,11 +100,6 @@ type
   published
     { Published declarations }
 
-
-    //function GetFormat : String;
-    //procedure SetFormat(Value : String);
-
-
     function GetSliceSize : Integer;
     function GetDataSource : TDataSource;
     procedure SetSliceSize(const Value : Integer);
@@ -132,7 +125,6 @@ type
 
     {The Format property allows the programmer to determine how records will be displayed within the component}
     property Format : TStrings read FFormat write SetFormat;
-    //property Format : String read GetFormat write SetFormat;
     property OperationMode: TOperationMode read FOperationMode write SetOperationMode default Standard;
 
     property Align;
@@ -176,7 +168,6 @@ implementation
 procedure Register;
 begin
   RegisterPropertyEditor(TypeInfo(TStrings), TPASVirtualDBScrollBase, 'Format', TPASFormatEditor);
-  //RegisterPropertyEditor(TypeInfo(String), TPASVirtualDBScrollBase, 'Format', TPASFormatEditor);
   RegisterPropertyEditor(TypeInfo(TOperationMode), TPASVirtualDBScrollBase, 'OperationMode', TPASOperationModePropertyEditor);
 end;
 
@@ -195,17 +186,7 @@ begin
   for i := Low(TRestricted) to High(TRestricted) do
     Proc(RestrictedStyleNames[i]);
 end;
-{
-function TPASVirtualDBScrollBase.GetFormat: String;
-begin
-  Result := FFormat;
-end;
 
-procedure TPASVirtualDBScrollBase.SetFormat(Value: String);
-begin
-  FFormat := Value;
-end;
-}
 function TPASVirtualDBScrollBase.GetSliceSize: Integer;
 begin
   Result := FRecordSliceSize;
@@ -360,6 +341,7 @@ begin
 
   // Every time we move positions within the DataSet
   // ShowMessage('OnDataSetChanged');
+
 end;
 
 procedure TPASVirtualDBScrollBase.OnDataSetOpen(ADataSet: TDataSet);
@@ -548,7 +530,6 @@ begin
 
 
   // Initialize the Dataset
-  //FDataLink := TComponentDataLink.Create;
   FDataLink := TPASDataLink.Create;
   FDataLink.OnRecordChanged := @OnRecordChanged;
   FDataLink.OnDatasetChanged := @OnDataSetChanged;
@@ -566,6 +547,7 @@ begin
   FDataLink.OnActiveChanged := @OnActiveChanged;
   FDataLink.VisualControl := True;
 
+  // Initialize the Format property
   FFormat := TStringList.Create;
   TStringList(FFormat).OnChange := @DoFormatChange;
 
