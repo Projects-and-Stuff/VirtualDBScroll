@@ -2,11 +2,11 @@ object formPASFormatEditor: TformPASFormatEditor
   Left = 393
   Height = 240
   Top = 441
-  Width = 320
+  Width = 585
   BorderStyle = bsSizeToolWin
   Caption = 'formPASFormatEditor'
   ClientHeight = 240
-  ClientWidth = 320
+  ClientWidth = 585
   LCLVersion = '1.2.2.0'
   object memoFormat: TMemo
     AnchorSideLeft.Control = Owner
@@ -18,11 +18,17 @@ object formPASFormatEditor: TformPASFormatEditor
     Left = 16
     Height = 153
     Top = 31
-    Width = 288
-    Anchors = [akTop, akLeft, akRight, akBottom]
+    Width = 289
+    Anchors = [akTop, akLeft, akBottom]
     BorderSpacing.Left = 16
     BorderSpacing.Right = 16
     BorderSpacing.Bottom = 16
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -13
+    Font.Name = 'Courier New'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    ParentFont = False
     ScrollBars = ssAutoBoth
     TabOrder = 0
     WantTabs = True
@@ -56,7 +62,7 @@ object formPASFormatEditor: TformPASFormatEditor
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Side = asrBottom
-    Left = 229
+    Left = 494
     Height = 25
     Top = 200
     Width = 75
@@ -66,5 +72,23 @@ object formPASFormatEditor: TformPASFormatEditor
     Caption = 'Cancel'
     ModalResult = 2
     TabOrder = 2
+  end
+  object Button1: TButton
+    Left = 224
+    Height = 25
+    Top = 200
+    Width = 75
+    Caption = 'Convert'
+    OnClick = Button1Click
+    TabOrder = 3
+  end
+  object Button2: TButton
+    Left = 304
+    Height = 25
+    Top = 200
+    Width = 75
+    Caption = 'Convert Back'
+    OnClick = Button2Click
+    TabOrder = 4
   end
 end
