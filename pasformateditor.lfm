@@ -3,8 +3,9 @@ object formPASFormatEditor: TformPASFormatEditor
   Height = 240
   Top = 441
   Width = 585
+  BorderIcons = []
   BorderStyle = bsSizeToolWin
-  Caption = 'formPASFormatEditor'
+  Caption = 'Format Editor'
   ClientHeight = 240
   ClientWidth = 585
   LCLVersion = '1.2.2.0'
