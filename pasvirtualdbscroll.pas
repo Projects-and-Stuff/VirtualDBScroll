@@ -9,7 +9,7 @@ interface
 uses
   PASVirtualDBScrollMemo, PASEmbeddedMemo, PASEmbeddedScrollBar, 
   PASFormatEditor, PASVirtualDBScrollBase, PASEmbeddedPanel, PASDataLink, 
-  LazarusPackageIntf;
+  PASVirtualDBScrollUtilities, LazarusPackageIntf;
 
 implementation
 

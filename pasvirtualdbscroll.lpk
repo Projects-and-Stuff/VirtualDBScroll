@@ -33,7 +33,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this package. If not, see &lt;http://www.gnu.org/licenses/>."/>
     <Version Minor="1"/>
-    <Files Count="8">
+    <Files Count="9">
       <Item1>
         <Filename Value="pasvirtualdbscrollmemo.pas"/>
         <HasRegisterProc Value="True"/>
@@ -68,6 +68,10 @@ along with this package. If not, see &lt;http://www.gnu.org/licenses/>."/>
         <Filename Value="pasdatalink.pas"/>
         <UnitName Value="pasdatalink"/>
       </Item8>
+      <Item9>
+        <Filename Value="pasvirtualdbscrollutilities.pas"/>
+        <UnitName Value="pasvirtualdbscrollutilities"/>
+      </Item9>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="3">

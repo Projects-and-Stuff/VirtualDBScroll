@@ -27,7 +27,7 @@ uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
   ExtCtrls, PASEmbeddedMemo, PASEmbeddedScrollBar, db, PropEdits,
   PASFormatEditor, PASEmbeddedPanel, PASDataLink
-  {$ifdef dbgDBScroll}, LazLogger{$endif};
+  {$ifdef dbgDBScroll}, LazLogger{$endif}, PASVirtualDBScrollUtilities;
 
 type
 
