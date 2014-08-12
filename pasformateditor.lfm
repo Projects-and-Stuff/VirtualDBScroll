@@ -91,4 +91,54 @@ object formPASFormatEditor: TformPASFormatEditor
     OnClick = Button2Click
     TabOrder = 4
   end
+  object Button3: TButton
+    Left = 400
+    Height = 25
+    Top = 112
+    Width = 75
+    Caption = 'Insert Field'
+    OnClick = Button3Click
+    TabOrder = 5
+  end
+  object txtFieldName: TEdit
+    Left = 343
+    Height = 23
+    Top = 64
+    Width = 105
+    TabOrder = 6
+  end
+  object cmbFieldType: TComboBox
+    Left = 456
+    Height = 23
+    Top = 64
+    Width = 100
+    ItemHeight = 15
+    ItemIndex = 5
+    Items.Strings = (
+      'Boolean'
+      'DateTime'
+      'Float'
+      'Integer'
+      'String'
+      'Variant'
+    )
+    TabOrder = 7
+    Text = 'Variant'
+  end
+  object Label2: TLabel
+    Left = 343
+    Height = 15
+    Top = 48
+    Width = 63
+    Caption = 'Field Name:'
+    ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 456
+    Height = 15
+    Top = 48
+    Width = 57
+    Caption = 'Field Type:'
+    ParentColor = False
+  end
 end

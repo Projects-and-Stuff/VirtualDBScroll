@@ -18,11 +18,17 @@ type
     btnCancel: TButton;
     Button1: TButton;
     Button2: TButton;
+    Button3: TButton;
+    cmbFieldType: TComboBox;
+    txtFieldName: TEdit;
     Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
     memoFormat: TMemo;
     procedure btnOKClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     { private declarations }
   public
@@ -76,6 +82,25 @@ begin
     memoFormat.Lines[i] := AnsiReplaceText(memoFormat.Lines[i], #$c2#$b7, #32);
     memoFormat.Lines[i] := AnsiReplaceText(memoFormat.Lines[i], '  >', #9);
   end;
+end;
+
+procedure TformPASFormatEditor.Button3Click(Sender: TObject);
+var
+  CurrentPos : TPoint;
+  CurrentLine : String;
+begin
+  CurrentPos := memoFormat.CaretPos;
+  if (Pos(' ', txtFieldName.Text) <> 0) or (Pos(#9, txtFieldName.Text) <> 0) then
+  begin
+    ShowMessage('No spaces or tabs are allowed in the Field Name');
+  end
+  else
+  begin
+    CurrentLine := memoFormat.Lines[CurrentPos.y];
+    Insert('[' + txtFieldName.Text + ':' + cmbFieldType.Text + ']', CurrentLine, CurrentPos.x);
+    memoFormat.Lines[CurrentPos.y] := CurrentLine;
+  end
+
 end;
 
 { TPASFormatEditor }
