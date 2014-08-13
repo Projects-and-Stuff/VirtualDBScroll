@@ -31,7 +31,10 @@ THE SOFTWARE.
 interface
 
 uses
-  Classes, SysUtils, strutils;
+  Classes, SysUtils, strutils, db;
+
+function ConvertFields(var i : Integer; S : String): String;
+procedure GetDSFieldNames(DataSet: TDataSet; FieldList: TStrings);
 
 implementation
 
@@ -74,6 +77,24 @@ begin
     result := S;
   end;
 
+end;
+
+procedure GetDSFieldNames(DataSet: TDataSet; FieldList: TStrings);
+begin
+  if not Assigned(DataSet) then
+  begin
+    exit;
+  end;
+
+  if DataSet.FieldCount > 0 then
+  begin
+    DataSet.GetFieldNames(FieldList)
+  end
+  else
+  begin
+    DataSet.FieldDefs.Update;
+    DataSet.FieldDefs.GetItemNames(FieldList);
+  end;
 end;
 
 end.
