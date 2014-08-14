@@ -33,7 +33,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls {$ifdef dbgDBScroll}, LazLogger{$endif},
-  PropEdits, strutils;
+  PropEdits, strutils, IDEIntf, GraphPropEdits, typinfo, ComCtrls, db, DBPropEdits;
 
 type
 
@@ -46,7 +46,7 @@ type
     Button2: TButton;
     Button3: TButton;
     cmbFieldType: TComboBox;
-    txtFieldName: TEdit;
+    cmbFieldNames: TComboBox;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
@@ -59,6 +59,7 @@ type
     { private declarations }
   public
     { public declarations }
+
   end;
 
   { TPASFormatEditor }
@@ -67,12 +68,19 @@ type
   public
     procedure Edit; override;
     function GetAttributes : TPropertyAttributes; override;
+    procedure GetValues(Proc: TGetStrProc); override;
+    procedure FillValues(const Values: TStringList);
   end;
+
+procedure LoadDataSourceFieldss(DataSource: TDataSource; List: TStrings);
 
 var
   formPASFormatEditor: TformPASFormatEditor;
 
 implementation
+
+uses
+  PASVirtualDBScrollBase, PASVirtualDBScrollUtilities;
 
 {$R *.lfm}
 
@@ -81,10 +89,8 @@ implementation
 procedure TformPASFormatEditor.btnOKClick(Sender: TObject);
 begin
 
-
   // Test that the statement is correctly formatted
   // If not, set ModalResult := mrNone;
-
 
 end;
 
@@ -116,14 +122,14 @@ var
   CurrentLine : String;
 begin
   CurrentPos := memoFormat.CaretPos;
-  if (Pos(' ', txtFieldName.Text) <> 0) or (Pos(#9, txtFieldName.Text) <> 0) then
+  if (Pos(' ', cmbFieldNames.Text) <> 0) or (Pos(#9, cmbFieldNames.Text) <> 0) then
   begin
     ShowMessage('No spaces or tabs are allowed in the Field Name');
   end
   else
   begin
     CurrentLine := memoFormat.Lines[CurrentPos.y];
-    Insert('[' + txtFieldName.Text + ':' + cmbFieldType.Text + ']', CurrentLine, CurrentPos.x);
+    Insert('[' + cmbFieldNames.Text + ':' + cmbFieldType.Text + ']', CurrentLine, CurrentPos.x);
     memoFormat.Lines[CurrentPos.y] := CurrentLine;
   end
 
@@ -134,6 +140,7 @@ end;
 procedure TPASFormatEditor.Edit;
 var
   formPASFormatEditor: TformPASFormatEditor;
+
 begin
   formPASFormatEditor := TformPASFormatEditor.Create(nil);
 
@@ -149,6 +156,7 @@ begin
 
       // Set memo text to current property value
       memoFormat.Lines := TStrings(GetObjectValue);
+      cmbFieldNames.Items := FFieldValues;
 
       ShowModal;
       if ModalResult = mrOk then
@@ -165,7 +173,60 @@ end;
 
 function TPASFormatEditor.GetAttributes: TPropertyAttributes;
 begin
-  Result := [paDialog, paReadOnly, paMultiSelect];
+  Result := [paDialog, paMultiSelect, paValueList, paFullWidthName]; // paValueList OR paReadOnly causes access violation
+end;
+
+procedure TPASFormatEditor.GetValues(Proc: TGetStrProc);
+var
+  i : Integer;
+begin
+
+  try
+    FFieldValues.Clear;
+    FillValues(FFieldValues);
+  finally
+
+  end;
+
+  //inherited GetValues(Proc);
+end;
+
+// procedure LoadDataSourceFields is not exposed in Lazarus 1.2.4, so it's copied
+// here and renamed with an extra 's'.
+// This procedure is technically licensed under LCL. In future stable versions of
+// Lazarus I can go back to simply linking, and keep my code fully MIT Licensed
+procedure LoadDataSourceFieldss(DataSource: TDataSource; List: TStrings);
+var
+  DataSet: TDataSet;
+  i: Integer;
+begin
+  if Assigned(DataSource) then
+  begin
+    DataSet := DataSource.DataSet;
+    if Assigned(DataSet) then
+    begin
+      if DataSet.Fields.Count > 0 then
+      begin
+        DataSet.GetFieldNames(List);
+      end
+      else
+      begin
+        for i := 0 to DataSet.FieldDefs.Count - 1 do
+        begin
+          List.Add(DataSet.FieldDefs[i].Name);
+        end;
+      end;
+    end;
+  end;
+end;
+
+procedure TPASFormatEditor.FillValues(const Values: TStringList);
+var
+  DataSource: TDataSource;
+begin
+  DataSource := GetObjectProp(GetComponent(0), 'DataSource') as TDataSource;
+
+  LoadDataSourceFieldss(DataSource, Values);
 end;
 
 end.

@@ -101,13 +101,6 @@ object formPASFormatEditor: TformPASFormatEditor
     OnClick = Button3Click
     TabOrder = 5
   end
-  object txtFieldName: TEdit
-    Left = 343
-    Height = 23
-    Top = 64
-    Width = 105
-    TabOrder = 6
-  end
   object cmbFieldType: TComboBox
     Left = 456
     Height = 23
@@ -123,7 +116,8 @@ object formPASFormatEditor: TformPASFormatEditor
       'String'
       'Variant'
     )
-    TabOrder = 7
+    Style = csDropDownList
+    TabOrder = 6
     Text = 'Variant'
   end
   object Label2: TLabel
@@ -141,5 +135,13 @@ object formPASFormatEditor: TformPASFormatEditor
     Width = 57
     Caption = 'Field Type:'
     ParentColor = False
+  end
+  object cmbFieldNames: TComboBox
+    Left = 343
+    Height = 23
+    Top = 64
+    Width = 100
+    ItemHeight = 15
+    TabOrder = 7
   end
 end

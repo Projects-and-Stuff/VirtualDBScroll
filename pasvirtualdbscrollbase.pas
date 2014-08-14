@@ -170,6 +170,8 @@ type
 
 procedure Register;
 
+var
+  FFieldValues: TStringList;
 
 implementation
 
@@ -570,6 +572,8 @@ begin
   // Set Format property default value (blank)
   //FFormat := '';
 
+  FFieldValues := TStringList.Create;
+
 
   {$ifdef dbgDBScroll}
     DebugLnExit(ClassName,'(inherited).Create DONE');
@@ -593,6 +597,9 @@ begin
   FScrollBar := Nil;
 
   FFormat.Free;
+  FFormat := Nil;
+
+  FFieldValues.Free;
   FFormat := Nil;
 
   inherited Destroy;
