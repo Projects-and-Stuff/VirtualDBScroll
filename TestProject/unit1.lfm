@@ -31,8 +31,8 @@ object Form1: TForm1
     Left = 8
     Height = 114
     Top = 6
-    Width = 402
-    EScrollBar.Left = 384
+    Width = 210
+    EScrollBar.Left = 192
     EScrollBar.Height = 112
     EScrollBar.Top = 1
     EScrollBar.Width = 17
@@ -42,6 +42,7 @@ object Form1: TForm1
     EPopupInfo.Width = 50
     EPopupInfo.Caption = '0'
     EPopupInfo.TabOrder = 1
+    DataSource = DataSource1
     Format.Strings = (
       '---------------------------------------------'
       'Record:'#9'[id:Integer]'#9'Name: '#9'[Name:String]'
@@ -54,16 +55,74 @@ object Form1: TForm1
     EMemo.Left = 1
     EMemo.Height = 112
     EMemo.Top = 1
-    EMemo.Width = 383
+    EMemo.Width = 191
     EMemo.ScrollBars = ssNone
   end
+  object Memo1: TMemo
+    Left = 232
+    Height = 90
+    Top = 16
+    Width = 344
+    Lines.Strings = (
+      'Entry ID: [id:String]'#9#9'Name: [Name:String]'
+      'Entry:'
+      '[Entry:String]'
+    )
+    TabOrder = 3
+    WordWrap = False
+  end
+  object Button3: TButton
+    Left = 336
+    Height = 25
+    Top = 120
+    Width = 75
+    Caption = 'Convert'
+    OnClick = Button3Click
+    TabOrder = 4
+  end
+  object Button4: TButton
+    Left = 434
+    Height = 25
+    Top = 120
+    Width = 75
+    Caption = 'Focus'
+    OnClick = Button4Click
+    TabOrder = 5
+  end
+  object Button5: TButton
+    Left = 372
+    Height = 25
+    Top = 198
+    Width = 75
+    Caption = 'Button5'
+    TabOrder = 6
+  end
   object DataSource1: TDataSource
+    Tag = 2
     DataSet = SQLQuery1
     left = 96
     top = 133
   end
   object SQLQuery1: TSQLQuery
-    FieldDefs = <>
+    FieldDefs = <    
+      item
+        Name = 'fieldOne'
+        DataType = ftVariant
+        Precision = 0
+        Size = 1
+      end    
+      item
+        Name = 'SQLQuery1Field2'
+        DataType = ftUnknown
+        Precision = 0
+        Size = 0
+      end    
+      item
+        Name = 'SQLQuery1Field3'
+        DataType = ftUnknown
+        Precision = 0
+        Size = 0
+      end>
     Database = SQLite3Connection1
     Transaction = SQLTransaction1
     Params = <>
